@@ -16,6 +16,12 @@ kotlin {
     desktopMain.dependencies {
       implementation(compose.desktop.currentOs)
     }
+    val desktopTest by getting {
+      dependencies {
+        implementation(compose.desktop.uiTestJUnit4)
+        implementation(compose.desktop.currentOs)
+      }
+    }
     commonMain.dependencies {
       implementation(compose.runtime)
       implementation(compose.foundation)
@@ -23,8 +29,8 @@ kotlin {
       @OptIn(ExperimentalComposeLibrary::class)
       implementation(compose.components.resources)
 
-      implementation("net.java.dev.jna:jna:5.13.0")
-      implementation("net.java.dev.jna:jna-platform:5.13.0")
+      implementation("net.java.dev.jna:jna:5.14.0")
+      implementation("net.java.dev.jna:jna-platform:5.14.0")
       implementation("org.apache.commons:commons-lang3:3.14.0")
     }
   }
@@ -37,8 +43,9 @@ compose.desktop {
 
     nativeDistributions {
       targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-      packageName = "wiki.zyue"
+      packageName = "PortView"
       packageVersion = "1.0.0"
     }
   }
+
 }
