@@ -1,6 +1,5 @@
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.window.WindowDraggableArea
 import androidx.compose.material.*
@@ -16,10 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.toAwtImage
 import androidx.compose.ui.platform.LocalWindowInfo
-import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.*
 import androidx.compose.ui.window.*
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -27,7 +23,6 @@ import java.awt.*
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 
-@OptIn(ExperimentalComposeUiApi::class)
 fun main() = application {
   var isVisible by remember { mutableStateOf(false) }
 
@@ -74,9 +69,7 @@ fun main() = application {
         }
       ) {
         WindowDraggableArea {
-          Content(
-            hide = { isVisible = false }
-          )
+          Content(hide = { isVisible = false })
         }
       }
     }
@@ -164,3 +157,4 @@ private fun TrayIcon.displayMessage(notification: Notification) {
 
   displayMessage(notification.title, notification.message, messageType)
 }
+
