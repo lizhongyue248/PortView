@@ -1,12 +1,18 @@
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.window.WindowDraggableArea
-import androidx.compose.material.*
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -15,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.toAwtImage
 import androidx.compose.ui.platform.LocalWindowInfo
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.*
 import androidx.compose.ui.window.*
 import kotlinx.coroutines.flow.launchIn
@@ -25,11 +32,11 @@ import java.awt.event.MouseEvent
 
 fun main() = application {
   var isVisible by remember { mutableStateOf(false) }
+  var text by remember { mutableStateOf("") }
 
   val trayState = rememberTrayState()
   var positionX by remember { mutableStateOf(50.dp) }
   var positionY by remember { mutableStateOf(50.dp) }
-  var selectedItem by remember { mutableStateOf(0) }
   Window(
     onCloseRequest = { isVisible = false },
     visible = isVisible,
@@ -49,28 +56,31 @@ fun main() = application {
           .fillMaxSize()
           .padding(top = 10.dp, start = 20.dp, end = 20.dp, bottom = 10.dp)
           .shadow(20.dp, RoundedCornerShape(20.dp)),
-        bottomBar = {
-          BottomNavigation {
-            BottomNavigationItem(
-              icon = { Icon(Icons.Filled.Home, "Home") },
-              label = { Text("Home") },
-              selected = selectedItem == 0,
-              onClick = {
-                selectedItem = 0
+        topBar = {
+          WindowDraggableArea {
+            Column {
+              Row(
+                modifier = Modifier.fillMaxWidth()
+                  .padding(top = 12.dp, bottom = 6.dp, start = 24.dp, end = 12.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+              ) {
+                Text(
+                  text = "Port View",
+                  style = MaterialTheme.typography.h6,
+                  fontWeight = FontWeight.Bold,
+                  lineHeight = 30.sp
+                )
+                MyIconButton(onClick = { isVisible = false }) {
+                  Icon(Icons.Filled.Close, "Close")
+                }
               }
-            )
-            BottomNavigationItem(
-              icon = { Icon(Icons.Filled.Settings, "Settings") },
-              label = { Text("Settings") },
-              selected = selectedItem == 1,
-              onClick = { selectedItem = 1 }
-            )
+              searchField(text)
+            }
           }
         }
       ) {
-        WindowDraggableArea {
-          Content(hide = { isVisible = false })
-        }
+        Content()
       }
     }
 
@@ -158,3 +168,39 @@ private fun TrayIcon.displayMessage(notification: Notification) {
   displayMessage(notification.title, notification.message, messageType)
 }
 
+
+@Composable
+private fun searchField(text: String) {
+  var text1 = text
+  Row {
+    BasicTextField(
+      modifier = Modifier.fillMaxWidth()
+        .padding(start = 24.dp, end = 24.dp, bottom = 6.dp)
+        .height(36.dp)
+        .border(2.dp, Color.LightGray, RoundedCornerShape(6.dp)),
+      value = text1,
+      onValueChange = {
+        text1 = it
+      },
+      singleLine = true,
+      decorationBox = { innerTextField ->
+        Row(
+          verticalAlignment = Alignment.CenterVertically,
+          modifier = Modifier.padding(horizontal = 10.dp)
+        ) {
+          Box(
+            modifier = Modifier.weight(1f),
+            contentAlignment = Alignment.CenterStart
+          ) {
+            innerTextField()
+          }
+          MyIconButton(
+            onClick = { },
+          ) {
+            Icon(Icons.Filled.Search, null)
+          }
+        }
+      }
+    )
+  }
+}
