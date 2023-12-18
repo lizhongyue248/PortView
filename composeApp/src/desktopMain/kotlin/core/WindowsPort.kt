@@ -1,6 +1,7 @@
 package core
 
 import com.sun.jna.Memory
+import com.sun.jna.Native
 import com.sun.jna.Pointer
 import com.sun.jna.platform.win32.*
 import com.sun.jna.platform.win32.IPHlpAPI.MIB_TCPTABLE_OWNER_PID
@@ -8,6 +9,7 @@ import com.sun.jna.platform.win32.IPHlpAPI.TCP_TABLE_CLASS
 import com.sun.jna.platform.win32.WinDef.*
 import com.sun.jna.platform.win32.WinGDI.BITMAP
 import com.sun.jna.platform.win32.WinGDI.ICONINFO
+import com.sun.jna.platform.win32.WinNT.*
 import com.sun.jna.ptr.IntByReference
 import java.awt.image.BufferedImage
 import java.net.InetAddress
@@ -21,6 +23,9 @@ class WindowsPort : PortStrategy {
   private val ipHlpInstance: IPHlpAPI = IPHlpAPI.INSTANCE
 
   override fun portList(): List<PortInfo> {
+    if (!enableDebugPrivilege()) {
+      println("Error enable debug privilege.")
+    }
     val sizePtr = IntByReference()
     ipHlpInstance.GetExtendedTcpTable(null, sizePtr, false, IPHlpAPI.AF_INET, TCP_TABLE_CLASS.TCP_TABLE_OWNER_PID_ALL, 0)
     var size: Int
@@ -62,6 +67,7 @@ class WindowsPort : PortStrategy {
         )
       )
     }
+    result.sortBy { it.port }
     return result
   }
 
@@ -149,6 +155,39 @@ class WindowsPort : PortStrategy {
     return null
   }
 
+  private fun enableDebugPrivilege(): Boolean {
+    val hToken = HANDLEByReference()
+    var success = Advapi32.INSTANCE.OpenProcessToken(
+      Kernel32.INSTANCE.GetCurrentProcess(),
+      TOKEN_QUERY or TOKEN_ADJUST_PRIVILEGES, hToken
+    )
+    if (!success) {
+      println("OpenProcessToken failed. Error: " + Native.getLastError())
+      return false
+    }
+    try {
+      val luid = LUID()
+      success = Advapi32.INSTANCE.LookupPrivilegeValue(null, SE_DEBUG_NAME, luid)
+      if (!success) {
+        println("OpenProcessToken failed. Error: " + Native.getLastError())
+        return false
+      }
+      val tkp = TOKEN_PRIVILEGES(1)
+      tkp.Privileges[0] = LUID_AND_ATTRIBUTES(luid, DWORD(SE_PRIVILEGE_ENABLED.toLong()))
+      success = Advapi32.INSTANCE.AdjustTokenPrivileges(hToken.value, false, tkp, 0, null, null)
+      val err = Native.getLastError()
+      if (!success) {
+        println("OpenProcessToken failed. Error: $err")
+        return false
+      } else if (err == ERROR_NOT_ALL_ASSIGNED) {
+        println("Debug privileges not enabled.")
+        return false
+      }
+    } finally {
+      Kernel32.INSTANCE.CloseHandle(hToken.value)
+    }
+    return true
+  }
 }
 
 private fun Path.fileNameWithoutExtension(): String {
