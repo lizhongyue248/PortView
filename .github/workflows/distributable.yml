@@ -29,4 +29,4 @@ jobs:
       - name: Show package release
         shell: bash
         run:
-          ls -l build/compose/binaries/main-release
+          ls -l composeApp/build/compose/binaries/main-release
