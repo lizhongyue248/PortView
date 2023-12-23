@@ -1,3 +1,4 @@
+import TestTag.Companion.SEARCH_INPUT
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -18,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.toAwtImage
 import androidx.compose.ui.platform.LocalWindowInfo
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.*
@@ -77,7 +79,7 @@ fun main() = application {
                   )
                 }
               }
-              searchField(store)
+              SearchField(store)
             }
           }
         }
@@ -167,19 +169,19 @@ private fun TrayIcon.displayMessage(notification: Notification) {
     Notification.Type.Warning -> TrayIcon.MessageType.WARNING
     Notification.Type.Error -> TrayIcon.MessageType.ERROR
   }
-
   displayMessage(notification.title, notification.message, messageType)
 }
 
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-private fun searchField(store: AppStore) {
+internal fun SearchField(store: AppStore) {
   Row {
     BasicTextField(
       value = store.state.searchText,
       onValueChange = store::changeSearchText,
       modifier = Modifier
+        .testTag(SEARCH_INPUT)
         .padding(start = 24.dp, end = 24.dp, bottom = 6.dp)
         .fillMaxWidth()
         .height(36.dp),

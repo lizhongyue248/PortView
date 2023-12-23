@@ -5,7 +5,7 @@ import kotlin.properties.Delegates
 
 open class PortSupport {
   private lateinit var socket: ServerSocket
-  private var port by Delegates.notNull<Int>()
+  var port by Delegates.notNull<Int>()
 
   @Before
   fun before() {

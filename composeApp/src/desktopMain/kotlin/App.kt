@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toPainter
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.text.style.TextAlign
@@ -26,11 +27,12 @@ fun Content(store: AppStore) {
   val appState = store.state
   val lazyListState = rememberLazyListState()
   Box {
-    LazyColumn(Modifier.fillMaxSize(), state = lazyListState) {
+    LazyColumn(Modifier.testTag(TestTag.PORT_LIST).fillMaxSize(), state = lazyListState) {
       items(appState.list) { item ->
         Row(
           verticalAlignment = Alignment.CenterVertically,
           modifier = Modifier
+            .testTag(TestTag.PORT_ITEM(item.port))
             .clickable {
               println("Hello")
             }
@@ -58,7 +60,8 @@ fun Content(store: AppStore) {
             )
           }
           Text(
-            modifier = Modifier.width(70.dp).padding(start = 10.dp),
+            modifier = Modifier
+              .width(70.dp).padding(start = 10.dp),
             text = ":${item.port}",
             fontSize = 18.sp,
             fontWeight = SemiBold,
