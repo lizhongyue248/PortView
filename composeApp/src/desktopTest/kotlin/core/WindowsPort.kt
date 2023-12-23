@@ -1,5 +1,6 @@
 package core
 
+import PortSupport
 import org.junit.After
 import org.junit.Assert
 import org.junit.Assert.assertNotNull
@@ -9,17 +10,7 @@ import org.junit.Test
 import java.net.ServerSocket
 import kotlin.properties.Delegates
 
-class WindowsPortTest {
-
-  private lateinit var socket: ServerSocket
-  private var port by Delegates.notNull<Int>()
-
-  @Before
-  fun before() {
-    socket = ServerSocket(0)
-    port = socket.localPort
-    println("Start port: $port")
-  }
+class WindowsPortTest : PortSupport(){
 
   @Test
   fun portListTest() {
@@ -30,12 +21,6 @@ class WindowsPortTest {
     val find = portList.find { it.port == port }
     assertNotNull(find)
     portList.forEach(System.out::println)
-  }
-
-  @After
-  fun after() {
-    socket.close()
-    println("Close port: $port")
   }
 
 }
