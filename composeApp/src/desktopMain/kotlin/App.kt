@@ -16,19 +16,18 @@ import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.delay
 
 @Composable
-fun Content() {
-  val portStrategy = getPortStrategy()
-  var list by remember { mutableStateOf(portStrategy.portList()) }
-  val state = rememberLazyListState()
+fun Content(store: AppStore) {
+  val appState = store.state
+  val lazyListState = rememberLazyListState()
   Box {
-    LazyColumn(Modifier.fillMaxSize(), state = state) {
-      items(list) { item ->
+    LazyColumn(Modifier.fillMaxSize(), state = lazyListState) {
+      items(appState.list) { item ->
         Row(
           verticalAlignment = Alignment.CenterVertically,
           modifier = Modifier
@@ -36,25 +35,24 @@ fun Content() {
               println("Hello")
             }
             .pointerHoverIcon(PointerIcon.Hand)
-            .padding(horizontal = 24.dp, vertical = 12.dp)
+            .padding(horizontal = 24.dp, vertical = 6.dp)
         ) {
           Image(
             painter = if (item.image === null) painterResource("logo-ghost.png") else item.image.toPainter(),
             contentDescription = "logo",
-            modifier = Modifier.width(24.dp)
-              .height(24.dp)
-              .padding(end = 8.dp)
+            modifier = Modifier.size(38.dp)
+              .padding(end = 12.dp)
           )
           Column(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.SpaceBetween
           ) {
-            Text(text = item.name, fontSize = 12.sp)
+            Text(text = item.name, fontSize = 14.sp)
             Text(
               text = item.command,
               modifier = Modifier.fillMaxWidth(),
               overflow = TextOverflow.Ellipsis,
-              fontSize = 10.sp,
+              fontSize = 12.sp,
               color = Color.LightGray,
               maxLines = 2
             )
@@ -62,25 +60,20 @@ fun Content() {
           Text(
             modifier = Modifier.width(70.dp).padding(start = 10.dp),
             text = ":${item.port}",
-            fontSize = 16.sp,
-            fontWeight = SemiBold
+            fontSize = 18.sp,
+            fontWeight = SemiBold,
+            textAlign = TextAlign.End
           )
         }
       }
     }
 
     VerticalScrollbar(
-      rememberScrollbarAdapter(state),
+      rememberScrollbarAdapter(lazyListState),
       modifier = Modifier
         .align(Alignment.CenterEnd)
         .fillMaxHeight()
     )
-    LaunchedEffect(true) {
-      while (true) {
-        list = portStrategy.portList()
-        delay(5000)
-        println("Update success.")
-      }
-    }
   }
+
 }

@@ -1,13 +1,10 @@
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.window.WindowDraggableArea
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
@@ -22,6 +19,7 @@ import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.toAwtImage
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.*
 import androidx.compose.ui.window.*
 import kotlinx.coroutines.flow.launchIn
@@ -31,22 +29,21 @@ import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 
 fun main() = application {
-  var isVisible by remember { mutableStateOf(false) }
-  var text by remember { mutableStateOf("") }
-
+  val store = remember { AppStore() }
+  val state = store.state
   val trayState = rememberTrayState()
   var positionX by remember { mutableStateOf(50.dp) }
   var positionY by remember { mutableStateOf(50.dp) }
   Window(
-    onCloseRequest = { isVisible = false },
-    visible = isVisible,
+    onCloseRequest = store::hidden,
+    visible = state.isVisible,
     alwaysOnTop = true,
     undecorated = true,
     transparent = true,
     resizable = false,
     icon = MyAppIcon,
     state = WindowState(
-      width = 380.dp, height = 630.dp,
+      width = 420.dp, height = 700.dp,
       position = WindowPosition(positionX, positionY)
     )
   ) {
@@ -55,7 +52,7 @@ fun main() = application {
         modifier = Modifier.background(Color.Transparent)
           .fillMaxSize()
           .padding(top = 10.dp, start = 20.dp, end = 20.dp, bottom = 10.dp)
-          .shadow(20.dp, RoundedCornerShape(20.dp)),
+          .shadow(20.dp, RoundedCornerShape(5.dp)),
         topBar = {
           WindowDraggableArea {
             Column {
@@ -69,25 +66,30 @@ fun main() = application {
                   text = "Port View",
                   style = MaterialTheme.typography.h6,
                   fontWeight = FontWeight.Bold,
-                  lineHeight = 30.sp
+                  fontSize = 24.sp,
+                  lineHeight = 36.sp
                 )
-                MyIconButton(onClick = { isVisible = false }) {
-                  Icon(Icons.Filled.Close, "Close")
+                MyIconButton(onClick = store::hidden) {
+                  Icon(
+                    tint = Color.LightGray,
+                    contentDescription = "Close Window",
+                    imageVector = Icons.Filled.Close
+                  )
                 }
               }
-              searchField(text)
+              searchField(store)
             }
           }
         }
       ) {
-        Content()
+        Content(store)
       }
     }
 
     TraySetting(state = trayState, exit = { exitApplication() }, onAction = { x, y ->
       positionX = x
       positionY = y
-      isVisible = !isVisible
+      store.visibleToggle()
     })
 
   }
@@ -95,6 +97,7 @@ fun main() = application {
   val notification = rememberNotification("Port view setup success!", "")
   LaunchedEffect(Unit) {
     trayState.sendNotification(notification)
+    store.setTimer()
   }
 }
 
@@ -169,38 +172,51 @@ private fun TrayIcon.displayMessage(notification: Notification) {
 }
 
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-private fun searchField(text: String) {
-  var text1 = text
+private fun searchField(store: AppStore) {
   Row {
     BasicTextField(
-      modifier = Modifier.fillMaxWidth()
+      value = store.state.searchText,
+      onValueChange = store::changeSearchText,
+      modifier = Modifier
         .padding(start = 24.dp, end = 24.dp, bottom = 6.dp)
-        .height(36.dp)
-        .border(2.dp, Color.LightGray, RoundedCornerShape(6.dp)),
-      value = text1,
-      onValueChange = {
-        text1 = it
-      },
+        .fillMaxWidth()
+        .height(36.dp),
       singleLine = true,
-      decorationBox = { innerTextField ->
-        Row(
-          verticalAlignment = Alignment.CenterVertically,
-          modifier = Modifier.padding(horizontal = 10.dp)
-        ) {
-          Box(
-            modifier = Modifier.weight(1f),
-            contentAlignment = Alignment.CenterStart
-          ) {
-            innerTextField()
-          }
+    ) { innerTextField ->
+      val interactionSource = remember { MutableInteractionSource() }
+      TextFieldDefaults.OutlinedTextFieldDecorationBox(
+        value = store.state.searchText,
+        innerTextField = innerTextField,
+        enabled = true,
+        border = {
+          TextFieldDefaults.BorderBox(
+            enabled = true, isError = false,
+            interactionSource,
+            TextFieldDefaults.outlinedTextFieldColors(),
+            shape = RoundedCornerShape(4.dp)
+          )
+        },
+        singleLine = true,
+        colors = TextFieldDefaults.textFieldColors(backgroundColor = Color.Transparent),
+        placeholder = {
+          Text("Input port or name", color = Color.LightGray)
+        },
+        interactionSource = interactionSource,
+        visualTransformation = VisualTransformation.None,
+        contentPadding = TextFieldDefaults.textFieldWithoutLabelPadding(
+          top = 0.dp,
+          bottom = 0.dp
+        ),
+        trailingIcon = {
           MyIconButton(
             onClick = { },
           ) {
-            Icon(Icons.Filled.Search, null)
+            Icon(Icons.Filled.Search, "Search")
           }
         }
-      }
-    )
+      )
+    }
   }
 }
