@@ -15,6 +15,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import component.MyIconButton
+import component.MyTextField
 import icons.GithubMark
 import icons.rememberArrowOutward
 import icons.rememberHelp

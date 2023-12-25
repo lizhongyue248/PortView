@@ -24,6 +24,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.*
 import androidx.compose.ui.window.*
+import component.MyDialogWindow
+import component.MyIconButton
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.jetbrains.compose.resources.ExperimentalResourceApi
@@ -32,6 +34,7 @@ import java.awt.*
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 
+@OptIn(ExperimentalResourceApi::class)
 fun main() = application {
   val store = remember { AppStore() }
   val state = store.state
@@ -40,18 +43,18 @@ fun main() = application {
   var positionY by remember { mutableStateOf(50.dp) }
   var selectedItem by remember { mutableStateOf(0) }
   val items = listOf("Home", "Setting")
-  Window(
+  MyDialogWindow(
     onCloseRequest = store::hidden,
     visible = state.isVisible,
     alwaysOnTop = true,
     undecorated = true,
     transparent = true,
     resizable = false,
-    icon = MyAppIcon,
-    state = WindowState(
+    icon = painterResource("icon.png"),
+    state = DialogState(
       width = 420.dp, height = 700.dp,
       position = WindowPosition(positionX, positionY)
-    )
+    ),
   ) {
     MaterialTheme {
       Scaffold(
