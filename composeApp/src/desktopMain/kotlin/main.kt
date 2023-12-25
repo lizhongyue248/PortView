@@ -9,14 +9,14 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.toAwtImage
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.platform.testTag
@@ -26,6 +26,8 @@ import androidx.compose.ui.unit.*
 import androidx.compose.ui.window.*
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.painterResource
 import java.awt.*
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
@@ -36,6 +38,8 @@ fun main() = application {
   val trayState = rememberTrayState()
   var positionX by remember { mutableStateOf(50.dp) }
   var positionY by remember { mutableStateOf(50.dp) }
+  var selectedItem by remember { mutableStateOf(0) }
+  val items = listOf("Home", "Setting")
   Window(
     onCloseRequest = store::hidden,
     visible = state.isVisible,
@@ -79,12 +83,39 @@ fun main() = application {
                   )
                 }
               }
-              SearchField(store)
+            }
+          }
+        },
+        bottomBar = {
+          BottomNavigation(
+            backgroundColor = Color.White
+          ) {
+            items.forEachIndexed { index, item ->
+              BottomNavigationItem(
+                selectedContentColor = Color.Blue,
+                unselectedContentColor = Color.Black,
+                icon = {
+                  when (index) {
+                    0 -> Icon(Icons.Outlined.Home, contentDescription = null)
+                    else -> Icon(Icons.Outlined.Settings, contentDescription = null)
+                  }
+                },
+                label = { Text(item) },
+                selected = selectedItem == index,
+                onClick = { selectedItem = index }
+              )
             }
           }
         }
       ) {
-        Content(store)
+        if (selectedItem == 0) {
+          Column {
+            SearchField(store)
+            Content(store)
+          }
+        } else {
+          Setting()
+        }
       }
     }
 
@@ -103,14 +134,17 @@ fun main() = application {
   }
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalResourceApi::class)
 @Composable
 fun TraySetting(
   state: TrayState = rememberTrayState(),
   exit: () -> Unit,
   onAction: (x: Dp, y: Dp) -> Unit
 ) {
-  val image = ColorPainter(Color.Red).toAwtImage(Density(10F), LayoutDirection.Ltr, Size(16F, 16F))
+  val image = painterResource("icon.png").toAwtImage(
+    density = Density(1f, 1f),
+    layoutDirection = LayoutDirection.Ltr
+  )
   val popupMenu = remember { PopupMenu() }
 
   // 获取屏幕大小

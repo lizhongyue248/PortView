@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.sp
 fun Content(store: AppStore) {
   val appState = store.state
   val lazyListState = rememberLazyListState()
-  Box {
+  Box(modifier = Modifier.padding(bottom = 64.dp)) {
     LazyColumn(Modifier.testTag(TestTag.PORT_LIST).fillMaxSize(), state = lazyListState) {
       items(appState.list) { item ->
         Row(
