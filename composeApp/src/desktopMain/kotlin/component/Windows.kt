@@ -16,6 +16,11 @@ import javax.swing.JDialog
 import kotlin.math.roundToInt
 internal val LocalWindow = compositionLocalOf<Window?> { null }
 
+/**
+ * Add alwaysOnTop for DialogWindow.
+ *
+ * @see [DialogWindow]
+ */
 @Composable
 fun MyDialogWindow(
   onCloseRequest: () -> Unit,
@@ -194,11 +199,6 @@ internal class ListenerOnWindowRef<T>(
   }
 }
 
-internal fun windowStateListenerRef() = ListenerOnWindowRef<WindowStateListener>(
-  register = Window::addWindowStateListener,
-  unregister = Window::removeWindowStateListener
-)
-
 internal fun windowListenerRef() = ListenerOnWindowRef<WindowListener>(
   register = Window::addWindowListener,
   unregister = Window::removeWindowListener
@@ -208,7 +208,6 @@ internal fun componentListenerRef() = ListenerOnWindowRef<ComponentListener>(
   register = Component::addComponentListener,
   unregister = Component::removeComponentListener
 )
-
 
 /**
  * Sets the position of the window, given its placement.
