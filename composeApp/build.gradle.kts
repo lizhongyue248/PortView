@@ -28,10 +28,10 @@ kotlin {
       implementation(compose.material)
       @OptIn(ExperimentalComposeLibrary::class)
       implementation(compose.components.resources)
-
-      implementation("net.java.dev.jna:jna:5.14.0")
-      implementation("net.java.dev.jna:jna-platform:5.14.0")
-      implementation("org.apache.commons:commons-lang3:3.14.0")
+      implementation(libs.jna.platform)
+      implementation(libs.jna)
+      implementation(libs.apache.commons)
+      implementation(libs.kstore.file)
     }
   }
 }

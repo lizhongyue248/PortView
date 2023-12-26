@@ -4,6 +4,9 @@ compose-plugin = "1.5.10"
 compose-compiler = "1.5.4"
 kotlin = "1.9.20"
 junit = "4.13.2"
+kstore = "0.7.1"
+jna = "5.14.0"
+apache-commons = "3.14.0"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -14,6 +17,12 @@ compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = 
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
 compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "compose" }
 compose-material = { module = "androidx.compose.material:material", version.ref = "compose" }
+kstore = { module = "io.github.xxfast:kstore", version.ref = "kstore" }
+kstore-file = { module = "io.github.xxfast:kstore-file", version.ref = "kstore" }
+kstore-storage = { module = "io.github.xxfast:kstore-storage", version.ref = "kstore" }
+jna = { module="net.java.dev.jna:jna", version.ref = "jna" }
+jna-platform = { module="net.java.dev.jna:jna-platform", version.ref = "jna" }
+apache-commons = { module="org.apache.commons:commons-lang3", version.ref = "apache-commons" }
 
 [plugins]
 jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose-plugin" }
