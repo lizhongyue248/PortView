@@ -38,7 +38,6 @@ import java.awt.event.MouseEvent
 fun main() = application {
   val store = remember { AppStore() }
   val state = store.state
-  val trayState = rememberTrayState()
   var positionX by remember { mutableStateOf(50.dp) }
   var positionY by remember { mutableStateOf(50.dp) }
   var selectedItem by remember { mutableStateOf(0) }
@@ -122,7 +121,7 @@ fun main() = application {
       }
     }
 
-    TraySetting(state = trayState, exit = { exitApplication() }, onAction = { x, y ->
+    TraySetting(state = state.trayState, exit = { exitApplication() }, onAction = { x, y ->
       positionX = x
       positionY = y
       store.visibleToggle()
@@ -132,7 +131,7 @@ fun main() = application {
 
   val notification = rememberNotification("Port view setup success!", "")
   LaunchedEffect(Unit) {
-    trayState.sendNotification(notification)
+    state.trayState.sendNotification(notification)
     store.setTimer()
   }
 }

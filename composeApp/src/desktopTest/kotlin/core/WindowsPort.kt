@@ -1,14 +1,10 @@
 package core
 
 import PortSupport
-import org.junit.After
-import org.junit.Assert
+import core.win.WindowsPort
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
-import org.junit.Before
 import org.junit.Test
-import java.net.ServerSocket
-import kotlin.properties.Delegates
 
 class WindowsPortTest : PortSupport(){
 

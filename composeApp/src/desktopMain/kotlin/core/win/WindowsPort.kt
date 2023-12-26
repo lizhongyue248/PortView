@@ -1,23 +1,19 @@
-package core
+package core.win
 
 import com.sun.jna.Memory
 import com.sun.jna.Native
 import com.sun.jna.Pointer
 import com.sun.jna.platform.win32.*
-import com.sun.jna.platform.win32.IPHlpAPI.MIB_TCPTABLE_OWNER_PID
-import com.sun.jna.platform.win32.IPHlpAPI.TCP_TABLE_CLASS
-import com.sun.jna.platform.win32.WinDef.*
-import com.sun.jna.platform.win32.WinGDI.BITMAP
-import com.sun.jna.platform.win32.WinGDI.ICONINFO
-import com.sun.jna.platform.win32.WinNT.*
+import com.sun.jna.platform.win32.WinError.ERROR_NOT_ALL_ASSIGNED
 import com.sun.jna.ptr.IntByReference
+import core.PortInfo
+import core.PortStrategy
 import java.awt.image.BufferedImage
 import java.net.InetAddress
 import java.net.UnknownHostException
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.*
-
 
 class WindowsPort : PortStrategy {
   private val ipHlpInstance: IPHlpAPI = IPHlpAPI.INSTANCE
@@ -27,21 +23,21 @@ class WindowsPort : PortStrategy {
       println("Error enable debug privilege.")
     }
     val sizePtr = IntByReference()
-    ipHlpInstance.GetExtendedTcpTable(null, sizePtr, false, IPHlpAPI.AF_INET, TCP_TABLE_CLASS.TCP_TABLE_OWNER_PID_ALL, 0)
+    ipHlpInstance.GetExtendedTcpTable(null, sizePtr, false, IPHlpAPI.AF_INET, IPHlpAPI.TCP_TABLE_CLASS.TCP_TABLE_OWNER_PID_ALL, 0)
     var size: Int
     var buf: Memory
     do {
       size = sizePtr.value
       buf = Memory(size.toLong())
       val ret: Int = ipHlpInstance.GetExtendedTcpTable(
-        buf, sizePtr, false, IPHlpAPI.AF_INET, TCP_TABLE_CLASS.TCP_TABLE_OWNER_PID_ALL,
+        buf, sizePtr, false, IPHlpAPI.AF_INET, IPHlpAPI.TCP_TABLE_CLASS.TCP_TABLE_OWNER_PID_ALL,
         0
       )
       if (WinError.NO_ERROR != ret) {
         println("Error $ret")
       }
     } while (size < sizePtr.value)
-    val tcpTable = MIB_TCPTABLE_OWNER_PID(buf)
+    val tcpTable = IPHlpAPI.MIB_TCPTABLE_OWNER_PID(buf)
     val result = mutableListOf<PortInfo>()
     for (mibTcpRow in tcpTable.table) {
       if (mibTcpRow.dwState != IPHlpAPI.MIB_TCP_STATE.MIB_TCP_STATE_LISTEN) {
@@ -50,8 +46,8 @@ class WindowsPort : PortStrategy {
       val pid = mibTcpRow.dwOwningPid
       val executablePath = getProcessExecutablePath(pid)
       val image = if (executablePath != "unknown") {
-        val largeIcons = arrayOfNulls<HICON>(1)
-        val smallIcons = arrayOfNulls<HICON>(1)
+        val largeIcons = arrayOfNulls<WinDef.HICON>(1)
+        val smallIcons = arrayOfNulls<WinDef.HICON>(1)
         Shell32.INSTANCE.ExtractIconEx(executablePath, 0, largeIcons, smallIcons, 1)
         toImage(largeIcons[0])
       } else {
@@ -96,22 +92,22 @@ class WindowsPort : PortStrategy {
     return value and 0xFF shl 8 or (value shr 8 and 0xFF)
   }
 
-  private fun toImage(hicon: HICON?): BufferedImage? {
+  private fun toImage(hicon: WinDef.HICON?): BufferedImage? {
     if (hicon == null) {
       return null
     }
-    var bitmapHandle: HBITMAP? = null
+    var bitmapHandle: WinDef.HBITMAP? = null
     val user32 = User32.INSTANCE
     val gdi32 = GDI32.INSTANCE
 
     try {
-      val info = ICONINFO()
+      val info = WinGDI.ICONINFO()
       if (!user32.GetIconInfo(hicon, info)) return null
 
       info.read()
       bitmapHandle = Optional.ofNullable(info.hbmColor).orElse(info.hbmMask)
 
-      val bitmap = BITMAP()
+      val bitmap = WinGDI.BITMAP()
       if (gdi32.GetObject(bitmapHandle, bitmap.size(), bitmap.pointer) > 0) {
         bitmap.read()
 
@@ -150,30 +146,30 @@ class WindowsPort : PortStrategy {
       }
     } finally {
       gdi32.DeleteObject(hicon)
-      Optional.ofNullable(bitmapHandle).ifPresent { hObject: HBITMAP? -> gdi32.DeleteObject(hObject) }
+      Optional.ofNullable(bitmapHandle).ifPresent { hObject: WinDef.HBITMAP? -> gdi32.DeleteObject(hObject) }
     }
     return null
   }
 
   private fun enableDebugPrivilege(): Boolean {
-    val hToken = HANDLEByReference()
+    val hToken = WinNT.HANDLEByReference()
     var success = Advapi32.INSTANCE.OpenProcessToken(
       Kernel32.INSTANCE.GetCurrentProcess(),
-      TOKEN_QUERY or TOKEN_ADJUST_PRIVILEGES, hToken
+      WinNT.TOKEN_QUERY or WinNT.TOKEN_ADJUST_PRIVILEGES, hToken
     )
     if (!success) {
       println("OpenProcessToken failed. Error: " + Native.getLastError())
       return false
     }
     try {
-      val luid = LUID()
-      success = Advapi32.INSTANCE.LookupPrivilegeValue(null, SE_DEBUG_NAME, luid)
+      val luid = WinNT.LUID()
+      success = Advapi32.INSTANCE.LookupPrivilegeValue(null, WinNT.SE_DEBUG_NAME, luid)
       if (!success) {
         println("OpenProcessToken failed. Error: " + Native.getLastError())
         return false
       }
-      val tkp = TOKEN_PRIVILEGES(1)
-      tkp.Privileges[0] = LUID_AND_ATTRIBUTES(luid, DWORD(SE_PRIVILEGE_ENABLED.toLong()))
+      val tkp = WinNT.TOKEN_PRIVILEGES(1)
+      tkp.Privileges[0] = WinNT.LUID_AND_ATTRIBUTES(luid, WinDef.DWORD(WinNT.SE_PRIVILEGE_ENABLED.toLong()))
       success = Advapi32.INSTANCE.AdjustTokenPrivileges(hToken.value, false, tkp, 0, null, null)
       val err = Native.getLastError()
       if (!success) {
@@ -189,6 +185,7 @@ class WindowsPort : PortStrategy {
     return true
   }
 }
+
 
 private fun Path.fileNameWithoutExtension(): String {
   val fileNameWithExtension: String = this.fileName.toString()

@@ -1,6 +1,7 @@
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.window.TrayState
 import core.PortInfo
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.seconds
@@ -36,9 +37,13 @@ class AppStore {
   suspend fun setTimer() {
     while (true) {
       delay(5.seconds)
-      setState {
-        copy(items = getPortStrategy().portList())
-      }
+      updateItems()
+    }
+  }
+
+  fun updateItems() {
+    setState {
+      copy(items = getPortStrategy().portList())
     }
   }
 
@@ -57,7 +62,8 @@ class AppStore {
     val items: List<PortInfo> = emptyList(),
     val searchText: String = "",
     val editingItemId: Long? = null,
-    val isVisible: Boolean = false
+    val isVisible: Boolean = true,
+    val trayState: TrayState = TrayState()
   ) {
     val list: List<PortInfo> get() {
       val conditionInt = searchText.toIntOrNull()

@@ -1,7 +1,8 @@
-import core.MacPort
+import core.ActionStrategy
 import core.PortStrategy
-import core.WindowsPort
-import java.awt.GraphicsEnvironment
+import core.mac.MacPort
+import core.win.WindowsAction
+import core.win.WindowsPort
 
 class PlatformInfo {
   val name: String = "Java ${System.getProperty("java.version")}"
@@ -20,7 +21,6 @@ fun getPortStrategy(): PortStrategy {
   return MacPort()
 }
 
-
-internal val GlobalDensity get() = GraphicsEnvironment.getLocalGraphicsEnvironment()
-  .defaultScreenDevice
-  .defaultConfiguration
+fun getActionStrategy(): ActionStrategy {
+  return WindowsAction()
+}
