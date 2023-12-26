@@ -1,3 +1,6 @@
+package ui
+
+import core.TestTag
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.clickable
@@ -28,6 +31,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Notification
 import androidx.compose.ui.window.rememberNotification
 import core.PortInfo
+import core.getActionStrategy
+import model.AppStore
 
 @Composable
 fun Content(store: AppStore) {

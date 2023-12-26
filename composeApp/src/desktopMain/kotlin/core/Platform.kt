@@ -1,5 +1,5 @@
-import core.ActionStrategy
-import core.PortStrategy
+package core
+
 import core.mac.MacPort
 import core.win.WindowsAction
 import core.win.WindowsPort

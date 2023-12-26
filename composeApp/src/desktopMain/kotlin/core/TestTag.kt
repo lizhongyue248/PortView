@@ -1,3 +1,5 @@
+package core
+
 class TestTag {
   companion object {
     const val PORT_LIST = "port-list"

@@ -1,12 +1,13 @@
-import TestTag.Companion.PORT_ITEM
-import TestTag.Companion.PORT_LIST
-import TestTag.Companion.SEARCH_INPUT
-import androidx.compose.runtime.remember
+import core.TestTag.Companion.PORT_ITEM
+import core.TestTag.Companion.PORT_LIST
+import core.TestTag.Companion.SEARCH_INPUT
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import org.junit.Assert
 import org.junit.Rule
 import org.junit.Test
+import model.AppStore
+import ui.Content
 
 class UiTest : PortSupport() {
 

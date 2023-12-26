@@ -1,4 +1,4 @@
-import TestTag.Companion.SEARCH_INPUT
+import core.TestTag.Companion.SEARCH_INPUT
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -28,8 +28,11 @@ import component.MyDialogWindow
 import component.MyIconButton
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import model.AppStore
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
+import ui.Content
+import ui.Setting
 import java.awt.*
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent

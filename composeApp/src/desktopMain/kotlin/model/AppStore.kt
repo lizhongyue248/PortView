@@ -1,8 +1,11 @@
+package model
+
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.window.TrayState
 import core.PortInfo
+import core.getPortStrategy
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.seconds
 
