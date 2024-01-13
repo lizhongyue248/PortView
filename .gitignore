@@ -9,6 +9,8 @@ build/
 *.iws
 *.iml
 *.ipr
+*.log
+*.log.gz
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/

@@ -8,6 +8,7 @@ import org.junit.Rule
 import org.junit.Test
 import model.AppStore
 import ui.Content
+import ui.SearchField
 
 class UiTest : PortSupport() {
 

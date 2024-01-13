@@ -1,5 +1,6 @@
 import com.jthemedetecor.OsThemeDetector
 import net.harawata.appdirs.AppDirsFactory
+import org.apache.logging.log4j.kotlin.logger
 import org.junit.Test
 import java.io.File
 
@@ -19,5 +20,6 @@ class OtherTest {
   @Test
   fun textKey() {
     println(OsThemeDetector.getDetector().isDark)
+    logger().info("OsThemeDetector.getDetector().isDark ${OsThemeDetector.getDetector().isDark}")
   }
 }

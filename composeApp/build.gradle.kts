@@ -35,6 +35,12 @@ kotlin {
       implementation(libs.apache.commons)
       implementation(libs.app.dirs)
       implementation(libs.serialization.json.jvm)
+
+      // Logging
+      implementation(libs.slf4j)
+      implementation(libs.log4j)
+      implementation(libs.log4j.slf4j)
+      implementation(libs.log4j.kotlin)
     }
   }
 }

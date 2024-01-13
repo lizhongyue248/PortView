@@ -25,7 +25,7 @@ fun PortViewTheme(
 private val DarkColorPalette = darkColors(
   primary = Color(22, 125, 255),
   onPrimary = Color.White,
-  onSecondary = Color.LightGray,
+  onSecondary = Color(0xff9e9e9e),
   onBackground = Color.White
 )
 private val LightColorPalette = lightColors(
