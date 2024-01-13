@@ -71,9 +71,12 @@ class AppStore {
   }
 
   fun updateItems() {
+    setState {
+      copy(loading = true)
+    }
     val items = portInfoList()
     setState {
-      copy(items = items)
+      copy(items = items, loading = false)
     }
   }
 
@@ -140,7 +143,8 @@ class AppStore {
     val editingItemId: Long? = null,
     val keyboard: String = "",
     val isVisible: Boolean = true,
-    val trayState: TrayState = TrayState()
+    val trayState: TrayState = TrayState(),
+    val loading: Boolean = false
   ) {
     val list: List<PortInfo>
       get() {
@@ -159,9 +163,7 @@ class AppStore {
     if (config.theme == ThemeOption.DARK) {
       return true
     }
-    val dark = OsThemeDetector.getDetector().isDark
-    println("OsThemeDetector.getDetector().isDark $dark")
-    return dark
+    return OsThemeDetector.getDetector().isDark
   }
 
   @Serializable

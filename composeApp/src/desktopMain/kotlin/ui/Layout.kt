@@ -7,6 +7,7 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Settings
@@ -14,7 +15,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.toAwtImage
 import androidx.compose.ui.platform.LocalWindowInfo
@@ -57,7 +57,7 @@ internal fun TopBar(store: AppStore) {
       )
       MyIconButton(onClick = store::hidden) {
         Icon(
-          tint = Color.LightGray,
+          tint = MaterialTheme.colors.onSecondary,
           contentDescription = "Close Window",
           imageVector = Icons.Filled.Close
         )
@@ -203,9 +203,14 @@ internal fun SearchField(store: AppStore) {
         ),
         trailingIcon = {
           MyIconButton(
-            onClick = { },
+            onClick = store::updateItems,
+            enabled = !store.state.loading
           ) {
-            Icon(Icons.Filled.Search, "Search")
+            if (store.state.loading) {
+              Icon(Icons.Filled.Refresh, "Search")
+            } else {
+              Icon(Icons.Filled.Search, "Search")
+            }
           }
         }
       )

@@ -1,5 +1,5 @@
-
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -11,10 +11,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.DialogState
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.application
+import androidx.compose.ui.window.rememberDialogState
 import androidx.compose.ui.window.rememberNotification
 import com.jthemedetecor.OsThemeDetector
 import com.tulskiy.keymaster.common.Provider
@@ -41,7 +42,11 @@ fun main() = application {
   val selectedItem = remember { mutableStateOf(0) }
 
   val rightBottom = GraphicsEnvironment.getLocalGraphicsEnvironment().maximumWindowBounds.rightBottom
-  var position by remember { mutableStateOf(WindowPosition((rightBottom.x - 400).dp, (rightBottom.y - 690).dp)) }
+  val dialogState = rememberDialogState(
+    width = 420.dp,
+    height = 700.dp,
+    position = WindowPosition((rightBottom.x - 400).dp, (rightBottom.y - 690).dp)
+  )
 
   val darkTheme = remember { mutableStateOf(store.isDarkTheme()) }
   PortViewTheme(darkTheme = darkTheme.value) {
@@ -53,17 +58,22 @@ fun main() = application {
       transparent = true,
       resizable = false,
       icon = painterResource("icon.png"),
-      state = DialogState(
-        width = 420.dp, height = 700.dp,
-        position = position
-      ),
+      state = dialogState,
     ) {
       MaterialTheme {
         Scaffold(
           modifier = Modifier.background(Color.Transparent).fillMaxSize()
             .padding(top = 10.dp, start = 20.dp, end = 20.dp, bottom = 10.dp)
             .shadow(20.dp, RoundedCornerShape(5.dp)),
-          topBar = { WindowDraggableArea { TopBar(store) } },
+          topBar = {
+            WindowDraggableArea(modifier = Modifier
+              .pointerInput(Unit) {
+                detectTransformGestures { _, panGesture, _, _ ->
+                  dialogState.position = WindowPosition((dialogState.position.x.value + panGesture.x).dp,
+                    (dialogState.position.y.value + panGesture.y).dp)
+                }
+              }) { TopBar(store) }
+          },
           bottomBar = { BottomNav(selectedItem) }
         ) {
           if (selectedItem.value == 0) {
@@ -78,7 +88,7 @@ fun main() = application {
       }
 
       TraySetting(state = state.trayState, exit = { exitApplication() }, onAction = { x, y ->
-        position = WindowPosition(x, y)
+        dialogState.position = WindowPosition(x, y)
         store.visibleToggle()
       })
     }
