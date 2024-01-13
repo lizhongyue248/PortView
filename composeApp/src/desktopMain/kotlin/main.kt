@@ -1,4 +1,3 @@
-import core.TestTag.Companion.SEARCH_INPUT
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -24,10 +23,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.*
 import androidx.compose.ui.window.*
+import com.tulskiy.keymaster.common.Provider
 import component.MyDialogWindow
 import component.MyIconButton
+import component.rightBottom
+import core.TestTag.Companion.SEARCH_INPUT
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.isActive
 import model.AppStore
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
@@ -36,15 +40,19 @@ import ui.Setting
 import java.awt.*
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
+import javax.swing.KeyStroke
+import kotlin.time.Duration.Companion.seconds
 
-@OptIn(ExperimentalResourceApi::class)
+@OptIn(ExperimentalResourceApi::class, ExperimentalComposeUiApi::class)
 fun main() = application {
   val store = remember { AppStore() }
   val state = store.state
-  var positionX by remember { mutableStateOf(50.dp) }
-  var positionY by remember { mutableStateOf(50.dp) }
   var selectedItem by remember { mutableStateOf(0) }
-  val items = listOf("Home", "Setting")
+
+  val screenBounds: Rectangle = GraphicsEnvironment.getLocalGraphicsEnvironment().maximumWindowBounds
+  val rightBottom = screenBounds.rightBottom
+  var positionX by remember { mutableStateOf((rightBottom.x - 400).dp) }
+  var positionY by remember { mutableStateOf((rightBottom.y - 690).dp) }
   MyDialogWindow(
     onCloseRequest = store::hidden,
     visible = state.isVisible,
@@ -95,7 +103,7 @@ fun main() = application {
           BottomNavigation(
             backgroundColor = Color.White
           ) {
-            items.forEachIndexed { index, item ->
+            listOf("Home", "Setting").forEachIndexed { index, item ->
               BottomNavigationItem(
                 selectedContentColor = Color.Blue,
                 unselectedContentColor = Color.Black,
@@ -119,7 +127,7 @@ fun main() = application {
             Content(store)
           }
         } else {
-          Setting()
+          Setting(store)
         }
       }
     }
@@ -133,9 +141,29 @@ fun main() = application {
   }
 
   val notification = rememberNotification("Port view setup success!", "")
+
   LaunchedEffect(Unit) {
     state.trayState.sendNotification(notification)
-    store.setTimer()
+  }
+
+
+  LaunchedEffect(store.config.refreshTime) {
+    println("Change refresh time ${store.config.refreshTime}")
+    while (isActive) {
+      delay(store.config.refreshTime.seconds)
+      store.updateItems()
+    }
+  }
+  DisposableEffect(store.state.keyboard) {
+    val provider = Provider.getCurrentProvider(true)
+    store.updateKeyboard()
+    provider.register(KeyStroke.getKeyStroke(store.state.keyboard)) {
+      store.visibleToggle()
+    }
+    println(store.state.keyboard)
+    onDispose {
+      provider.unregister(KeyStroke.getKeyStroke(store.state.keyboard))
+    }
   }
 }
 

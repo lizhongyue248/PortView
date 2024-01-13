@@ -10,7 +10,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.*
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -22,11 +24,13 @@ import component.MyTextField
 import icons.GithubMark
 import icons.rememberArrowOutward
 import icons.rememberHelp
+import model.AppStore
+import java.awt.event.KeyEvent
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Preview
 @Composable
-fun Setting() {
+fun Setting(store: AppStore) {
   Column(
     modifier = Modifier.padding(horizontal = 24.dp),
     verticalArrangement = Arrangement.spacedBy(3.dp)
@@ -150,13 +154,12 @@ fun Setting() {
       }
     }
 
+    val pressedKeys by remember { mutableStateOf(linkedSetOf<Key>()) }
 
     Spacer(modifier = Modifier.height(6.dp))
-
-    val textState = remember { mutableStateOf("") }
     MyTextField(
-      value = textState.value,
-      onValueChange = { textState.value = it },
+      value = store.config.keyboard,
+      onValueChange = {  },
       colors = TextFieldDefaults.textFieldColors(backgroundColor = Color.Transparent),
       label = {
         Text("打开 Port View 的全局快捷键", color = Color.LightGray, fontSize = 12.sp)
@@ -168,20 +171,41 @@ fun Setting() {
         start = 0.dp
       ),
       minHeight = 24.dp,
-      textStyle = TextStyle(fontSize = 16.sp)
+      textStyle = TextStyle(fontSize = 16.sp),
+      modifier = Modifier.onKeyEvent {
+        when (it.type) {
+          KeyEventType.KeyDown -> {
+            pressedKeys.add(it.key)
+            store.configKeyboard(pressedKeys.joinToString(" ") { key ->
+              val keyText = KeyEvent.getKeyText(key.nativeKeyCode)
+              if (keyText.length > 1) {
+                keyText.lowercase()
+              } else {
+                keyText.uppercase()
+              }
+            })
+          }
+          KeyEventType.KeyUp -> {
+            if (pressedKeys.size > 1) {
+              store.updateKeyboard()
+            }
+            pressedKeys.clear()
+          }
+        }
+        false
+      }
     )
 
     Spacer(modifier = Modifier.height(6.dp))
 
-    val intervalTime = remember { mutableStateOf(5) }
     MyTextField(
-      value = intervalTime.value.toString(),
+      value = store.config.refreshTime.toString(),
       onValueChange = {
         val time = it.toIntOrNull()
         if (time == null) {
-          intervalTime.value = 5
+          store.configRefreshTime(5)
         } else {
-          intervalTime.value = time
+          store.configRefreshTime(time)
         }
       },
       colors = TextFieldDefaults.textFieldColors(backgroundColor = Color.Transparent),
@@ -195,7 +219,10 @@ fun Setting() {
         start = 0.dp
       ),
       minHeight = 24.dp,
-      textStyle = TextStyle(fontSize = 16.sp)
+      textStyle = TextStyle(fontSize = 16.sp),
+      modifier = Modifier.onFocusChanged {
+        println("${it.isFocused} ${it.isCaptured}")
+      }
     )
     Spacer(Modifier.height(12.dp))
 
@@ -265,4 +292,5 @@ fun Setting() {
       )
     }
   }
+
 }

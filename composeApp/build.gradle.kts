@@ -3,7 +3,7 @@ import org.jetbrains.compose.ExperimentalComposeLibrary
 
 plugins {
   alias(libs.plugins.kotlinMultiplatform)
-
+  alias(libs.plugins.kotlinSerialization)
   alias(libs.plugins.jetbrainsCompose)
 }
 
@@ -30,8 +30,12 @@ kotlin {
       implementation(compose.components.resources)
       implementation(libs.jna.platform)
       implementation(libs.jna)
+      implementation(libs.jkeymaster)
       implementation(libs.apache.commons)
+      implementation(libs.kstore)
       implementation(libs.kstore.file)
+      implementation(libs.app.dirs)
+      implementation(libs.serialization.json.jvm)
     }
   }
 }
