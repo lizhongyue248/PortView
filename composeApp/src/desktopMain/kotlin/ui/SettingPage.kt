@@ -226,14 +226,13 @@ fun Setting(store: AppStore) {
     )
     Spacer(Modifier.height(12.dp))
 
-    var checkedState by remember { mutableStateOf(true) }
     Row(
       verticalAlignment = Alignment.CenterVertically
     ) {
       CompositionLocalProvider(LocalMinimumInteractiveComponentEnforcement provides false) {
         Switch(
-          checked = checkedState,
-          onCheckedChange = { checkedState = it }
+          checked = store.config.showUnknown,
+          onCheckedChange = { store.configShowUnknown(it) }
         )
       }
       Spacer(Modifier.width(8.dp))

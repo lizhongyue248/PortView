@@ -156,11 +156,9 @@ fun main() = application {
   }
   DisposableEffect(store.state.keyboard) {
     val provider = Provider.getCurrentProvider(true)
-    store.updateKeyboard()
     provider.register(KeyStroke.getKeyStroke(store.state.keyboard)) {
       store.visibleToggle()
     }
-    println(store.state.keyboard)
     onDispose {
       provider.unregister(KeyStroke.getKeyStroke(store.state.keyboard))
     }

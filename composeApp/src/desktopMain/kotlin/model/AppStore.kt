@@ -10,20 +10,21 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import net.harawata.appdirs.AppDirsFactory
+import org.apache.commons.lang3.StringUtils
 import java.io.File
 
 val CONFIG_PATH: String = AppDirsFactory.getInstance().getUserConfigDir("PortView", null, "zyue") + File.separatorChar + "config.json"
 
 class AppStore {
-  var state: AppState by mutableStateOf(initialState())
-    private set
   var config: ConfigState by mutableStateOf(initialConfig())
+    private set
+  var state: AppState by mutableStateOf(initialState())
     private set
 
   private fun initialState(): AppState {
-    val portStrategy = getPortStrategy()
     return AppState(
-      items = portStrategy.portList()
+      items = portInfoList(),
+      keyboard = config.getKeyStrokeString()
     )
   }
 
@@ -46,12 +47,6 @@ class AppStore {
     return fileConfig
   }
 
-  fun show() {
-    setState {
-      copy(isVisible = true)
-    }
-  }
-
   fun visibleToggle() {
     setState {
       copy(isVisible = !isVisible)
@@ -71,9 +66,20 @@ class AppStore {
   }
 
   fun updateItems() {
+    val items = portInfoList()
     setState {
-      copy(items = getPortStrategy().portList())
+      copy(items = items)
     }
+  }
+
+  private fun portInfoList(): List<PortInfo> {
+    val items = if (config.showUnknown) {
+      getPortStrategy().portList()
+    } else {
+      getPortStrategy().portList()
+        .filter { !StringUtils.equalsIgnoreCase(it.name, "unknown") }
+    }
+    return items
   }
 
   fun updateKeyboard() {
