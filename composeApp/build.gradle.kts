@@ -38,9 +38,12 @@ kotlin {
 
       // Logging
       implementation(libs.slf4j)
-      implementation(libs.log4j)
-      implementation(libs.log4j.slf4j)
-      implementation(libs.log4j.kotlin)
+      implementation(libs.tinylog)
+      implementation(libs.tinylog.impl)
+      implementation(libs.tinylog.slf4j)
+//      implementation(libs.log4j)
+//      implementation(libs.log4j.slf4j)
+//      implementation(libs.kotlin.logging)
     }
   }
 }
@@ -52,6 +55,7 @@ compose.desktop {
 
     nativeDistributions {
       targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+      modules("java.instrument", "java.management", "java.naming", "java.sql", "jdk.unsupported")
       packageName = "PortView"
       packageVersion = "1.0.0"
     }

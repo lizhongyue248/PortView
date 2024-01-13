@@ -32,12 +32,13 @@ import core.TestTag
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import model.AppStore
-import org.apache.logging.log4j.kotlin.logger
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
+import org.tinylog.kotlin.Logger
 import java.awt.*
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
+
 
 @Composable
 internal fun TopBar(store: AppStore) {
@@ -143,11 +144,11 @@ fun TraySetting(
     state.notificationFlow
       .onEach(tray::displayMessage)
       .launchIn(coroutineScope)
-    logger.info("Success launch tray.")
+    Logger.info("Success launch tray.")
     onDispose {
       menuComposition.dispose()
       SystemTray.getSystemTray().remove(tray)
-      logger.info("Success remove tray.")
+      Logger.info("Success remove tray.")
     }
   }
 }

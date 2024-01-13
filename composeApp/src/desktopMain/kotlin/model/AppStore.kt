@@ -12,12 +12,11 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import net.harawata.appdirs.AppDirsFactory
 import org.apache.commons.lang3.StringUtils
-import org.apache.logging.log4j.kotlin.logger
+import org.tinylog.kotlin.Logger
 import java.io.File
 
 
 val CONFIG_PATH: String = AppDirsFactory.getInstance().getUserConfigDir("PortView", null, "zyue") + File.separatorChar + "config.json"
-private val logger = logger("Store")
 
 class AppStore {
   var config: ConfigState by mutableStateOf(initialConfig())
@@ -36,7 +35,7 @@ class AppStore {
     val json = Json { ignoreUnknownKeys = true }
     var fileConfig = runCatching {
       val jsonString = File(CONFIG_PATH).readText()
-      logger.info("Load config file from $CONFIG_PATH. Get config json string: $jsonString")
+      Logger.info("Load config file from $CONFIG_PATH. Get config json string: $jsonString")
       json.decodeFromString<ConfigState>(jsonString)
     }.getOrNull()
     if (fileConfig == null) {
@@ -48,7 +47,7 @@ class AppStore {
         showUnknown = true
       )
     }
-    logger.info("Get config $fileConfig")
+    Logger.info("Get config $fileConfig")
     return fileConfig
   }
 

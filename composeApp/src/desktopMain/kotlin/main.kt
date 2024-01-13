@@ -25,15 +25,14 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import model.AppStore
 import model.ThemeOption
-import org.apache.logging.log4j.kotlin.logger
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
+import org.tinylog.kotlin.Logger
 import ui.*
 import java.awt.GraphicsEnvironment
 import javax.swing.KeyStroke
 import kotlin.time.Duration.Companion.seconds
 
-private val logger = logger("Main")
 
 @OptIn(ExperimentalResourceApi::class)
 fun main() = application {
@@ -69,8 +68,10 @@ fun main() = application {
             WindowDraggableArea(modifier = Modifier
               .pointerInput(Unit) {
                 detectTransformGestures { _, panGesture, _, _ ->
-                  dialogState.position = WindowPosition((dialogState.position.x.value + panGesture.x).dp,
-                    (dialogState.position.y.value + panGesture.y).dp)
+                  dialogState.position = WindowPosition(
+                    (dialogState.position.x.value + panGesture.x).dp,
+                    (dialogState.position.y.value + panGesture.y).dp
+                  )
                 }
               }) { TopBar(store) }
           },
@@ -98,7 +99,7 @@ fun main() = application {
 
   LaunchedEffect(Unit) {
     state.trayState.sendNotification(notification)
-    logger.info("Send init notification.")
+    Logger.info("Send init notification.")
   }
 
   refreshEffect(store)
@@ -109,7 +110,7 @@ fun main() = application {
 @Composable
 private fun refreshEffect(store: AppStore) {
   LaunchedEffect(store.config.refreshTime) {
-    logger.info("Refresh time update to ${store.config.refreshTime}s.")
+    Logger.info("Refresh time update to ${store.config.refreshTime}s.")
     while (isActive) {
       delay(store.config.refreshTime.seconds)
       store.updateItems()
@@ -121,20 +122,20 @@ private fun refreshEffect(store: AppStore) {
 private fun keyboardEffect(store: AppStore) {
   DisposableEffect(store.state.keyboard) {
     val provider = Provider.getCurrentProvider(true)
-    logger.info("Keyboard update to ${store.state.keyboard}")
+    Logger.info("Keyboard update to ${store.state.keyboard}")
     val keyStroke = KeyStroke.getKeyStroke(store.state.keyboard)
     if (keyStroke == null) {
-      logger.warn("Can not get keyStroke from ${store.state.keyboard}.")
+      Logger.warn("Can not get keyStroke from ${store.state.keyboard}.")
     } else {
       provider.register(keyStroke) {
         store.visibleToggle()
       }
-      logger.info("Register keyboard success.")
+      Logger.info("Register keyboard success.")
     }
     onDispose {
       if (keyStroke != null) {
         provider.unregister(keyStroke)
-        logger.info("Unregister keyboard ${store.state.keyboard} success.")
+        Logger.info("Unregister keyboard ${store.state.keyboard} success.")
       }
     }
   }
@@ -144,26 +145,26 @@ private fun keyboardEffect(store: AppStore) {
 private fun themeEffect(store: AppStore, darkTheme: MutableState<Boolean>) {
   val changeTheme: (theme: Boolean) -> Unit = {
     if (store.config.theme != ThemeOption.SYSTEM) {
-      logger.info("The current theme follows the system.")
+      Logger.info("The current theme follows the system.")
       darkTheme.value = store.config.theme.isDark()
     } else {
-      logger.info("Theme is dark: ${it}.")
+      Logger.info("Theme is dark: ${it}.")
       darkTheme.value = it
     }
   }
 
   LaunchedEffect(store.config.theme) {
-    logger.info("Change config theme ${store.config.theme}")
+    Logger.info("Change config theme ${store.config.theme}")
     changeTheme(store.isDarkTheme())
   }
 
   DisposableEffect(Unit) {
     val detector = OsThemeDetector.getDetector()
     detector.registerListener(changeTheme)
-    logger.info("Add system theme listener.")
+    Logger.info("Add system theme listener.")
     onDispose {
       detector.removeListener(changeTheme)
-      logger.info("Remove system theme listener.")
+      Logger.info("Remove system theme listener.")
     }
   }
 }

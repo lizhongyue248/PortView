@@ -66,7 +66,7 @@ fun Setting(store: AppStore) {
 
 @Composable
 private fun TitleInfo(desktop: Desktop) {
-  val folder = File("./logs")
+  val folder = File("logs")
   Row(
     verticalAlignment = Alignment.CenterVertically,
     modifier = Modifier.padding(top = 12.dp)
