@@ -1,5 +1,5 @@
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.compose.ExperimentalComposeLibrary
+import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
   alias(libs.plugins.kotlinMultiplatform)
@@ -25,15 +25,14 @@ kotlin {
     commonMain.dependencies {
       implementation(compose.runtime)
       implementation(compose.foundation)
-      implementation(compose.material)
+      implementation(compose.material3)
+      implementation(libs.jSystemThemeDetector)
       @OptIn(ExperimentalComposeLibrary::class)
       implementation(compose.components.resources)
       implementation(libs.jna.platform)
       implementation(libs.jna)
       implementation(libs.jkeymaster)
       implementation(libs.apache.commons)
-      implementation(libs.kstore)
-      implementation(libs.kstore.file)
       implementation(libs.app.dirs)
       implementation(libs.serialization.json.jvm)
     }

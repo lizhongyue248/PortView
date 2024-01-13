@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.window.TrayState
+import com.jthemedetecor.OsThemeDetector
 import core.PortInfo
 import core.getPortStrategy
 import kotlinx.serialization.Serializable
@@ -12,6 +13,7 @@ import kotlinx.serialization.json.Json
 import net.harawata.appdirs.AppDirsFactory
 import org.apache.commons.lang3.StringUtils
 import java.io.File
+
 
 val CONFIG_PATH: String = AppDirsFactory.getInstance().getUserConfigDir("PortView", null, "zyue") + File.separatorChar + "config.json"
 
@@ -38,7 +40,7 @@ class AppStore {
     if (fileConfig == null) {
       return ConfigState(
         language = "简体中文",
-        theme = "系统",
+        theme = ThemeOption.SYSTEM,
         keyboard = "ctrl shift P",
         refreshTime = 5,
         showUnknown = true
@@ -100,7 +102,7 @@ class AppStore {
     }
   }
 
-  fun configTheme(theme: String) {
+  fun configTheme(theme: ThemeOption) {
     setConfig {
       copy(theme = theme)
     }
@@ -147,10 +149,22 @@ class AppStore {
       }
   }
 
+  fun isDarkTheme(): Boolean {
+    if (config.theme == ThemeOption.LIGHT) {
+      return false
+    }
+    if (config.theme == ThemeOption.DARK) {
+      return true
+    }
+    val dark = OsThemeDetector.getDetector().isDark
+    println("OsThemeDetector.getDetector().isDark $dark")
+    return dark
+  }
+
   @Serializable
   data class ConfigState(
     val language: String,
-    val theme: String,
+    val theme: ThemeOption,
     val keyboard: String,
     val refreshTime: Int,
     val showUnknown: Boolean
@@ -173,4 +187,11 @@ class AppStore {
       }
 
   }
+}
+
+enum class ThemeOption(val text: String) {
+  LIGHT("浅色"), SYSTEM("系统"), DARK("暗色");
+
+  fun isDark(): Boolean = this == DARK
+
 }

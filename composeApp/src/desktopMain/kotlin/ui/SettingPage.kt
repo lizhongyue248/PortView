@@ -10,7 +10,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.*
 import androidx.compose.ui.res.painterResource
@@ -25,6 +24,7 @@ import icons.GithubMark
 import icons.rememberArrowOutward
 import icons.rememberHelp
 import model.AppStore
+import model.ThemeOption
 import java.awt.event.KeyEvent
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
@@ -35,7 +35,7 @@ fun Setting(store: AppStore) {
     modifier = Modifier.padding(horizontal = 24.dp),
     verticalArrangement = Arrangement.spacedBy(3.dp)
   ) {
-    Divider(color = Color.LightGray, thickness = 1.dp)
+    Divider(color = MaterialTheme.colors.onSecondary, thickness = 1.dp)
     Row(
       verticalAlignment = Alignment.CenterVertically,
       modifier = Modifier.padding(top = 12.dp)
@@ -51,25 +51,25 @@ fun Setting(store: AppStore) {
           .padding(start = 12.dp),
         verticalArrangement = Arrangement.SpaceBetween
       ) {
-        Text("Port View", fontSize = 18.sp, fontWeight = FontWeight.Bold)
-        Text("2023.03.01", fontSize = 12.sp, color = Color.LightGray)
+        Text("Port View", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colors.onPrimary)
+        Text("2023.03.01", fontSize = 12.sp, color = MaterialTheme.colors.onSecondary)
       }
       OutlinedButton(
         onClick = {},
         elevation = null,
-        border = BorderStroke(1.dp, Color.Black),
+        border = BorderStroke(1.dp, MaterialTheme.colors.onPrimary),
         colors = ButtonDefaults.outlinedButtonColors(
-          contentColor = Color.Black
+          contentColor = MaterialTheme.colors.onPrimary
         )
       ) {
-        Text("显示日志文件", fontSize = 12.sp)
+        Text("显示日志文件", fontSize = 12.sp, color = MaterialTheme.colors.onPrimary)
       }
     }
     Spacer(modifier = Modifier.height(12.dp))
 
     val fontSize = 14.sp
 
-    Text("Windows 11", fontSize = fontSize)
+    Text("Windows 11", fontSize = fontSize, color = MaterialTheme.colors.onPrimary)
     val dropdownMenuState = rememberSaveable { mutableStateOf(false) }
     val languageList = mutableListOf(
       "简体中文",
@@ -85,6 +85,7 @@ fun Setting(store: AppStore) {
       ) {
         Text(selectType.value,
           fontSize = fontSize,
+          color = MaterialTheme.colors.onPrimary,
           modifier = Modifier.clickable {
             dropdownMenuState.value = !dropdownMenuState.value
           })
@@ -100,7 +101,7 @@ fun Setting(store: AppStore) {
                 },
                 contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp),
                 content = {
-                  Text(text = it, fontSize = fontSize)
+                  Text(text = it, fontSize = fontSize, color = MaterialTheme.colors.onPrimary)
                 }
               )
             }
@@ -113,45 +114,36 @@ fun Setting(store: AppStore) {
     Row(
       verticalAlignment = Alignment.CenterVertically
     ) {
-      Text("主题：", fontSize = fontSize)
-      OutlinedButton(
-        onClick = {},
-        elevation = null,
-        modifier = Modifier
-          .size(64.dp, 24.dp),
-        shape = RoundedCornerShape(topStart = 4.dp, bottomStart = 4.dp),
-        colors = ButtonDefaults.textButtonColors(contentColor = Color.Black),
-        contentPadding = PaddingValues()
-      ) {
-        Text("浅色")
-      }
-      OutlinedButton(
-        onClick = {},
-        elevation = null,
-        enabled = false,
-        modifier = Modifier
-          .size(64.dp, 24.dp),
-        shape = RoundedCornerShape(0.dp),
-        colors = ButtonDefaults.textButtonColors(
-          backgroundColor = Color(22, 125, 255),
-          contentColor = Color.Black,
-          disabledContentColor = Color.White
-        ),
-        contentPadding = PaddingValues(0.dp)
-      ) {
-        Text("系统")
-      }
-      OutlinedButton(
-        onClick = {},
-        elevation = null,
-        modifier = Modifier
-          .size(64.dp, 24.dp),
-        shape = RoundedCornerShape(topEnd = 4.dp, bottomEnd = 4.dp),
-        colors = ButtonDefaults.textButtonColors(contentColor = Color.Black),
-        contentPadding = PaddingValues()
-      ) {
-        Text("暗色")
-      }
+      Text("主题：", fontSize = fontSize, color = MaterialTheme.colors.onPrimary)
+      listOf(ThemeOption.LIGHT, ThemeOption.SYSTEM, ThemeOption.DARK)
+        .forEach {
+          OutlinedButton(
+            onClick = {
+              store.configTheme(it)
+            },
+            elevation = null,
+            modifier = Modifier
+              .background(
+                color = if (it == store.config.theme) {
+                  MaterialTheme.colors.primary
+                } else {
+                  MaterialTheme.colors.background
+                }
+              )
+              .size(64.dp, 24.dp),
+            shape = RoundedCornerShape(topStart = 4.dp, bottomStart = 4.dp),
+            colors = ButtonDefaults.textButtonColors(contentColor = Color.Black),
+            contentPadding = PaddingValues(),
+          ) {
+            Text(
+              it.text, color = if (it == store.config.theme) {
+                Color.White
+              } else {
+                MaterialTheme.colors.onPrimary
+              }
+            )
+          }
+        }
     }
 
     val pressedKeys by remember { mutableStateOf(linkedSetOf<Key>()) }
@@ -159,10 +151,10 @@ fun Setting(store: AppStore) {
     Spacer(modifier = Modifier.height(6.dp))
     MyTextField(
       value = store.config.keyboard,
-      onValueChange = {  },
+      onValueChange = { },
       colors = TextFieldDefaults.textFieldColors(backgroundColor = Color.Transparent),
       label = {
-        Text("打开 Port View 的全局快捷键", color = Color.LightGray, fontSize = 12.sp)
+        Text("打开 Port View 的全局快捷键", color = MaterialTheme.colors.onSecondary, fontSize = 12.sp)
       },
       singleLine = true,
       contentPadding = TextFieldDefaults.textFieldWithoutLabelPadding(
@@ -185,6 +177,7 @@ fun Setting(store: AppStore) {
               }
             })
           }
+
           KeyEventType.KeyUp -> {
             if (pressedKeys.size > 1) {
               store.updateKeyboard()
@@ -210,7 +203,7 @@ fun Setting(store: AppStore) {
       },
       colors = TextFieldDefaults.textFieldColors(backgroundColor = Color.Transparent),
       label = {
-        Text("进程列表刷新间隔时间（s）", color = Color.LightGray, fontSize = 12.sp)
+        Text("进程列表刷新间隔时间（s）", color = MaterialTheme.colors.onSecondary, fontSize = 12.sp)
       },
       singleLine = true,
       contentPadding = TextFieldDefaults.textFieldWithoutLabelPadding(
@@ -219,10 +212,7 @@ fun Setting(store: AppStore) {
         start = 0.dp
       ),
       minHeight = 24.dp,
-      textStyle = TextStyle(fontSize = 16.sp),
-      modifier = Modifier.onFocusChanged {
-        println("${it.isFocused} ${it.isCaptured}")
-      }
+      textStyle = TextStyle(fontSize = 16.sp)
     )
     Spacer(Modifier.height(12.dp))
 
@@ -232,31 +222,35 @@ fun Setting(store: AppStore) {
       CompositionLocalProvider(LocalMinimumInteractiveComponentEnforcement provides false) {
         Switch(
           checked = store.config.showUnknown,
-          onCheckedChange = { store.configShowUnknown(it) }
+          onCheckedChange = { store.configShowUnknown(it) },
+          colors = SwitchDefaults.colors(
+            checkedThumbColor = MaterialTheme.colors.primary
+          )
         )
       }
       Spacer(Modifier.width(8.dp))
-      Text("是否显示 Unknown 进程", fontSize = 14.sp)
+      Text("是否显示 Unknown 进程", fontSize = 14.sp, color = MaterialTheme.colors.onPrimary)
       Spacer(Modifier.width(4.dp))
       TooltipArea(
         tooltip = {
           Surface(
-            modifier = Modifier.shadow(4.dp),
+            modifier = Modifier.shadow(4.dp).background(color = MaterialTheme.colors.onBackground),
             shape = RoundedCornerShape(4.dp)
           ) {
             Text(
               text = "部分进程属于受系统保护的进程，我们无法获取到它们的具体信息。",
-              modifier = Modifier.padding(10.dp).widthIn(0.dp, 150.dp)
+              modifier = Modifier.padding(10.dp).widthIn(0.dp, 150.dp),
+              color = MaterialTheme.colors.onPrimary
             )
           }
         },
-        delayMillis = 600,
+        delayMillis = 100,
         tooltipPlacement = TooltipPlacement.CursorPoint(
           alignment = Alignment.TopCenter,
           offset = DpOffset(0.dp, (-10).dp)
         )
       ) {
-        MyIconButton(onClick = {}, modifier = Modifier.size(18.dp)) {
+        MyIconButton(onClick = {}, modifier = Modifier.size(18.dp).padding(top = 2.dp)) {
           Icon(
             tint = Color.LightGray,
             contentDescription = "Help",

@@ -1,7 +1,7 @@
+import com.jthemedetecor.OsThemeDetector
 import net.harawata.appdirs.AppDirsFactory
 import org.junit.Test
 import java.io.File
-import javax.swing.KeyStroke
 
 class OtherTest {
   @Test
@@ -18,7 +18,6 @@ class OtherTest {
 
   @Test
   fun textKey() {
-    val keyStroke = KeyStroke.getKeyStroke("control alt P")
-    assert(keyStroke != null)
+    println(OsThemeDetector.getDetector().isDark)
   }
 }

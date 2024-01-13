@@ -1,3 +1,4 @@
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -23,6 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.*
 import androidx.compose.ui.window.*
+import com.jthemedetecor.OsThemeDetector
 import com.tulskiy.keymaster.common.Provider
 import component.MyDialogWindow
 import component.MyIconButton
@@ -33,9 +35,11 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.isActive
 import model.AppStore
+import model.ThemeOption
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import ui.Content
+import ui.PortViewTheme
 import ui.Setting
 import java.awt.*
 import java.awt.event.MouseAdapter
@@ -53,91 +57,94 @@ fun main() = application {
   val rightBottom = screenBounds.rightBottom
   var positionX by remember { mutableStateOf((rightBottom.x - 400).dp) }
   var positionY by remember { mutableStateOf((rightBottom.y - 690).dp) }
-  MyDialogWindow(
-    onCloseRequest = store::hidden,
-    visible = state.isVisible,
-    alwaysOnTop = true,
-    undecorated = true,
-    transparent = true,
-    resizable = false,
-    icon = painterResource("icon.png"),
-    state = DialogState(
-      width = 420.dp, height = 700.dp,
-      position = WindowPosition(positionX, positionY)
-    ),
-  ) {
-    MaterialTheme {
-      Scaffold(
-        modifier = Modifier.background(Color.Transparent)
-          .fillMaxSize()
-          .padding(top = 10.dp, start = 20.dp, end = 20.dp, bottom = 10.dp)
-          .shadow(20.dp, RoundedCornerShape(5.dp)),
-        topBar = {
-          WindowDraggableArea {
-            Column {
-              Row(
-                modifier = Modifier.fillMaxWidth()
-                  .padding(top = 12.dp, bottom = 6.dp, start = 24.dp, end = 12.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-              ) {
-                Text(
-                  text = "Port View",
-                  style = MaterialTheme.typography.h6,
-                  fontWeight = FontWeight.Bold,
-                  fontSize = 24.sp,
-                  lineHeight = 36.sp
-                )
-                MyIconButton(onClick = store::hidden) {
-                  Icon(
-                    tint = Color.LightGray,
-                    contentDescription = "Close Window",
-                    imageVector = Icons.Filled.Close
+
+  val darkTheme = remember { mutableStateOf(store.isDarkTheme()) }
+  PortViewTheme(darkTheme = darkTheme.value) {
+    MyDialogWindow(
+      onCloseRequest = store::hidden,
+      visible = state.isVisible,
+      alwaysOnTop = true,
+      undecorated = true,
+      transparent = true,
+      resizable = false,
+      icon = painterResource("icon.png"),
+      state = DialogState(
+        width = 420.dp, height = 700.dp,
+        position = WindowPosition(positionX, positionY)
+      ),
+    ) {
+      MaterialTheme {
+        Scaffold(
+          modifier = Modifier.background(Color.Transparent)
+            .fillMaxSize()
+            .padding(top = 10.dp, start = 20.dp, end = 20.dp, bottom = 10.dp)
+            .shadow(20.dp, RoundedCornerShape(5.dp)),
+          topBar = {
+            WindowDraggableArea {
+              Column {
+                Row(
+                  modifier = Modifier.fillMaxWidth()
+                    .padding(top = 12.dp, bottom = 6.dp, start = 24.dp, end = 12.dp),
+                  horizontalArrangement = Arrangement.SpaceBetween,
+                  verticalAlignment = Alignment.CenterVertically
+                ) {
+                  Text(
+                    text = "Port View",
+                    style = MaterialTheme.typography.h6,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 24.sp,
+                    lineHeight = 36.sp
                   )
+                  MyIconButton(onClick = store::hidden) {
+                    Icon(
+                      tint = Color.LightGray,
+                      contentDescription = "Close Window",
+                      imageVector = Icons.Filled.Close
+                    )
+                  }
                 }
               }
             }
-          }
-        },
-        bottomBar = {
-          BottomNavigation(
-            backgroundColor = Color.White
-          ) {
-            listOf("Home", "Setting").forEachIndexed { index, item ->
-              BottomNavigationItem(
-                selectedContentColor = Color.Blue,
-                unselectedContentColor = Color.Black,
-                icon = {
-                  when (index) {
-                    0 -> Icon(Icons.Outlined.Home, contentDescription = null)
-                    else -> Icon(Icons.Outlined.Settings, contentDescription = null)
-                  }
-                },
-                label = { Text(item) },
-                selected = selectedItem == index,
-                onClick = { selectedItem = index }
-              )
+          },
+          bottomBar = {
+            BottomNavigation(
+              backgroundColor = MaterialTheme.colors.background
+            ) {
+              listOf("Home", "Setting").forEachIndexed { index, item ->
+                BottomNavigationItem(
+                  selectedContentColor = MaterialTheme.colors.primary,
+                  unselectedContentColor = MaterialTheme.colors.onPrimary,
+                  icon = {
+                    when (index) {
+                      0 -> Icon(Icons.Outlined.Home, contentDescription = null)
+                      else -> Icon(Icons.Outlined.Settings, contentDescription = null)
+                    }
+                  },
+                  label = { Text(item) },
+                  selected = selectedItem == index,
+                  onClick = { selectedItem = index }
+                )
+              }
             }
           }
-        }
-      ) {
-        if (selectedItem == 0) {
-          Column {
-            SearchField(store)
-            Content(store)
+        ) {
+          if (selectedItem == 0) {
+            Column {
+              SearchField(store)
+              Content(store)
+            }
+          } else {
+            Setting(store)
           }
-        } else {
-          Setting(store)
         }
       }
+
+      TraySetting(state = state.trayState, exit = { exitApplication() }, onAction = { x, y ->
+        positionX = x
+        positionY = y
+        store.visibleToggle()
+      })
     }
-
-    TraySetting(state = state.trayState, exit = { exitApplication() }, onAction = { x, y ->
-      positionX = x
-      positionY = y
-      store.visibleToggle()
-    })
-
   }
 
   val notification = rememberNotification("Port view setup success!", "")
@@ -154,6 +161,29 @@ fun main() = application {
       store.updateItems()
     }
   }
+  val changeTheme: (theme: Boolean) -> Unit = {
+    println("changeTheme --- $it")
+    if (store.config.theme != ThemeOption.SYSTEM) {
+      darkTheme.value = store.config.theme.isDark()
+    } else{
+      darkTheme.value = it
+    }
+  }
+
+  LaunchedEffect(store.config.theme) {
+    println("Change config theme ${store.config.theme}")
+    changeTheme(store.isDarkTheme())
+  }
+
+  DisposableEffect(Unit) {
+    val detector = OsThemeDetector.getDetector()
+    detector.registerListener(changeTheme)
+    println("Add changeTheme")
+    onDispose {
+      detector.removeListener(changeTheme)
+    }
+  }
+
   DisposableEffect(store.state.keyboard) {
     val provider = Provider.getCurrentProvider(true)
     provider.register(KeyStroke.getKeyStroke(store.state.keyboard)) {

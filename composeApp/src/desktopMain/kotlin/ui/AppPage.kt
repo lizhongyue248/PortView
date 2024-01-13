@@ -1,22 +1,19 @@
 package ui
 
-import core.TestTag
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.VerticalScrollbar
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollbarAdapter
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.Button
-import androidx.compose.material.Text
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toPainter
 import androidx.compose.ui.input.pointer.PointerIcon
@@ -31,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Notification
 import androidx.compose.ui.window.rememberNotification
 import core.PortInfo
+import core.TestTag
 import core.getActionStrategy
 import model.AppStore
 
@@ -54,23 +52,33 @@ fun Content(store: AppStore) {
             .pointerHoverIcon(PointerIcon.Hand)
             .padding(horizontal = 24.dp, vertical = 6.dp)
         ) {
-          Image(
-            painter = if (item.image === null) painterResource("logo-ghost.png") else item.image.toPainter(),
-            contentDescription = "logo",
-            modifier = Modifier.size(38.dp)
-              .padding(end = 12.dp)
-          )
+          Box(
+            modifier = Modifier
+              .padding(end = 8.dp)
+              .size(36.dp)
+              .clip(CircleShape)
+              .background(Color.White)
+              .shadow(8.dp, CircleShape)
+          ){
+            Image(
+              painter = if (item.image === null) painterResource("logo-ghost.png") else item.image.toPainter(),
+              contentDescription = "logo",
+              modifier = Modifier.fillMaxSize()
+                .padding(2.dp)
+                .background(Color.White),
+            )
+          }
           Column(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.SpaceBetween
           ) {
-            Text(text = item.name, fontSize = 14.sp)
+            Text(text = item.name, fontSize = 14.sp, color = MaterialTheme.colors.onPrimary)
             Text(
               text = item.command,
               modifier = Modifier.fillMaxWidth(),
               overflow = TextOverflow.Ellipsis,
               fontSize = 12.sp,
-              color = Color.LightGray,
+              color = MaterialTheme.colors.onSecondary,
               maxLines = 2
             )
           }
@@ -80,7 +88,8 @@ fun Content(store: AppStore) {
             text = ":${item.port}",
             fontSize = 18.sp,
             fontWeight = SemiBold,
-            textAlign = TextAlign.End
+            textAlign = TextAlign.End,
+            color = MaterialTheme.colors.onPrimary
           )
         }
       }
@@ -118,15 +127,18 @@ fun Content(store: AppStore) {
             }
             confirmDialog.value = false
           }) {
-          Text("Confirm")
+          Text("Confirm", color = Color.White)
         }
       },
       dismissButton = {
         Button(
+          colors = ButtonDefaults.buttonColors(
+            backgroundColor = MaterialTheme.colors.error
+          ),
           onClick = {
             confirmDialog.value = false
           }) {
-          Text("Cancel")
+          Text("Cancel", color = Color.White)
         }
       }
     )
