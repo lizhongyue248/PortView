@@ -58,6 +58,17 @@ compose.desktop {
       modules("java.instrument", "java.management", "java.naming", "java.sql", "jdk.unsupported")
       packageName = "PortView"
       packageVersion = "1.0.0"
+      windows {
+        shortcut = true
+        iconFile.set(project.file("icon/win.ico"))
+      }
+      linux {
+        shortcut = true
+        iconFile.set(project.file("icon/linux.png"))
+      }
+      macOS {
+        iconFile.set(project.file("icon/mac.icns"))
+      }
     }
 
     buildTypes.release.proguard {
