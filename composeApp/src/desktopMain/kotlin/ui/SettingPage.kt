@@ -20,6 +20,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Notification
+import androidx.compose.ui.window.rememberNotification
 import component.MyIconButton
 import component.MyTextField
 import icons.GithubMark
@@ -45,7 +47,7 @@ fun Setting(store: AppStore) {
     verticalArrangement = Arrangement.spacedBy(3.dp)
   ) {
     Divider(color = MaterialTheme.colors.onSecondary, thickness = 1.dp)
-    TitleInfo(desktop = desktop)
+    TitleInfo(store, desktop)
     Spacer(Modifier.height(12.dp))
     SystemInfo()
     Spacer(Modifier.height(12.dp))
@@ -59,14 +61,15 @@ fun Setting(store: AppStore) {
     Spacer(Modifier.height(12.dp))
     Unknown(store)
     Spacer(Modifier.height(12.dp))
-    Links(desktop = desktop)
+    Links(desktop)
   }
 
 }
 
 @Composable
-private fun TitleInfo(desktop: Desktop) {
-  val folder = File("logs")
+private fun TitleInfo(store: AppStore, desktop: Desktop) {
+  val file = File(System.getenv("TEMP") + File.separatorChar + "port-view.log")
+  val errorTip = rememberNotification("Can not find log file! ${file.absoluteFile}", "", Notification.Type.Error)
   Row(
     verticalAlignment = Alignment.CenterVertically,
     modifier = Modifier.padding(top = 12.dp)
@@ -86,7 +89,13 @@ private fun TitleInfo(desktop: Desktop) {
       Text("2023.03.01", fontSize = 12.sp, color = MaterialTheme.colors.onSecondary)
     }
     OutlinedButton(
-      onClick = { desktop.open(folder) },
+      onClick = {
+        if (file.exists()) {
+          desktop.open(file)
+        } else {
+          store.state.trayState.sendNotification(errorTip)
+        }
+      },
       elevation = null,
       border = BorderStroke(1.dp, MaterialTheme.colors.onPrimary),
       colors = ButtonDefaults.outlinedButtonColors(
