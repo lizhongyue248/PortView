@@ -1,8 +1,14 @@
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.res.FileResourceLoader
 import com.jthemedetecor.OsThemeDetector
+import i18n.lang.Lang
+import kotlinx.serialization.json.Json
+import model.ThemeOption
 import net.harawata.appdirs.AppDirsFactory
 import org.junit.Test
 import org.tinylog.kotlin.Logger
 import java.io.File
+import java.util.*
 
 class OtherTest {
   @Test
@@ -21,5 +27,34 @@ class OtherTest {
   fun textKey() {
     println(OsThemeDetector.getDetector().isDark)
     Logger.info("OsThemeDetector.getDetector().isDark ${OsThemeDetector.getDetector().isDark}")
+  }
+
+  @OptIn(ExperimentalComposeUiApi::class)
+  @Test
+  fun i18nTest() {
+    val json = Json { ignoreUnknownKeys = true }
+    val resource = this.javaClass.classLoader.getResource("lang")?.toURI() ?: throw Exception("Not found lang resource.")
+    val langDir = File(resource)
+    val langList = mutableListOf<Lang>()
+    langDir.listFiles()?.forEach { langFile ->
+      if (!langFile.isFile || langFile.extension != "json") {
+        Logger.info("${langFile.name} is not json file, skip.")
+        return@forEach
+      }
+      val jsonString = langFile.readText()
+      val lang = json.decodeFromString<Lang>(jsonString)
+      langList.add(lang)
+      Logger.info("Load lang [${lang.name}] file ${langFile.name} success.")
+    }
+    val fileResourceLoader = FileResourceLoader(File("lang"))
+    println(fileResourceLoader.root.absolutePath)
+    println(fileResourceLoader.root.isDirectory)
+  }
+
+  @Test
+  fun getLocale() {
+    val currentLocale: Locale = Locale.getDefault()
+    println(currentLocale.language)
+    println(ThemeOption.SYSTEM.name.lowercase())
   }
 }

@@ -7,6 +7,7 @@ import androidx.compose.ui.window.TrayState
 import com.jthemedetecor.OsThemeDetector
 import core.PortInfo
 import core.getPortStrategy
+import i18n.lang.LangEnum
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -40,7 +41,7 @@ class AppStore {
     }.getOrNull()
     if (fileConfig == null) {
       fileConfig = ConfigState(
-        language = "简体中文",
+        language = LangEnum.ZH,
         theme = ThemeOption.SYSTEM,
         keyboard = "ctrl shift P",
         refreshTime = 5,
@@ -113,7 +114,7 @@ class AppStore {
     }
   }
 
-  fun configLanguage(language: String) {
+  fun configLanguage(language: LangEnum) {
     setConfig {
       copy(language = language)
     }
@@ -167,7 +168,7 @@ class AppStore {
 
   @Serializable
   data class ConfigState(
-    val language: String,
+    val language: LangEnum,
     val theme: ThemeOption,
     val keyboard: String,
     val refreshTime: Int,
@@ -191,11 +192,4 @@ class AppStore {
       }
 
   }
-}
-
-enum class ThemeOption(val text: String) {
-  LIGHT("浅色"), SYSTEM("系统"), DARK("暗色");
-
-  fun isDark(): Boolean = this == DARK
-
 }

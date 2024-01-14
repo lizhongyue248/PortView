@@ -24,6 +24,7 @@ import androidx.compose.ui.window.Notification
 import androidx.compose.ui.window.rememberNotification
 import component.MyIconButton
 import component.MyTextField
+import i18n.lang.LangEnum
 import icons.GithubMark
 import icons.rememberArrowOutward
 import icons.rememberHelp
@@ -51,7 +52,7 @@ fun Setting(store: AppStore) {
     Spacer(Modifier.height(12.dp))
     SystemInfo()
     Spacer(Modifier.height(12.dp))
-    LanguageSelect()
+    LanguageSelect(store)
     Spacer(Modifier.height(10.dp))
     ThemeSelect(store)
     Spacer(Modifier.height(6.dp))
@@ -104,7 +105,7 @@ private fun TitleInfo(store: AppStore, desktop: Desktop) {
       modifier = Modifier
         .pointerHoverIcon(PointerIcon.Hand)
     ) {
-      Text("显示日志文件", fontSize = 12.sp, color = MaterialTheme.colors.onPrimary)
+      Text(LocalLanguage.current.ui.showLog, fontSize = 12.sp, color = MaterialTheme.colors.onPrimary)
     }
   }
 }
@@ -115,20 +116,15 @@ private fun SystemInfo() {
 }
 
 @Composable
-private fun LanguageSelect() {
-  val selectType = rememberSaveable { mutableStateOf("简体中文") }
+private fun LanguageSelect(store: AppStore) {
   val dropdownMenuState = rememberSaveable { mutableStateOf(false) }
-  val languageList = mutableListOf(
-    "简体中文",
-    "English"
-  )
   Row {
-    Text("语言：", fontSize = fontSize)
+    Text("${LocalLanguage.current.ui.language}：", fontSize = fontSize)
     Box(
       modifier = Modifier.fillMaxWidth()
     ) {
       Text(
-        selectType.value,
+        store.config.language.displayName,
         fontSize = fontSize,
         color = MaterialTheme.colors.onPrimary,
         modifier = Modifier.clickable {
@@ -139,15 +135,15 @@ private fun LanguageSelect() {
         expanded = dropdownMenuState.value,
         onDismissRequest = { dropdownMenuState.value = false },
         content = {
-          languageList.forEach {
+          LangEnum.entries.forEach {
             DropdownMenuItem(
               onClick = {
                 dropdownMenuState.value = !dropdownMenuState.value
-                selectType.value = it
+                store.configLanguage(it)
               },
               contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp),
               content = {
-                Text(text = it, fontSize = fontSize, color = MaterialTheme.colors.onPrimary)
+                Text(text = it.displayName, fontSize = fontSize, color = MaterialTheme.colors.onPrimary)
               },
               modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
             )
@@ -163,7 +159,7 @@ private fun ThemeSelect(store: AppStore) {
   Row(
     verticalAlignment = Alignment.CenterVertically
   ) {
-    Text("主题：", fontSize = fontSize, color = MaterialTheme.colors.onPrimary)
+    Text("${LocalLanguage.current.ui.theme}：", fontSize = fontSize, color = MaterialTheme.colors.onPrimary)
     listOf(ThemeOption.LIGHT, ThemeOption.SYSTEM, ThemeOption.DARK)
       .forEach {
         OutlinedButton(
@@ -186,7 +182,8 @@ private fun ThemeSelect(store: AppStore) {
           contentPadding = PaddingValues(),
         ) {
           Text(
-            it.text, color = if (it == store.config.theme) {
+            LocalLanguage.current.ui.themeOption.getOrDefault(it.name.lowercase(), "Unknown"),
+            color = if (it == store.config.theme) {
               Color.White
             } else {
               MaterialTheme.colors.onPrimary
@@ -206,7 +203,7 @@ private fun KeyboardField(store: AppStore) {
     onValueChange = { },
     colors = TextFieldDefaults.textFieldColors(backgroundColor = Color.Transparent),
     label = {
-      Text("打开 Port View 的全局快捷键", color = MaterialTheme.colors.onSecondary, fontSize = 12.sp)
+      Text(LocalLanguage.current.ui.keyboard, color = MaterialTheme.colors.onSecondary, fontSize = 12.sp)
     },
     singleLine = true,
     contentPadding = TextFieldDefaults.textFieldWithoutLabelPadding(
@@ -257,7 +254,7 @@ private fun RefreshField(store: AppStore) {
     },
     colors = TextFieldDefaults.textFieldColors(backgroundColor = Color.Transparent),
     label = {
-      Text("进程列表刷新间隔时间（s）", color = MaterialTheme.colors.onSecondary, fontSize = 12.sp)
+      Text(LocalLanguage.current.ui.refreshTime, color = MaterialTheme.colors.onSecondary, fontSize = 12.sp)
     },
     singleLine = true,
     contentPadding = TextFieldDefaults.textFieldWithoutLabelPadding(
@@ -287,7 +284,7 @@ private fun Unknown(store: AppStore) {
       )
     }
     Spacer(Modifier.width(8.dp))
-    Text("是否显示 Unknown 进程", fontSize = 14.sp, color = MaterialTheme.colors.onPrimary)
+    Text(LocalLanguage.current.ui.unknown, fontSize = 14.sp, color = MaterialTheme.colors.onPrimary)
     Spacer(Modifier.width(4.dp))
     TooltipArea(
       tooltip = {
@@ -296,7 +293,7 @@ private fun Unknown(store: AppStore) {
           shape = RoundedCornerShape(4.dp)
         ) {
           Text(
-            text = "部分进程属于受系统保护的进程，我们无法获取到它们的具体信息。",
+            text = LocalLanguage.current.tip.unknownHelp,
             modifier = Modifier.padding(10.dp).widthIn(0.dp, 150.dp),
             color = MaterialTheme.colors.onPrimary
           )
@@ -325,7 +322,10 @@ private fun Unknown(store: AppStore) {
 @Composable
 private fun Links(desktop: Desktop) {
   listOf(
-    ExternalLink("Source Code", "https://github.com/lizhongyue248/PortView", GithubMark)
+    ExternalLink(
+      LocalLanguage.current.links.sourceCode,
+      "https://github.com/lizhongyue248/PortView", GithubMark
+    )
   )
     .forEach {
       Row(

@@ -1,0 +1,160 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "title": "i18n.lang.Lang",
+  "additionalProperties": false,
+  "$ref": "#/definitions/opcxjl33whkx",
+  "definitions": {
+    "opcxjl33whkx": {
+      "additionalProperties": false,
+      "type": "object",
+      "properties": {
+        "name": {
+          "additionalProperties": false,
+          "$ref": "#/definitions/xq0zwcprkn9j3"
+        },
+        "tip": {
+          "additionalProperties": false,
+          "$ref": "#/definitions/x1fykep5ne9ou7"
+        },
+        "ui": {
+          "additionalProperties": false,
+          "$ref": "#/definitions/x17riuho0hetxb"
+        },
+        "links": {
+          "additionalProperties": false,
+          "$ref": "#/definitions/x1qcfw8fkcxam7"
+        }
+      },
+      "required": [
+        "name",
+        "tip",
+        "ui",
+        "links"
+      ]
+    },
+    "xq0zwcprkn9j3": {
+      "type": "string"
+    },
+    "x1fykep5ne9ou7": {
+      "additionalProperties": false,
+      "type": "object",
+      "properties": {
+        "welcome": {
+          "additionalProperties": false,
+          "$ref": "#/definitions/xq0zwcprkn9j3"
+        },
+        "search": {
+          "additionalProperties": false,
+          "$ref": "#/definitions/xq0zwcprkn9j3"
+        },
+        "unknownHelp": {
+          "additionalProperties": false,
+          "$ref": "#/definitions/xq0zwcprkn9j3"
+        },
+        "killTitle": {
+          "additionalProperties": false,
+          "$ref": "#/definitions/xq0zwcprkn9j3"
+        },
+        "kill": {
+          "additionalProperties": false,
+          "$ref": "#/definitions/xq0zwcprkn9j3"
+        },
+        "killError": {
+          "additionalProperties": false,
+          "$ref": "#/definitions/xq0zwcprkn9j3"
+        }
+      },
+      "required": [
+        "welcome",
+        "search",
+        "unknownHelp",
+        "killTitle",
+        "kill",
+        "killError"
+      ]
+    },
+    "x17riuho0hetxb": {
+      "additionalProperties": false,
+      "type": "object",
+      "properties": {
+        "homeNav": {
+          "additionalProperties": false,
+          "$ref": "#/definitions/xq0zwcprkn9j3"
+        },
+        "settingNav": {
+          "additionalProperties": false,
+          "$ref": "#/definitions/xq0zwcprkn9j3"
+        },
+        "showLog": {
+          "additionalProperties": false,
+          "$ref": "#/definitions/xq0zwcprkn9j3"
+        },
+        "language": {
+          "additionalProperties": false,
+          "$ref": "#/definitions/xq0zwcprkn9j3"
+        },
+        "theme": {
+          "additionalProperties": false,
+          "$ref": "#/definitions/xq0zwcprkn9j3"
+        },
+        "keyboard": {
+          "additionalProperties": false,
+          "$ref": "#/definitions/xq0zwcprkn9j3"
+        },
+        "refreshTime": {
+          "additionalProperties": false,
+          "$ref": "#/definitions/xq0zwcprkn9j3"
+        },
+        "unknown": {
+          "additionalProperties": false,
+          "$ref": "#/definitions/xq0zwcprkn9j3"
+        },
+        "confirm": {
+          "additionalProperties": false,
+          "$ref": "#/definitions/xq0zwcprkn9j3"
+        },
+        "cancel": {
+          "additionalProperties": false,
+          "$ref": "#/definitions/xq0zwcprkn9j3"
+        },
+        "themeOption": {
+          "additionalProperties": false,
+          "$ref": "#/definitions/px5mae9ial8h"
+        }
+      },
+      "required": [
+        "homeNav",
+        "settingNav",
+        "showLog",
+        "language",
+        "theme",
+        "keyboard",
+        "refreshTime",
+        "unknown",
+        "confirm",
+        "cancel",
+        "themeOption"
+      ]
+    },
+    "x1qcfw8fkcxam7": {
+      "additionalProperties": false,
+      "type": "object",
+      "properties": {
+        "sourceCode": {
+          "additionalProperties": false,
+          "$ref": "#/definitions/xq0zwcprkn9j3"
+        }
+      },
+      "required": [
+        "sourceCode"
+      ]
+    },
+    "px5mae9ial8h": {
+      "additionalProperties": {
+        "additionalProperties": false,
+        "$ref": "#/definitions/xq0zwcprkn9j3"
+      },
+      "type": "object"
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "name": "English",
+  "tip": {
+    "welcome": "PortView launch success!",
+    "search": "Search name or port",
+    "unknownHelp": "Some processes belong to system protected processes or have insufficient permissions, and we are unable to obtain their specific information.",
+    "killTitle": "Tip",
+    "kill": "Do you want to close %s %s ?",
+    "killError": "Close error, please see log file to get more information."
+  },
+  "ui": {
+    "homeNav": "Home",
+    "settingNav": "Setting",
+    "showLog": "Show Log",
+    "language": "Language",
+    "theme": "Theme",
+    "keyboard": "Open the global shortcut key for PortView",
+    "refreshTime": "Process list refresh interval time(s)",
+    "unknown": "Display unknown processes",
+    "confirm": "Yes",
+    "cancel": "No",
+    "themeOption": {
+      "dark": "Dark",
+      "light": "Light",
+      "system": "System"
+    }
+  },
+  "links": {
+    "sourceCode": "Source Code"
+  }
+}

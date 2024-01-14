@@ -1,0 +1,31 @@
+{
+  "name": "简体中文",
+  "tip": {
+    "welcome": "PortView 启动成功!",
+    "search": "搜索名称或端口号",
+    "unknownHelp": "部分进程属于受系统保护的进程或权限不够，我们无法获取到它们的具体信息。",
+    "killTitle": "确认",
+    "kill": "确认结束进程 %s %s 吗？",
+    "killError": "进程结束失败，清查看日志以获取更多信息"
+  },
+  "ui": {
+    "homeNav": "主页",
+    "settingNav": "设置",
+    "showLog": "显示日志文件",
+    "language": "语言",
+    "theme": "主题",
+    "keyboard": "打开 PortView 的全局快捷键",
+    "refreshTime": "进程列表刷新间隔时间 (s)",
+    "unknown": "是否显示 Unknown 进程",
+    "confirm": "确认",
+    "cancel": "取消",
+    "themeOption": {
+      "dark": "深色",
+      "light": "浅色",
+      "system": "系统"
+    }
+  },
+  "links": {
+    "sourceCode": "PortView 源代码"
+  }
+}

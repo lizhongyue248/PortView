@@ -48,7 +48,7 @@ fun main() = application {
   )
 
   val darkTheme = remember { mutableStateOf(store.isDarkTheme()) }
-  PortViewTheme(darkTheme = darkTheme.value) {
+  PortViewTheme(darkTheme = darkTheme.value, lang = store.config.language) {
     MyDialogWindow(
       onCloseRequest = store::hidden,
       visible = state.isVisible,
@@ -95,7 +95,7 @@ fun main() = application {
     }
   }
 
-  val notification = rememberNotification("Port view setup success!", "")
+  val notification = rememberNotification(LocalLanguage.current.tip.welcome, "")
 
   LaunchedEffect(Unit) {
     state.trayState.sendNotification(notification)

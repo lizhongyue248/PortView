@@ -121,14 +121,13 @@ private fun Alter(confirmDialog: MutableState<Boolean>, currentProcess: MutableS
       confirmDialog.value = false
     },
     title = {
-      Text(text = "Confirm ${currentProcess.value?.name}")
+      Text(text = LocalLanguage.current.tip.killTitle)
     },
     text = {
-      Text("Do you want to close port :${currentProcess.value?.port} process?")
+      Text(LocalLanguage.current.tip.kill.format(currentProcess.value?.name, currentProcess.value?.port))
     },
     confirmButton = {
-      val errorTip = rememberNotification("Port view kill error!", "", Notification.Type.Error)
-
+      val errorTip = rememberNotification(LocalLanguage.current.tip.killError, "", Notification.Type.Error)
       Button(
         onClick = {
           val result = getActionStrategy().closeProcess(currentProcess.value?.pid)
@@ -139,7 +138,7 @@ private fun Alter(confirmDialog: MutableState<Boolean>, currentProcess: MutableS
           }
           confirmDialog.value = false
         }) {
-        Text("Confirm", color = Color.White)
+        Text(LocalLanguage.current.ui.confirm, color = Color.White)
       }
     },
     dismissButton = {
@@ -150,7 +149,7 @@ private fun Alter(confirmDialog: MutableState<Boolean>, currentProcess: MutableS
         onClick = {
           confirmDialog.value = false
         }) {
-        Text("Cancel", color = Color.White)
+        Text(LocalLanguage.current.ui.cancel, color = Color.White)
       }
     }
   )

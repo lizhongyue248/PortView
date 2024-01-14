@@ -72,7 +72,7 @@ internal fun BottomNav(selectedItem: MutableState<Int>) {
   BottomNavigation(
     backgroundColor = MaterialTheme.colors.background
   ) {
-    listOf("Home", "Setting").forEachIndexed { index, item ->
+    listOf(LocalLanguage.current.ui.homeNav, LocalLanguage.current.ui.settingNav).forEachIndexed { index, item ->
       BottomNavigationItem(
         selectedContentColor = MaterialTheme.colors.primary,
         unselectedContentColor = MaterialTheme.colors.onPrimary,
@@ -194,7 +194,7 @@ internal fun SearchField(store: AppStore) {
         },
         singleLine = true,
         placeholder = {
-          Text("Input port or name", color = MaterialTheme.colors.onSecondary)
+          Text(LocalLanguage.current.tip.search, color = MaterialTheme.colors.onSecondary)
         },
         interactionSource = interactionSource,
         visualTransformation = VisualTransformation.None,
