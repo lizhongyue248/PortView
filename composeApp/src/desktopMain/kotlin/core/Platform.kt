@@ -13,14 +13,17 @@ class PlatformInfo {
 
 fun getPlatform() = PlatformInfo()
 
-fun getPortStrategy(): PortStrategy {
-  val platform = getPlatform()
-  if (platform.isWindows()) {
-    return WindowsPort()
-  }
-  return MacPort()
-}
-
-fun getActionStrategy(): ActionStrategy {
-  return WindowsAction()
+object Platform {
+  val portStrategy: PortStrategy
+    get() {
+      val platform = getPlatform()
+      if (platform.isWindows()) {
+        return WindowsPort
+      }
+      return MacPort
+    }
+  val actionStrategy: ActionStrategy
+    get() {
+      return WindowsAction
+    }
 }

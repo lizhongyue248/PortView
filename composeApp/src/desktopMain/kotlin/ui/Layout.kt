@@ -17,6 +17,8 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.toAwtImage
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
@@ -84,7 +86,8 @@ internal fun BottomNav(selectedItem: MutableState<Int>) {
         },
         label = { Text(item) },
         selected = selectedItem.value == index,
-        onClick = { selectedItem.value = index }
+        onClick = { selectedItem.value = index },
+        modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
       )
     }
   }

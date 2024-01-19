@@ -28,9 +28,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Notification
 import androidx.compose.ui.window.rememberNotification
+import core.Platform
 import core.PortInfo
 import core.TestTag
-import core.getActionStrategy
 import model.AppStore
 
 @Composable
@@ -130,7 +130,7 @@ private fun Alter(confirmDialog: MutableState<Boolean>, currentProcess: MutableS
       val errorTip = rememberNotification(LocalLanguage.current.tip.killError, "", Notification.Type.Error)
       Button(
         onClick = {
-          val result = getActionStrategy().closeProcess(currentProcess.value?.pid)
+          val result = Platform.actionStrategy.closeProcess(currentProcess.value?.pid)
           if (result.first) {
             store.updateItems()
           } else {

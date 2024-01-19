@@ -100,6 +100,7 @@ fun main() = application {
   LaunchedEffect(Unit) {
     state.trayState.sendNotification(notification)
     Logger.info("Send init notification.")
+    store.updateItems()
   }
 
   refreshEffect(store)

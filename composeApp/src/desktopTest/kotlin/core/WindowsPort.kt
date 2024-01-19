@@ -11,7 +11,7 @@ class WindowsPortTest : PortSupport(){
   @Test
   fun portListTest() {
     val windowsPort = WindowsPort()
-    val portList = windowsPort.portList()
+    val portList = windowsPort.portList(emptyList())
     assertTrue(portList.isNotEmpty())
     assertTrue(port > 0)
     val find = portList.find { it.port == port }

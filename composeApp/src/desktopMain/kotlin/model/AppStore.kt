@@ -5,19 +5,21 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.window.TrayState
 import com.jthemedetecor.OsThemeDetector
+import core.Platform
 import core.PortInfo
-import core.getPortStrategy
 import i18n.lang.LangEnum
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import net.harawata.appdirs.AppDirsFactory
 import org.apache.commons.lang3.StringUtils
+import org.tinylog.configuration.Configuration
 import org.tinylog.kotlin.Logger
 import java.io.File
 
 
 val CONFIG_PATH: String = AppDirsFactory.getInstance().getUserConfigDir("PortView", null, "zyue") + File.separatorChar + "config.json"
+val LOGGER_PATH: String = AppDirsFactory.getInstance().getUserConfigDir("PortView", null, "zyue") + File.separatorChar + "port-view.log"
 
 class AppStore {
   var config: ConfigState by mutableStateOf(initialConfig())
@@ -27,12 +29,14 @@ class AppStore {
 
   private fun initialState(): AppState {
     return AppState(
-      items = portInfoList(),
-      keyboard = config.getKeyStrokeString()
+      keyboard = config.getKeyStrokeString(),
+      showUnknown = config.showUnknown
     )
   }
 
   private fun initialConfig(): ConfigState {
+    Configuration.set("writer2.file", LOGGER_PATH)
+    Logger.info("Success set logger writer file. $LOGGER_PATH")
     val json = Json { ignoreUnknownKeys = true }
     var fileConfig = runCatching {
       val jsonString = File(CONFIG_PATH).readText()
@@ -74,20 +78,10 @@ class AppStore {
     setState {
       copy(loading = true)
     }
-    val items = portInfoList()
+    val items = Platform.portStrategy.portList(state.items)
     setState {
       copy(items = items, loading = false)
     }
-  }
-
-  private fun portInfoList(): List<PortInfo> {
-    val items = if (config.showUnknown) {
-      getPortStrategy().portList()
-    } else {
-      getPortStrategy().portList()
-        .filter { !StringUtils.equalsIgnoreCase(it.name, "unknown") }
-    }
-    return items
   }
 
   fun updateKeyboard() {
@@ -127,6 +121,9 @@ class AppStore {
   }
 
   fun configShowUnknown(showUnknown: Boolean) {
+    setState {
+      copy(showUnknown = showUnknown)
+    }
     setConfig {
       copy(showUnknown = showUnknown)
     }
@@ -144,7 +141,8 @@ class AppStore {
     val keyboard: String = "",
     val isVisible: Boolean = true,
     val trayState: TrayState = TrayState(),
-    val loading: Boolean = false
+    val loading: Boolean = false,
+    val showUnknown: Boolean
   ) {
     val list: List<PortInfo>
       get() {
@@ -152,6 +150,12 @@ class AppStore {
         return items.filter {
           it.name.trim().contains(searchText.trim(), ignoreCase = true)
             || (conditionInt != null && it.port == conditionInt)
+        }.filter {
+          if (showUnknown) {
+            true
+          } else {
+            !StringUtils.equalsIgnoreCase(it.name, "unknown")
+          }
         }
       }
   }

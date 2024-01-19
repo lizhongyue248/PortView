@@ -4,10 +4,12 @@ import com.sun.jna.Memory
 import com.sun.jna.Native
 import com.sun.jna.Pointer
 import com.sun.jna.platform.win32.*
+import com.sun.jna.platform.win32.WinDef.HICON
 import com.sun.jna.platform.win32.WinError.ERROR_NOT_ALL_ASSIGNED
 import com.sun.jna.ptr.IntByReference
 import core.PortInfo
 import core.PortStrategy
+import org.tinylog.kotlin.Logger
 import java.awt.image.BufferedImage
 import java.net.InetAddress
 import java.net.UnknownHostException
@@ -15,13 +17,19 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.*
 
-class WindowsPort : PortStrategy {
+
+object WindowsPort : PortStrategy {
   private val ipHlpInstance: IPHlpAPI = IPHlpAPI.INSTANCE
 
-  override fun portList(): List<PortInfo> {
+  init {
     if (!enableDebugPrivilege()) {
-      println("Error enable debug privilege.")
+      Logger.info("Current os doesn't enable debug privilege.")
+    } else{
+      Logger.info("Current os enable debug privilege.")
     }
+  }
+
+  override fun portList(lastList: List<PortInfo>): List<PortInfo> {
     val sizePtr = IntByReference()
     ipHlpInstance.GetExtendedTcpTable(null, sizePtr, false, IPHlpAPI.AF_INET, IPHlpAPI.TCP_TABLE_CLASS.TCP_TABLE_OWNER_PID_ALL, 0)
     var size: Int
@@ -34,37 +42,49 @@ class WindowsPort : PortStrategy {
         0
       )
       if (WinError.NO_ERROR != ret) {
-        println("Error $ret")
+        Logger.info("GetExtendedTcpTable error $ret ")
       }
     } while (size < sizePtr.value)
-    val tcpTable = IPHlpAPI.MIB_TCPTABLE_OWNER_PID(buf)
-    val result = mutableListOf<PortInfo>()
-    for (mibTcpRow in tcpTable.table) {
-      if (mibTcpRow.dwState != IPHlpAPI.MIB_TCP_STATE.MIB_TCP_STATE_LISTEN) {
-        continue
+    val lastListMap = lastList.associateBy { it.pid }
+    val existList = mutableListOf<PortInfo>()
+    return IPHlpAPI.MIB_TCPTABLE_OWNER_PID(buf).table.filter {
+      if (it.dwState != IPHlpAPI.MIB_TCP_STATE.MIB_TCP_STATE_LISTEN) {
+        return@filter false
       }
-      val pid = mibTcpRow.dwOwningPid
-      val executablePath = getProcessExecutablePath(pid)
-      val image = if (executablePath != "unknown") {
-        val largeIcons = arrayOfNulls<WinDef.HICON>(1)
-        val smallIcons = arrayOfNulls<WinDef.HICON>(1)
-        Shell32.INSTANCE.ExtractIconEx(executablePath, 0, largeIcons, smallIcons, 1)
-        toImage(largeIcons[0])
-      } else {
-        null
+      val value = lastListMap[it.dwOwningPid]
+      if (value != null) {
+        existList.add(value)
+        return@filter false
       }
-      result.add(
+      return@filter true
+    }.distinctBy { it.dwOwningPid }
+      .map { mibTcpRow ->
+        val executablePath = getProcessExecutablePath(mibTcpRow.dwOwningPid)
+        val image = getProcessExecutableImage(executablePath)
         PortInfo(
           Paths.get(executablePath).fileNameWithoutExtension(),
-          executablePath, pid,
+          executablePath, mibTcpRow.dwOwningPid,
           formatIPAddress(mibTcpRow.dwLocalAddr), formatPort(mibTcpRow.dwLocalPort),
           formatIPAddress(mibTcpRow.dwRemoteAddr), formatPort(mibTcpRow.dwRemotePort),
           image
         )
-      )
+      }.plus(existList).sortedBy { it.port }
+  }
+
+  private fun getProcessExecutableImage(executablePath: String) = if (executablePath != "unknown") {
+    val iconCount = Shell32.INSTANCE.ExtractIconEx(executablePath, 0, null, null, 0)
+    Logger.debug("$executablePath get icon count $iconCount")
+    if (iconCount == 0) {
+      null
+    } else {
+      val icons = arrayOfNulls<HICON>(iconCount)
+      Shell32.INSTANCE.ExtractIconEx(executablePath, 0, icons, null, iconCount)
+      Logger.debug("$executablePath get icon count ${icons[0]}")
+      toImage(icons[0])
     }
-    result.sortBy { it.port }
-    return result
+  } else {
+    Logger.debug("$executablePath do not get icon.")
+    null
   }
 
   private fun getProcessExecutablePath(pid: Int): String {
@@ -123,7 +143,9 @@ class WindowsPort : PortStrategy {
             deviceContext, bitmapHandle, 0, 0, Pointer.NULL, bitmapInfo,
             WinGDI.DIB_RGB_COLORS
           ) != 0
-        ) { "GetDIBits should not return 0" }
+        ) {
+          Logger.warn("GetDIBits 1 should not return 0.")
+        }
 
         bitmapInfo.read()
 
@@ -136,7 +158,9 @@ class WindowsPort : PortStrategy {
             deviceContext, bitmapHandle, 0, bitmapInfo.bmiHeader.biHeight, pixels, bitmapInfo,
             WinGDI.DIB_RGB_COLORS
           ) != 0
-        ) { "GetDIBits should not return 0" }
+        ) {
+          Logger.warn("GetDIBits 2 should not return 0.")
+        }
 
         val colorArray = pixels.getIntArray(0, width * height)
         val image = BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
@@ -158,14 +182,14 @@ class WindowsPort : PortStrategy {
       WinNT.TOKEN_QUERY or WinNT.TOKEN_ADJUST_PRIVILEGES, hToken
     )
     if (!success) {
-      println("OpenProcessToken failed. Error: " + Native.getLastError())
+      Logger.warn("OpenProcessToken 1 failed. Error: ${Native.getLastError()}")
       return false
     }
     try {
       val luid = WinNT.LUID()
       success = Advapi32.INSTANCE.LookupPrivilegeValue(null, WinNT.SE_DEBUG_NAME, luid)
       if (!success) {
-        println("OpenProcessToken failed. Error: " + Native.getLastError())
+        Logger.warn("OpenProcessToken 2 failed. Error: ${Native.getLastError()}")
         return false
       }
       val tkp = WinNT.TOKEN_PRIVILEGES(1)
@@ -173,10 +197,10 @@ class WindowsPort : PortStrategy {
       success = Advapi32.INSTANCE.AdjustTokenPrivileges(hToken.value, false, tkp, 0, null, null)
       val err = Native.getLastError()
       if (!success) {
-        println("OpenProcessToken failed. Error: $err")
+        Logger.warn("OpenProcessToken 3 failed. Error: $err")
         return false
       } else if (err == ERROR_NOT_ALL_ASSIGNED) {
-        println("Debug privileges not enabled.")
+        Logger.info("Debug privileges not enabled.")
         return false
       }
     } finally {
@@ -184,6 +208,7 @@ class WindowsPort : PortStrategy {
     }
     return true
   }
+
 }
 
 

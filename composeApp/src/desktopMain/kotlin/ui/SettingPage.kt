@@ -30,6 +30,7 @@ import icons.rememberArrowOutward
 import icons.rememberHelp
 import model.AppStore
 import model.ExternalLink
+import model.LOGGER_PATH
 import model.ThemeOption
 import java.awt.Desktop
 import java.awt.event.KeyEvent
@@ -69,8 +70,8 @@ fun Setting(store: AppStore) {
 
 @Composable
 private fun TitleInfo(store: AppStore, desktop: Desktop) {
-  val file = File(System.getenv("TEMP") + File.separatorChar + "port-view.log")
-  val errorTip = rememberNotification("Can not find log file! ${file.absoluteFile}", "", Notification.Type.Error)
+  val file = File(LOGGER_PATH)
+  val errorTip = rememberNotification("Can not find log file! $LOGGER_PATH", "", Notification.Type.Error)
   Row(
     verticalAlignment = Alignment.CenterVertically,
     modifier = Modifier.padding(top = 12.dp)

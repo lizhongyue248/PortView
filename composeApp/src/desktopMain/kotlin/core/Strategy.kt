@@ -1,7 +1,7 @@
 package core
 
 fun interface PortStrategy {
-  fun portList(): List<PortInfo>
+  fun portList(lastList: List<PortInfo>): List<PortInfo>
 }
 
 fun interface ActionStrategy {
