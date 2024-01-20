@@ -24,14 +24,12 @@ import androidx.compose.ui.window.Notification
 import androidx.compose.ui.window.rememberNotification
 import component.MyIconButton
 import component.MyTextField
+import core.PlatformInfo
 import i18n.lang.LangEnum
 import icons.GithubMark
 import icons.rememberArrowOutward
 import icons.rememberHelp
-import model.AppStore
-import model.ExternalLink
-import model.LOGGER_PATH
-import model.ThemeOption
+import model.*
 import java.awt.Desktop
 import java.awt.event.KeyEvent
 import java.io.File
@@ -85,8 +83,8 @@ private fun TitleInfo(store: AppStore, desktop: Desktop) {
         .padding(start = 12.dp),
       verticalArrangement = Arrangement.SpaceBetween
     ) {
-      Text("Port View", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colors.onPrimary)
-      Text("2023.03.01", fontSize = MaterialTheme.typography.caption.fontSize, color = MaterialTheme.colors.onSecondary)
+      Text(Information.app.name, fontSize = 18.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colors.onPrimary)
+      Text(Information.app.updateDate, fontSize = MaterialTheme.typography.caption.fontSize, color = MaterialTheme.colors.onSecondary)
     }
     OutlinedButton(
       onClick = {
@@ -111,7 +109,11 @@ private fun TitleInfo(store: AppStore, desktop: Desktop) {
 
 @Composable
 private fun SystemInfo() {
-  Text("Windows 11", fontSize = MaterialTheme.typography.subtitle2.fontSize, color = MaterialTheme.colors.onPrimary)
+  Text(
+    PlatformInfo.osName,
+    fontSize = MaterialTheme.typography.subtitle2.fontSize,
+    color = MaterialTheme.colors.onPrimary
+  )
 }
 
 @Composable
