@@ -9,6 +9,7 @@ import com.sun.jna.platform.win32.WinError.ERROR_NOT_ALL_ASSIGNED
 import com.sun.jna.ptr.IntByReference
 import core.PortInfo
 import core.PortStrategy
+import model.UNKNOWN
 import org.tinylog.kotlin.Logger
 import java.awt.image.BufferedImage
 import java.net.InetAddress
@@ -74,7 +75,7 @@ object WindowsPort : PortStrategy {
       .sortedBy { it.port }.toList()
   }
 
-  private fun getProcessExecutableImage(executablePath: String) = if (executablePath != "unknown") {
+  private fun getProcessExecutableImage(executablePath: String) = if (executablePath != UNKNOWN) {
     val iconCount = Shell32.INSTANCE.ExtractIconEx(executablePath, 0, null, null, 0)
     Logger.debug("$executablePath get icon count $iconCount")
     if (iconCount == 0) {
@@ -94,7 +95,7 @@ object WindowsPort : PortStrategy {
     return try {
       Kernel32Util.QueryFullProcessImageName(pid, 0)
     } catch (e: Exception) {
-      "unknown"
+      UNKNOWN
     }
   }
 
@@ -107,7 +108,7 @@ object WindowsPort : PortStrategy {
       )
       InetAddress.getByAddress(bytes).hostAddress
     } catch (e: UnknownHostException) {
-      "Unknown"
+      UNKNOWN
     }
   }
 

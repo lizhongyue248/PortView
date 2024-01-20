@@ -184,7 +184,7 @@ class AppStore {
           if (showUnknown) {
             true
           } else {
-            !StringUtils.equalsIgnoreCase(it.name, "unknown")
+            !StringUtils.equalsIgnoreCase(it.name, UNKNOWN)
           }
         }
       }

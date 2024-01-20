@@ -1,9 +1,12 @@
 package core
 
+import java.io.File
+
 fun interface PortStrategy {
   fun portList(lastList: List<PortInfo>): List<PortInfo>
 }
 
-fun interface ActionStrategy {
+ interface ActionStrategy {
   fun closeProcess(pid: Int?): Pair<Boolean, String>
+  fun open(file: File): Boolean
 }

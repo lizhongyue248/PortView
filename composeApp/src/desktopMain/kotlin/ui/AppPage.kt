@@ -7,10 +7,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -34,30 +31,51 @@ import core.Platform
 import core.PortInfo
 import core.TestTag
 import model.AppStore
+import model.UNKNOWN
+import org.apache.commons.lang3.StringUtils
+import java.io.File
 
 @Composable
 fun Content(store: AppStore) {
   val lazyListState = rememberSaveable(saver = LazyListState.Saver) { store.state.lazyListState }
   val confirmDialog = remember { mutableStateOf(false) }
   val currentProcess = remember { mutableStateOf<PortInfo?>(null) }
+  val i18n = LocalLanguage.current
+  val contextMenuRepresentation = if (store.isDarkTheme()) {
+    DarkDefaultContextMenuRepresentation
+  } else {
+    LightDefaultContextMenuRepresentation
+  }
   Box(modifier = Modifier.padding(bottom = 64.dp)) {
     LazyColumn(Modifier.testTag(TestTag.PORT_LIST).fillMaxSize(), state = lazyListState) {
       items(store.state.list) { item ->
-        PortItem(item, confirmDialog, currentProcess)
+        CompositionLocalProvider(LocalContextMenuRepresentation provides contextMenuRepresentation) {
+          ContextMenuArea(
+            items = {
+              listOf(
+                ContextMenuItem(i18n.tip.openPath) {
+                  val file = File(item.command)
+                  if (StringUtils.equalsIgnoreCase(item.name, UNKNOWN) || !file.exists()) {
+                    return@ContextMenuItem
+                  }
+                  Platform.actionStrategy.open(file)
+                },
+                ContextMenuItem("${item.address}:${item.port}") {},
+                ContextMenuItem("PID - ${item.pid}") {},
+              )
+            }
+          ) { PortItem(item, confirmDialog, currentProcess) }
+        }
       }
     }
     VerticalScrollbar(
       rememberScrollbarAdapter(lazyListState),
-      modifier = Modifier
-        .align(Alignment.CenterEnd)
-        .fillMaxHeight()
+      modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight()
     )
   }
-
   if (confirmDialog.value) {
     Alter(confirmDialog, currentProcess, store)
   }
-
 }
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalComposeUiApi::class)

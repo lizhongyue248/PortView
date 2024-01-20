@@ -6,7 +6,8 @@
     "unknownHelp": "Some processes belong to system protected processes or have insufficient permissions, and we are unable to obtain their specific information.",
     "killTitle": "Tip",
     "kill": "Do you want to close %s %s ?",
-    "killError": "Close error, please see log file to get more information."
+    "killError": "Close error, please see log file to get more information.",
+    "openPath": "Open folder"
   },
   "ui": {
     "homeNav": "Home",

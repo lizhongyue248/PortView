@@ -6,7 +6,6 @@ import androidx.compose.ui.res.FileResourceLoader
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import java.io.File
-import java.time.format.DateTimeFormatter
 
 data class ExternalLink(
   val title: String,
@@ -26,6 +25,8 @@ data class AppInformation(
   val updateDate: String,
   val version: String
 )
+
+const val UNKNOWN: String = "Unknown"
 
 object Information {
   val app: AppInformation = fromFile()

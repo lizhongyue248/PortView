@@ -30,6 +30,7 @@ import icons.GithubMark
 import icons.rememberArrowOutward
 import icons.rememberHelp
 import model.*
+import org.tinylog.kotlin.Logger
 import java.awt.Desktop
 import java.awt.event.KeyEvent
 import java.io.File
@@ -183,7 +184,7 @@ private fun ThemeSelect(store: AppStore) {
           contentPadding = PaddingValues(),
         ) {
           Text(
-            LocalLanguage.current.ui.themeOption.getOrDefault(it.name.lowercase(), "Unknown"),
+            LocalLanguage.current.ui.themeOption.getOrDefault(it.name.lowercase(), UNKNOWN),
             color = if (it == store.config.theme) {
               Color.White
             } else {
@@ -325,6 +326,11 @@ private fun Unknown(store: AppStore) {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun Links(desktop: Desktop) {
+  Row {
+    Text("Test", modifier = Modifier.onClick {
+      Logger.info("Get current run dir is ${System.getProperty("user.dir")}")
+    })
+  }
   listOf(
     ExternalLink(
       LocalLanguage.current.links.sourceCode,

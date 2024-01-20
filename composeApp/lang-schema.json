@@ -14,7 +14,7 @@
         },
         "tip": {
           "additionalProperties": false,
-          "$ref": "#/definitions/x1fykep5ne9ou7"
+          "$ref": "#/definitions/xo7ezscd5vzsv"
         },
         "ui": {
           "additionalProperties": false,
@@ -35,7 +35,7 @@
     "xq0zwcprkn9j3": {
       "type": "string"
     },
-    "x1fykep5ne9ou7": {
+    "xo7ezscd5vzsv": {
       "additionalProperties": false,
       "type": "object",
       "properties": {
@@ -62,6 +62,10 @@
         "killError": {
           "additionalProperties": false,
           "$ref": "#/definitions/xq0zwcprkn9j3"
+        },
+        "openPath": {
+          "additionalProperties": false,
+          "$ref": "#/definitions/xq0zwcprkn9j3"
         }
       },
       "required": [
@@ -70,7 +74,8 @@
         "unknownHelp",
         "killTitle",
         "kill",
-        "killError"
+        "killError",
+        "openPath"
       ]
     },
     "x17riuho0hetxb": {

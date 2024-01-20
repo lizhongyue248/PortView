@@ -9,7 +9,8 @@ data class Tip(
   val unknownHelp: String,
   val killTitle: String,
   val kill: String,
-  val killError: String
+  val killError: String,
+  val openPath: String
 )
 
 @Serializable
