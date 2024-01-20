@@ -70,8 +70,9 @@ compose.desktop {
       macOS {
         iconFile.set(project.file("icon/mac.icns"))
       }
+      println(project.layout.projectDirectory.dir("resources"))
+      appResourcesRootDir.set(project.layout.projectDirectory.dir("resources"))
     }
-
     buildTypes.release.proguard {
       configurationFiles.from(project.file("compose-desktop.pro"))
     }

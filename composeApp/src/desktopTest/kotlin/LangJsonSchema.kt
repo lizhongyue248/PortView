@@ -23,8 +23,6 @@ class LangJsonSchema {
   @Test
   fun generate() {
     val encodeToSchema = myGlobalJson.encodeToSchema(Lang.serializer())
-    val file = File("lang-schema.json")
-    file.writeText(encodeToSchema)
-    println(file.absolutePath)
+    println(encodeToSchema)
   }
 }

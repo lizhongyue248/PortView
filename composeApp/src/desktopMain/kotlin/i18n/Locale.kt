@@ -1,12 +1,12 @@
 package i18n
 
-import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.res.FileResourceLoader
 import i18n.lang.Lang
 import i18n.lang.LangEnum
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.resource
 import org.tinylog.kotlin.Logger
-import java.io.File
 import java.util.Locale
 import java.util.Locale.CHINESE
 
@@ -14,26 +14,26 @@ object Locale {
 
   val langMap: Map<LangEnum, Lang> = initConfig()
 
-  @OptIn(ExperimentalComposeUiApi::class)
   private fun initConfig(): Map<LangEnum, Lang> {
     val json = Json { ignoreUnknownKeys = true }
-    val resource = FileResourceLoader(File("lang"))
-    if (!resource.root.exists()) {
-      throw Exception("Not found lang resource.")
-    }
-    val listFiles = resource.root.listFiles() ?: throw Exception("Not found lang resource.")
-    return listFiles.filter { file ->
-      Logger.info("Get file from lang dir ${file.absolutePath}.")
-      file.isFile && file.extension == "json"
-    }.associate { langFile ->
-      val jsonString = langFile.readText()
-      val lang = json.decodeFromString<Lang>(jsonString)
-      Logger.info("Load lang [${lang.name}] file ${langFile.name} success.")
+    return getLangString().associate { langFile ->
+      val lang = json.decodeFromString<Lang>(langFile)
+      Logger.info("Load lang [${lang.name}] file success.")
       LangEnum.toLang(lang.name) to lang
     }
   }
 
-  fun getDefaultLang(): Lang  {
+  @OptIn(ExperimentalResourceApi::class)
+  private fun getLangString(): List<String> {
+    return runBlocking {
+      listOf(
+        resource("lang/zh.json").readBytes().decodeToString(),
+        resource("lang/en.json").readBytes().decodeToString()
+      )
+    }
+  }
+
+  fun getDefaultLang(): Lang {
     if (langMap.isEmpty()) {
       throw Exception("Not found any lang resource when get default lang.")
     }

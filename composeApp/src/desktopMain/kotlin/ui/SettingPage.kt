@@ -329,6 +329,8 @@ private fun Links(desktop: Desktop) {
   Row {
     Text("Test", modifier = Modifier.onClick {
       Logger.info("Get current run dir is ${System.getProperty("user.dir")}")
+      println(this.javaClass.getResource("/lang")?.path)
+      println(File(this.javaClass.getResource("/lang")?.path?:"").exists())
     })
   }
   listOf(

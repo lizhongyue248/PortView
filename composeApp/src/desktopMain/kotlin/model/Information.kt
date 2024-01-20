@@ -1,11 +1,11 @@
 package model
 
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.FileResourceLoader
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import java.io.File
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.resource
 
 data class ExternalLink(
   val title: String,
@@ -31,14 +31,11 @@ const val UNKNOWN: String = "Unknown"
 object Information {
   val app: AppInformation = fromFile()
 
-  @OptIn(ExperimentalComposeUiApi::class)
+  @OptIn(ExperimentalResourceApi::class)
   private fun fromFile(): AppInformation {
     val json = Json { ignoreUnknownKeys = true }
-    val resource = FileResourceLoader(File("app.json"))
-    if (!resource.root.exists()) {
-      throw Exception("Not found app.json resource.")
-    }
-    val jsonString = File(resource.root.absolutePath).readText()
-    return json.decodeFromString(jsonString)
+    return json.decodeFromString(runBlocking {
+      resource("app.json").readBytes().decodeToString()
+    })
   }
 }

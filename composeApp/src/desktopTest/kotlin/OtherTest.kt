@@ -1,14 +1,16 @@
+
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.res.FileResourceLoader
 import com.jthemedetecor.OsThemeDetector
 import i18n.lang.Lang
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
-import model.ThemeOption
 import net.harawata.appdirs.AppDirsFactory
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.resource
 import org.junit.Test
 import org.tinylog.kotlin.Logger
 import java.io.File
-import java.util.*
 
 class OtherTest {
   @Test
@@ -51,10 +53,16 @@ class OtherTest {
     println(fileResourceLoader.root.isDirectory)
   }
 
+  @OptIn(ExperimentalResourceApi::class)
   @Test
   fun getLocale() {
-    val currentLocale: Locale = Locale.getDefault()
-    println(currentLocale.language)
-    println(ThemeOption.SYSTEM.name.lowercase())
+//    val currentLocale: Locale = Locale.getDefault()
+//    println(currentLocale.language)
+//    println(ThemeOption.SYSTEM.name.lowercase())
+    runBlocking {
+      val decodeToString = resource("lang/zh.json").readBytes().decodeToString()
+      println(decodeToString)
+    }
+
   }
 }
