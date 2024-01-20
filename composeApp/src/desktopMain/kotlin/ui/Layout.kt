@@ -1,6 +1,8 @@
 package ui
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -15,6 +17,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.toAwtImage
 import androidx.compose.ui.input.pointer.PointerIcon
@@ -41,9 +45,14 @@ import java.awt.*
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 
-
 @Composable
 internal fun TopBar(store: AppStore) {
+  val closeInteraction = remember { MutableInteractionSource() }
+  val borderColor = if (closeInteraction.collectIsFocusedAsState().value) {
+    MaterialTheme.colors.onSecondary
+  } else{
+    Color.Transparent
+  }
   Column {
     Row(
       modifier = Modifier.fillMaxWidth()
@@ -53,12 +62,12 @@ internal fun TopBar(store: AppStore) {
     ) {
       Text(
         text = "Port View",
-        style = MaterialTheme.typography.h6,
+        style = MaterialTheme.typography.h5,
         fontWeight = FontWeight.Bold,
-        fontSize = 24.sp,
+        fontSize = MaterialTheme.typography.h5.fontSize,
         lineHeight = 36.sp
       )
-      MyIconButton(onClick = store::hidden) {
+      MyIconButton(onClick = store::hidden, modifier = Modifier.border(1.dp, borderColor)) {
         Icon(
           tint = MaterialTheme.colors.onSecondary,
           contentDescription = "Close Window",
@@ -70,7 +79,7 @@ internal fun TopBar(store: AppStore) {
 }
 
 @Composable
-internal fun BottomNav(selectedItem: MutableState<Int>) {
+internal fun BottomNav(store: AppStore) {
   BottomNavigation(
     backgroundColor = MaterialTheme.colors.background
   ) {
@@ -85,8 +94,8 @@ internal fun BottomNav(selectedItem: MutableState<Int>) {
           }
         },
         label = { Text(item) },
-        selected = selectedItem.value == index,
-        onClick = { selectedItem.value = index },
+        selected = store.state.currentTab == index,
+        onClick = { store.changeCurrentTab(index) },
         modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
       )
     }
@@ -177,12 +186,14 @@ internal fun SearchField(store: AppStore) {
         .testTag(TestTag.SEARCH_INPUT)
         .padding(start = 24.dp, end = 24.dp, bottom = 6.dp)
         .fillMaxWidth()
-        .height(36.dp),
+        .height(36.dp)
+        .focusRequester(store.state.searchFocusRequester),
       cursorBrush = SolidColor(MaterialTheme.colors.onPrimary),
       singleLine = true,
-      textStyle = TextStyle(color = MaterialTheme.colors.onPrimary)
+      textStyle = TextStyle(
+        color = MaterialTheme.colors.onPrimary,
+      ),
     ) { innerTextField ->
-      val interactionSource = remember { MutableInteractionSource() }
       TextFieldDefaults.OutlinedTextFieldDecorationBox(
         value = store.state.searchText,
         innerTextField = innerTextField,
@@ -190,16 +201,20 @@ internal fun SearchField(store: AppStore) {
         border = {
           TextFieldDefaults.BorderBox(
             enabled = true, isError = false,
-            interactionSource,
-            TextFieldDefaults.outlinedTextFieldColors(),
+            interactionSource = store.state.searchInteractionSource,
+            colors = TextFieldDefaults.outlinedTextFieldColors(),
             shape = RoundedCornerShape(4.dp)
           )
         },
         singleLine = true,
         placeholder = {
-          Text(LocalLanguage.current.tip.search, color = MaterialTheme.colors.onSecondary)
+          Text(
+            LocalLanguage.current.tip.search,
+            color = MaterialTheme.colors.onSecondary,
+            fontSize = MaterialTheme.typography.body2.fontSize
+          )
         },
-        interactionSource = interactionSource,
+        interactionSource = store.state.searchInteractionSource,
         visualTransformation = VisualTransformation.None,
         contentPadding = TextFieldDefaults.textFieldWithoutLabelPadding(
           top = 0.dp,

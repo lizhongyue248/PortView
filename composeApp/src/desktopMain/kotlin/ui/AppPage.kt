@@ -3,15 +3,17 @@ package ui
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
@@ -35,13 +37,12 @@ import model.AppStore
 
 @Composable
 fun Content(store: AppStore) {
-  val appState = store.state
-  val lazyListState = rememberLazyListState()
+  val lazyListState = rememberSaveable(saver = LazyListState.Saver) { store.state.lazyListState }
   val confirmDialog = remember { mutableStateOf(false) }
   val currentProcess = remember { mutableStateOf<PortInfo?>(null) }
   Box(modifier = Modifier.padding(bottom = 64.dp)) {
     LazyColumn(Modifier.testTag(TestTag.PORT_LIST).fillMaxSize(), state = lazyListState) {
-      items(appState.list) { item ->
+      items(store.state.list) { item ->
         PortItem(item, confirmDialog, currentProcess)
       }
     }
@@ -59,6 +60,7 @@ fun Content(store: AppStore) {
 
 }
 
+@OptIn(ExperimentalFoundationApi::class, ExperimentalComposeUiApi::class)
 @Composable
 private fun PortItem(item: PortInfo, confirmDialog: MutableState<Boolean>, currentProcess: MutableState<PortInfo?>) {
   Row(
@@ -92,12 +94,21 @@ private fun PortItem(item: PortInfo, confirmDialog: MutableState<Boolean>, curre
       modifier = Modifier.weight(1f),
       verticalArrangement = Arrangement.SpaceBetween
     ) {
-      Text(text = item.name, fontSize = 14.sp, color = MaterialTheme.colors.onPrimary)
+      Row(
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        verticalAlignment = Alignment.CenterVertically,
+      ) {
+        Text(
+          text = item.name,
+          fontSize = MaterialTheme.typography.body2.fontSize,
+          color = MaterialTheme.colors.onPrimary
+        )
+      }
       Text(
         text = item.command,
         modifier = Modifier.fillMaxWidth(),
         overflow = TextOverflow.Ellipsis,
-        fontSize = 12.sp,
+        fontSize = MaterialTheme.typography.caption.fontSize,
         color = MaterialTheme.colors.onSecondary,
         maxLines = 2
       )
@@ -134,7 +145,7 @@ private fun Alter(confirmDialog: MutableState<Boolean>, currentProcess: MutableS
           if (result.first) {
             store.updateItems()
           } else {
-            store.state.trayState.sendNotification(errorTip.copy(message = result.second))
+            store.sendNotification(errorTip.copy(message = result.second))
           }
           confirmDialog.value = false
         }) {

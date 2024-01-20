@@ -24,7 +24,7 @@ object WindowsPort : PortStrategy {
   init {
     if (!enableDebugPrivilege()) {
       Logger.info("Current os doesn't enable debug privilege.")
-    } else{
+    } else {
       Logger.info("Current os enable debug privilege.")
     }
   }
@@ -47,7 +47,7 @@ object WindowsPort : PortStrategy {
     } while (size < sizePtr.value)
     val lastListMap = lastList.associateBy { it.pid }
     val existList = mutableListOf<PortInfo>()
-    return IPHlpAPI.MIB_TCPTABLE_OWNER_PID(buf).table.filter {
+    return IPHlpAPI.MIB_TCPTABLE_OWNER_PID(buf).table.asSequence().filter {
       if (it.dwState != IPHlpAPI.MIB_TCP_STATE.MIB_TCP_STATE_LISTEN) {
         return@filter false
       }
@@ -57,7 +57,7 @@ object WindowsPort : PortStrategy {
         return@filter false
       }
       return@filter true
-    }.distinctBy { it.dwOwningPid }
+    }
       .map { mibTcpRow ->
         val executablePath = getProcessExecutablePath(mibTcpRow.dwOwningPid)
         val image = getProcessExecutableImage(executablePath)
@@ -68,7 +68,10 @@ object WindowsPort : PortStrategy {
           formatIPAddress(mibTcpRow.dwRemoteAddr), formatPort(mibTcpRow.dwRemotePort),
           image
         )
-      }.plus(existList).sortedBy { it.port }
+      }
+      .plus(existList)
+      .distinctBy { it.pid }
+      .sortedBy { it.port }.toList()
   }
 
   private fun getProcessExecutableImage(executablePath: String) = if (executablePath != "unknown") {

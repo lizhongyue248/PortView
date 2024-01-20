@@ -26,7 +26,7 @@ fun PortViewTheme(
   CompositionLocalProvider(LocalLanguage provides Locale.langMap.getOrDefault(lang, Locale.getDefaultLang())) {
     MaterialTheme(
       colors = colors,
-      content = content
+      content = content,
     )
   }
 }

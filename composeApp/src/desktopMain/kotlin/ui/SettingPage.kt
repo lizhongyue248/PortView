@@ -38,8 +38,6 @@ import java.io.File
 import java.net.URI
 
 
-val fontSize = 14.sp
-
 @Preview
 @Composable
 fun Setting(store: AppStore) {
@@ -88,14 +86,14 @@ private fun TitleInfo(store: AppStore, desktop: Desktop) {
       verticalArrangement = Arrangement.SpaceBetween
     ) {
       Text("Port View", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colors.onPrimary)
-      Text("2023.03.01", fontSize = 12.sp, color = MaterialTheme.colors.onSecondary)
+      Text("2023.03.01", fontSize = MaterialTheme.typography.caption.fontSize, color = MaterialTheme.colors.onSecondary)
     }
     OutlinedButton(
       onClick = {
         if (file.exists()) {
           desktop.open(file)
         } else {
-          store.state.trayState.sendNotification(errorTip)
+          store.sendNotification(errorTip)
         }
       },
       elevation = null,
@@ -106,27 +104,27 @@ private fun TitleInfo(store: AppStore, desktop: Desktop) {
       modifier = Modifier
         .pointerHoverIcon(PointerIcon.Hand)
     ) {
-      Text(LocalLanguage.current.ui.showLog, fontSize = 12.sp, color = MaterialTheme.colors.onPrimary)
+      Text(LocalLanguage.current.ui.showLog, fontSize = MaterialTheme.typography.caption.fontSize, color = MaterialTheme.colors.onPrimary)
     }
   }
 }
 
 @Composable
 private fun SystemInfo() {
-  Text("Windows 11", fontSize = fontSize, color = MaterialTheme.colors.onPrimary)
+  Text("Windows 11", fontSize = MaterialTheme.typography.subtitle2.fontSize, color = MaterialTheme.colors.onPrimary)
 }
 
 @Composable
 private fun LanguageSelect(store: AppStore) {
   val dropdownMenuState = rememberSaveable { mutableStateOf(false) }
   Row {
-    Text("${LocalLanguage.current.ui.language}：", fontSize = fontSize)
+    Text("${LocalLanguage.current.ui.language}：", fontSize = MaterialTheme.typography.subtitle2.fontSize)
     Box(
       modifier = Modifier.fillMaxWidth()
     ) {
       Text(
         store.config.language.displayName,
-        fontSize = fontSize,
+        fontSize = MaterialTheme.typography.subtitle2.fontSize,
         color = MaterialTheme.colors.onPrimary,
         modifier = Modifier.clickable {
           dropdownMenuState.value = !dropdownMenuState.value
@@ -144,7 +142,7 @@ private fun LanguageSelect(store: AppStore) {
               },
               contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp),
               content = {
-                Text(text = it.displayName, fontSize = fontSize, color = MaterialTheme.colors.onPrimary)
+                Text(text = it.displayName, fontSize = MaterialTheme.typography.subtitle2.fontSize, color = MaterialTheme.colors.onPrimary)
               },
               modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
             )
@@ -160,7 +158,7 @@ private fun ThemeSelect(store: AppStore) {
   Row(
     verticalAlignment = Alignment.CenterVertically
   ) {
-    Text("${LocalLanguage.current.ui.theme}：", fontSize = fontSize, color = MaterialTheme.colors.onPrimary)
+    Text("${LocalLanguage.current.ui.theme}：", fontSize = MaterialTheme.typography.subtitle2.fontSize, color = MaterialTheme.colors.onPrimary)
     listOf(ThemeOption.LIGHT, ThemeOption.SYSTEM, ThemeOption.DARK)
       .forEach {
         OutlinedButton(
@@ -213,7 +211,7 @@ private fun KeyboardField(store: AppStore) {
       start = 0.dp
     ),
     minHeight = 24.dp,
-    textStyle = TextStyle(fontSize = 16.sp),
+    textStyle = TextStyle(fontSize = MaterialTheme.typography.subtitle1.fontSize),
     modifier = Modifier.onKeyEvent {
       when (it.type) {
         KeyEventType.KeyDown -> {
@@ -264,7 +262,7 @@ private fun RefreshField(store: AppStore) {
       start = 0.dp
     ),
     minHeight = 24.dp,
-    textStyle = TextStyle(fontSize = 16.sp)
+    textStyle = TextStyle(fontSize = MaterialTheme.typography.subtitle1.fontSize)
   )
 }
 
@@ -347,7 +345,7 @@ private fun Links(desktop: Desktop) {
         Text(
           it.title,
           color = Color(68, 122, 227),
-          fontSize = 14.sp
+          fontSize = MaterialTheme.typography.subtitle2.fontSize
         )
         Icon(
           imageVector = rememberArrowOutward(),

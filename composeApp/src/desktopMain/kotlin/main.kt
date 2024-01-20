@@ -1,3 +1,4 @@
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Column
@@ -10,7 +11,12 @@ import androidx.compose.material.Scaffold
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPosition
@@ -37,9 +43,6 @@ import kotlin.time.Duration.Companion.seconds
 @OptIn(ExperimentalResourceApi::class)
 fun main() = application {
   val store = remember { AppStore() }
-  val state = store.state
-  val selectedItem = remember { mutableStateOf(0) }
-
   val rightBottom = GraphicsEnvironment.getLocalGraphicsEnvironment().maximumWindowBounds.rightBottom
   val dialogState = rememberDialogState(
     width = 420.dp,
@@ -51,19 +54,29 @@ fun main() = application {
   PortViewTheme(darkTheme = darkTheme.value, lang = store.config.language) {
     MyDialogWindow(
       onCloseRequest = store::hidden,
-      visible = state.isVisible,
+      visible = store.state.isVisible,
       alwaysOnTop = true,
       undecorated = true,
       transparent = true,
       resizable = false,
       icon = painterResource("icon.png"),
       state = dialogState,
+      onKeyEvent = {
+        when {
+          it.key == Key.Escape && it.type == KeyEventType.KeyUp -> {
+            store.visibleToggle()
+            true
+          }
+          else -> false
+        }
+      }
     ) {
       MaterialTheme {
         Scaffold(
           modifier = Modifier.background(Color.Transparent).fillMaxSize()
             .padding(top = 10.dp, start = 20.dp, end = 20.dp, bottom = 10.dp)
-            .shadow(20.dp, RoundedCornerShape(5.dp)),
+            .shadow(20.dp, RoundedCornerShape(5.dp))
+            .focusRequester(store.state.focusRequester),
           topBar = {
             WindowDraggableArea(modifier = Modifier
               .pointerInput(Unit) {
@@ -75,9 +88,9 @@ fun main() = application {
                 }
               }) { TopBar(store) }
           },
-          bottomBar = { BottomNav(selectedItem) }
+          bottomBar = { BottomNav(store) }
         ) {
-          if (selectedItem.value == 0) {
+          if (store.state.currentTab == 0) {
             Column {
               SearchField(store)
               Content(store)
@@ -88,7 +101,7 @@ fun main() = application {
         }
       }
 
-      TraySetting(state = state.trayState, exit = { exitApplication() }, onAction = { x, y ->
+      TraySetting(state = store.state.trayState, exit = { exitApplication() }, onAction = { x, y ->
         dialogState.position = WindowPosition(x, y)
         store.visibleToggle()
       })
@@ -98,15 +111,18 @@ fun main() = application {
   val notification = rememberNotification(LocalLanguage.current.tip.welcome, "")
 
   LaunchedEffect(Unit) {
-    state.trayState.sendNotification(notification)
+    store.sendNotification(notification)
     Logger.info("Send init notification.")
+    store.state.searchFocusRequester.requestFocus()
     store.updateItems()
   }
 
   refreshEffect(store)
   themeEffect(store, darkTheme)
   keyboardEffect(store)
+  focusEffect(store)
 }
+
 
 @Composable
 private fun refreshEffect(store: AppStore) {
@@ -171,3 +187,10 @@ private fun themeEffect(store: AppStore, darkTheme: MutableState<Boolean>) {
 }
 
 
+@Composable
+private fun focusEffect(store: AppStore) {
+  LaunchedEffect(store.state.isVisible) {
+    delay(100)
+    store.state.searchFocusRequester.requestFocus()
+  }
+}

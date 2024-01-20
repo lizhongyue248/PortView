@@ -1,8 +1,12 @@
 package model
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.window.Notification
 import androidx.compose.ui.window.TrayState
 import com.jthemedetecor.OsThemeDetector
 import core.Platform
@@ -84,12 +88,22 @@ class AppStore {
     }
   }
 
+  fun changeCurrentTab(current: Int) {
+    setState {
+      copy(currentTab = current)
+    }
+  }
+
   fun updateKeyboard() {
     setState {
       copy(
         keyboard = config.getKeyStrokeString()
       )
     }
+  }
+
+  fun sendNotification(notification: Notification) {
+    state.trayState.sendNotification(notification)
   }
 
   private inline fun setState(update: AppState.() -> AppState) {
@@ -134,9 +148,18 @@ class AppStore {
     config.save()
   }
 
+  fun indexOfList(index: Int): PortInfo? {
+    return state.list.getOrNull(index)
+  }
+
   data class AppState(
     val items: List<PortInfo> = emptyList(),
     val searchText: String = "",
+    val searchFocusRequester: FocusRequester = FocusRequester(),
+    val searchInteractionSource: MutableInteractionSource = MutableInteractionSource(),
+    val focusRequester: FocusRequester = FocusRequester(),
+    val lazyListState: LazyListState = LazyListState(0, 0),
+    val currentTab: Int = 0,
     val editingItemId: Long? = null,
     val keyboard: String = "",
     val isVisible: Boolean = true,
@@ -169,6 +192,7 @@ class AppStore {
     }
     return OsThemeDetector.getDetector().isDark
   }
+
 
   @Serializable
   data class ConfigState(
