@@ -10,7 +10,10 @@ data class Tip(
   val killTitle: String,
   val kill: String,
   val killError: String,
-  val openPath: String
+  val openPath: String,
+  val errorNoExecute: String,
+  val errorNoElevate: String,
+  val errorNoRun: String
 )
 
 @Serializable
@@ -25,6 +28,7 @@ data class Ui(
   val unknown: String,
   val confirm: String,
   val cancel: String,
+  val elevate: String,
   val themeOption: Map<String, String>
 )
 

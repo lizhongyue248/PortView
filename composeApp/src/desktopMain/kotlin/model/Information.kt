@@ -1,16 +1,17 @@
 package model
 
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.runtime.Composable
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.resource
 
-data class ExternalLink(
+data class ExternalInfo(
   val title: String,
-  val link: String,
-  val icon: ImageVector
+  val onClick: () -> Unit,
+  val prefixIcon: @Composable () -> Unit = {},
+  val suffixIcon: @Composable () -> Unit = {}
 )
 
 enum class ThemeOption {

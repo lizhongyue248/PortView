@@ -24,17 +24,21 @@ import androidx.compose.ui.window.Notification
 import androidx.compose.ui.window.rememberNotification
 import component.MyIconButton
 import component.MyTextField
-import core.PlatformInfo
+import core.Platform
+import i18n.lang.Lang
 import i18n.lang.LangEnum
 import icons.GithubMark
 import icons.rememberArrowOutward
 import icons.rememberHelp
+import icons.rememberSensorOccupied
 import model.*
 import org.tinylog.kotlin.Logger
 import java.awt.Desktop
 import java.awt.event.KeyEvent
 import java.io.File
 import java.net.URI
+import java.util.concurrent.TimeUnit
+import kotlin.system.exitProcess
 
 
 @Preview
@@ -60,7 +64,7 @@ fun Setting(store: AppStore) {
     Spacer(Modifier.height(12.dp))
     Unknown(store)
     Spacer(Modifier.height(12.dp))
-    Links(desktop)
+    External(store, desktop)
   }
 
 }
@@ -111,7 +115,7 @@ private fun TitleInfo(store: AppStore, desktop: Desktop) {
 @Composable
 private fun SystemInfo() {
   Text(
-    PlatformInfo.osName,
+    Platform.osName,
     fontSize = MaterialTheme.typography.subtitle2.fontSize,
     color = MaterialTheme.colors.onPrimary
   )
@@ -325,48 +329,84 @@ private fun Unknown(store: AppStore) {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun Links(desktop: Desktop) {
-  Row {
-    Text("Test", modifier = Modifier.onClick {
-      Logger.info("Get current run dir is ${System.getProperty("user.dir")}")
-      println(this.javaClass.getResource("/lang")?.path)
-      println(File(this.javaClass.getResource("/lang")?.path?:"").exists())
-    })
-  }
-  listOf(
-    ExternalLink(
-      LocalLanguage.current.links.sourceCode,
-      "https://github.com/lizhongyue248/PortView", GithubMark
-    )
+private fun External(store: AppStore, desktop: Desktop) {
+  val currentLanguage = LocalLanguage.current
+  val externalInfoList = mutableListOf(
+    ExternalInfo(
+      currentLanguage.links.sourceCode,
+      prefixIcon = {
+        Icon(
+          imageVector = GithubMark,
+          tint = Color(68, 122, 227),
+          contentDescription = "to link github",
+          modifier = Modifier.size(16.dp)
+        )
+      },
+      suffixIcon = {
+        Icon(
+          imageVector = rememberArrowOutward(),
+          tint = Color(68, 122, 227),
+          contentDescription = "to link github",
+          modifier = Modifier.size(16.dp)
+        )
+      },
+      onClick = {
+        desktop.browse(URI.create("https://github.com/lizhongyue248/PortView"))
+      }
+    ),
   )
+  if (!Platform.isDebug && Platform.isWindows) {
+    externalInfoList.add(ExternalInfo(
+      currentLanguage.ui.elevate,
+      onClick = { elevateApplication(store, currentLanguage) },
+      prefixIcon = {
+        Icon(
+          imageVector = rememberSensorOccupied(),
+          tint = Color(68, 122, 227),
+          contentDescription = "to admin",
+          modifier = Modifier.size(16.dp)
+        )
+      },
+    ))
+  }
+  externalInfoList
     .forEach {
+      Spacer(Modifier.height(6.dp))
       Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
-          .onClick {
-            val uri = URI.create(it.link)
-            desktop.browse(uri)
-          }
+          .onClick(onClick = it.onClick)
       ) {
-        Icon(
-          imageVector = it.icon,
-          tint = Color(68, 122, 227),
-          contentDescription = it.title,
-          modifier = Modifier.size(16.dp)
-        )
+        it.prefixIcon()
         Spacer(Modifier.width(8.dp))
         Text(
           it.title,
           color = Color(68, 122, 227),
           fontSize = MaterialTheme.typography.subtitle2.fontSize
         )
-        Icon(
-          imageVector = rememberArrowOutward(),
-          tint = Color(68, 122, 227),
-          contentDescription = it.title,
-          modifier = Modifier.size(16.dp)
-        )
+        it.suffixIcon()
       }
     }
 
+}
+
+private fun elevateApplication(store: AppStore, currentLanguage: Lang) {
+  val elevateFile = File(ELEVATE_PATH)
+  val exeFile = File(System.getProperty("user.dir") + File.separatorChar + "PortView.exe")
+  if (!exeFile.exists()) {
+    Logger.warn("${exeFile.absolutePath} not exist")
+    store.sendWarn(currentLanguage.tip.errorNoExecute)
+    return
+  }
+  if (!elevateFile.exists()) {
+    Logger.warn("${elevateFile.absolutePath} not exist")
+    store.sendWarn(currentLanguage.tip.errorNoElevate)
+    return
+  }
+  val processBuilder = ProcessBuilder(elevateFile.absolutePath, exeFile.absolutePath)
+  if (processBuilder.start().waitFor(60, TimeUnit.SECONDS)) {
+    exitProcess(0)
+  } else {
+    store.sendWarn(currentLanguage.tip.errorNoRun)
+  }
 }

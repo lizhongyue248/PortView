@@ -7,7 +7,10 @@
     "killTitle": "Tip",
     "kill": "Do you want to close %s %s ?",
     "killError": "Close error, please see log file to get more information.",
-    "openPath": "Open folder"
+    "openPath": "Open folder",
+    "errorNoExecute": "Can not find execute file.",
+    "errorNoElevate": "Elevate file not exist.",
+    "errorNoRun": "Start timeout..."
   },
   "ui": {
     "homeNav": "Home",
@@ -20,6 +23,7 @@
     "unknown": "Display unknown processes",
     "confirm": "Yes",
     "cancel": "No",
+    "elevate": "Elevate to administrator privileges",
     "themeOption": {
       "dark": "Dark",
       "light": "Light",

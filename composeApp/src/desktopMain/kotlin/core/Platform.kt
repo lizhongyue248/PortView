@@ -4,18 +4,22 @@ import core.mac.MacPort
 import core.win.WindowsAction
 import core.win.WindowsPort
 
-object  PlatformInfo {
+object Platform {
   val name: String = "Java ${System.getProperty("java.version")}"
   val osName: String = System.getProperty("os.name")
-  fun isWindows(): Boolean = osName.lowercase().contains("windows")
-  fun isMac(): Boolean = osName.lowercase().contains("mac")
-}
+  val isWindows: Boolean
+    get() = osName.lowercase().contains("windows")
+  val isMac: Boolean
+    get() = osName.lowercase().contains("mac")
+  val x64: Boolean
+    get() = System.getProperty("os.arch").contains("64")
+  val x86: Boolean
+    get() = !x64
 
-object Platform {
+  var isDebug: Boolean = false
   val portStrategy: PortStrategy
     get() {
-      val platform = PlatformInfo
-      if (platform.isWindows()) {
+      if (isWindows) {
         return WindowsPort
       }
       return MacPort

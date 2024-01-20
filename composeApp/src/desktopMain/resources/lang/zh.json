@@ -7,7 +7,10 @@
     "killTitle": "确认",
     "kill": "确认结束进程 %s %s 吗？",
     "killError": "进程结束失败，清查看日志以获取更多信息",
-    "openPath": "打开所在文件夹"
+    "openPath": "打开所在文件夹",
+    "errorNoExecute": "无法找到当前程序文件",
+    "errorNoElevate": "无法找到提权文件",
+    "errorNoRun": "提权超时……"
   },
   "ui": {
     "homeNav": "主页",
@@ -24,7 +27,8 @@
       "dark": "深色",
       "light": "浅色",
       "system": "系统"
-    }
+    },
+    "elevate": "提升到管理员权限"
   },
   "links": {
     "sourceCode": "PortView 源代码"

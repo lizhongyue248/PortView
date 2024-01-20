@@ -13,7 +13,7 @@ object WindowsAction : ActionStrategy {
     val process = ProcessHandle.of(pid.toLong())
     if (process.isEmpty) {
       Logger.warn("[Error] Can not find process $pid. Maybe you should use root.")
-      return Pair(false, "Can not find process \$$pid.")
+      return Pair(false, "Can not find process $pid.")
     }
     val result = process.get().destroyForcibly()
     Logger.info("Close process result $result.")

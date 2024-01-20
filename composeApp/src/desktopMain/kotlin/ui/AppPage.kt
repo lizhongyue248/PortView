@@ -74,7 +74,7 @@ fun Content(store: AppStore) {
     )
   }
   if (confirmDialog.value) {
-    Alter(confirmDialog, currentProcess, store)
+    Alert(confirmDialog, currentProcess, store)
   }
 }
 
@@ -144,7 +144,7 @@ private fun PortItem(item: PortInfo, confirmDialog: MutableState<Boolean>, curre
 }
 
 @Composable
-private fun Alter(confirmDialog: MutableState<Boolean>, currentProcess: MutableState<PortInfo?>, store: AppStore) {
+private fun Alert(confirmDialog: MutableState<Boolean>, currentProcess: MutableState<PortInfo?>, store: AppStore) {
   AlertDialog(
     onDismissRequest = {
       confirmDialog.value = false

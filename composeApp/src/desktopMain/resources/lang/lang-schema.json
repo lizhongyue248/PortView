@@ -14,11 +14,11 @@
         },
         "tip": {
           "additionalProperties": false,
-          "$ref": "#/definitions/xo7ezscd5vzsv"
+          "$ref": "#/definitions/xk0br3e0ffda7"
         },
         "ui": {
           "additionalProperties": false,
-          "$ref": "#/definitions/x17riuho0hetxb"
+          "$ref": "#/definitions/xlh7gbm06pfcv"
         },
         "links": {
           "additionalProperties": false,
@@ -35,7 +35,7 @@
     "xq0zwcprkn9j3": {
       "type": "string"
     },
-    "xo7ezscd5vzsv": {
+    "xk0br3e0ffda7": {
       "additionalProperties": false,
       "type": "object",
       "properties": {
@@ -66,6 +66,18 @@
         "openPath": {
           "additionalProperties": false,
           "$ref": "#/definitions/xq0zwcprkn9j3"
+        },
+        "errorNoExecute": {
+          "additionalProperties": false,
+          "$ref": "#/definitions/xq0zwcprkn9j3"
+        },
+        "errorNoElevate": {
+          "additionalProperties": false,
+          "$ref": "#/definitions/xq0zwcprkn9j3"
+        },
+        "errorNoRun": {
+          "additionalProperties": false,
+          "$ref": "#/definitions/xq0zwcprkn9j3"
         }
       },
       "required": [
@@ -75,10 +87,13 @@
         "killTitle",
         "kill",
         "killError",
-        "openPath"
+        "openPath",
+        "errorNoExecute",
+        "errorNoElevate",
+        "errorNoRun"
       ]
     },
-    "x17riuho0hetxb": {
+    "xlh7gbm06pfcv": {
       "additionalProperties": false,
       "type": "object",
       "properties": {
@@ -122,6 +137,10 @@
           "additionalProperties": false,
           "$ref": "#/definitions/xq0zwcprkn9j3"
         },
+        "elevate": {
+          "additionalProperties": false,
+          "$ref": "#/definitions/xq0zwcprkn9j3"
+        },
         "themeOption": {
           "additionalProperties": false,
           "$ref": "#/definitions/px5mae9ial8h"
@@ -138,6 +157,7 @@
         "unknown",
         "confirm",
         "cancel",
+        "elevate",
         "themeOption"
       ]
     },

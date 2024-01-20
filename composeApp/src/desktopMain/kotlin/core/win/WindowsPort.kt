@@ -7,6 +7,7 @@ import com.sun.jna.platform.win32.*
 import com.sun.jna.platform.win32.WinDef.HICON
 import com.sun.jna.platform.win32.WinError.ERROR_NOT_ALL_ASSIGNED
 import com.sun.jna.ptr.IntByReference
+import core.Platform
 import core.PortInfo
 import core.PortStrategy
 import model.UNKNOWN
@@ -24,8 +25,10 @@ object WindowsPort : PortStrategy {
 
   init {
     if (!enableDebugPrivilege()) {
+      Platform.isDebug = false
       Logger.info("Current os doesn't enable debug privilege.")
     } else {
+      Platform.isDebug = true
       Logger.info("Current os enable debug privilege.")
     }
   }

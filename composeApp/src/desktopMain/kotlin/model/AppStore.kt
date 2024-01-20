@@ -12,18 +12,25 @@ import com.jthemedetecor.OsThemeDetector
 import core.Platform
 import core.PortInfo
 import i18n.lang.LangEnum
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import net.harawata.appdirs.AppDirsFactory
 import org.apache.commons.lang3.StringUtils
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.resource
 import org.tinylog.configuration.Configuration
 import org.tinylog.kotlin.Logger
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.StandardOpenOption
 
 
 val CONFIG_PATH: String = AppDirsFactory.getInstance().getUserConfigDir("PortView", null, "zyue") + File.separatorChar + "config.json"
 val LOGGER_PATH: String = AppDirsFactory.getInstance().getUserConfigDir("PortView", null, "zyue") + File.separatorChar + "port-view.log"
+val ELEVATE_PATH: String = AppDirsFactory.getInstance().getUserConfigDir("PortView", null, "zyue") + File.separatorChar + "Elevate.exe"
 
 class AppStore {
   var config: ConfigState by mutableStateOf(initialConfig())
@@ -31,7 +38,25 @@ class AppStore {
   var state: AppState by mutableStateOf(initialState())
     private set
 
+  @OptIn(ExperimentalResourceApi::class)
   private fun initialState(): AppState {
+    if (Platform.isWindows) {
+      val elevatePath = File(ELEVATE_PATH)
+      if (!elevatePath.exists()) {
+        val name = "helper/Elevate_${
+          if (Platform.x64) "x64"
+          else "x86"
+        }.exe"
+        val bytes = runBlocking {
+          resource(name).readBytes()
+        }
+        try {
+          Files.write(Path.of(ELEVATE_PATH), bytes, StandardOpenOption.CREATE, StandardOpenOption.WRITE)
+        } catch (e: Exception) {
+          Logger.warn("Write Elevate file error.", e)
+        }
+      }
+    }
     return AppState(
       keyboard = config.getKeyStrokeString(),
       showUnknown = config.showUnknown
@@ -108,6 +133,17 @@ class AppStore {
   }
 
   fun sendNotification(notification: Notification) {
+    state.trayState.sendNotification(notification)
+  }
+
+  fun sendWarn(title: String) {
+    sendNotification(title, Notification.Type.Warning)
+  }
+
+  fun sendNotification(title: String, type: Notification.Type) {
+    val notification = Notification(
+      title, "", type
+    )
     state.trayState.sendNotification(notification)
   }
 
