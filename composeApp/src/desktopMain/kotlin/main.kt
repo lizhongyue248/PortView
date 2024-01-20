@@ -113,7 +113,7 @@ fun main() = application {
   LaunchedEffect(Unit) {
     store.sendNotification(notification)
     Logger.info("Send init notification.")
-    store.state.searchFocusRequester.requestFocus()
+    store.searchFocus()
     store.updateItems()
   }
 
@@ -191,6 +191,6 @@ private fun themeEffect(store: AppStore, darkTheme: MutableState<Boolean>) {
 private fun focusEffect(store: AppStore) {
   LaunchedEffect(store.state.isVisible) {
     delay(100)
-    store.state.searchFocusRequester.requestFocus()
+    store.searchFocus()
   }
 }

@@ -62,7 +62,12 @@ class AppStore {
 
   fun visibleToggle() {
     setState {
-      copy(isVisible = !isVisible)
+      if (!isVisible) {
+        val items = Platform.portStrategy.portList(state.items)
+        copy(isVisible = true, items = items)
+      } else {
+        copy(isVisible = false)
+      }
     }
   }
 
@@ -148,8 +153,10 @@ class AppStore {
     config.save()
   }
 
-  fun indexOfList(index: Int): PortInfo? {
-    return state.list.getOrNull(index)
+  fun searchFocus() {
+    if (state.currentTab == 0) {
+      state.searchFocusRequester.requestFocus()
+    }
   }
 
   data class AppState(

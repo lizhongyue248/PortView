@@ -213,6 +213,9 @@ private fun KeyboardField(store: AppStore) {
     minHeight = 24.dp,
     textStyle = TextStyle(fontSize = MaterialTheme.typography.subtitle1.fontSize),
     modifier = Modifier.onKeyEvent {
+      if (it.key == Key.Tab) {
+        return@onKeyEvent false
+      }
       when (it.type) {
         KeyEventType.KeyDown -> {
           pressedKeys.add(it.key)
@@ -233,7 +236,7 @@ private fun KeyboardField(store: AppStore) {
           pressedKeys.clear()
         }
       }
-      false
+      true
     }
   )
 }
