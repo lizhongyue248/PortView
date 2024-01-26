@@ -97,19 +97,10 @@ fun MyDialogWindow(
 
             override fun windowDeactivated(e: WindowEvent?) {
               onWindowDeactivated()
-              println("windowDeactivated")
             }
 
             override fun windowActivated(e: WindowEvent?) {
-              println("windowActivated")
-            }
-
-            override fun windowLostFocus(e: WindowEvent?) {
-              println("windowLostFocus")
-            }
-
-            override fun windowGainedFocus(e: WindowEvent?) {
-              println("windowGainedFocus")
+              dialog.toFront()
             }
           }
         )

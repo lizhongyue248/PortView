@@ -127,7 +127,6 @@ fun TraySetting(
       isImageAutoSize = true
       addMouseListener(object : MouseAdapter() {
         override fun mousePressed(e: MouseEvent) {
-          println(e.button)
           if ((Platform.isMac && e.button == MouseEvent.BUTTON3)
             || (!Platform.isMac && e.button == MouseEvent.BUTTON1)
           ) {

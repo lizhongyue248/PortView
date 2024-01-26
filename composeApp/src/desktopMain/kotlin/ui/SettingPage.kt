@@ -228,6 +228,10 @@ private fun KeyboardField(store: AppStore) {
           pressedKeys.add(it.key)
           store.configKeyboard(pressedKeys.joinToString(" ") { key ->
             val keyText = KeyEvent.getKeyText(key.nativeKeyCode)
+              .replace("⌥", "alt")
+              .replace("⇧", "shift")
+              .replace("⌘", "meta")
+              .replace("⌃", "ctrl")
             if (keyText.length > 1) {
               keyText.lowercase()
             } else {
