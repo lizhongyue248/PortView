@@ -16,6 +16,9 @@ log4j = "2.22.1"
 log4j-kotlin = "1.4.0"
 tinylog = "2.6.2"
 json-schema = "0.9.9"
+oshi = "6.4.11"
+twelvemonkeys-imageio = "3.10.1"
+plist = "1.27"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -42,6 +45,10 @@ tinylog = { module = "org.tinylog:tinylog-api-kotlin", version.ref = "tinylog" }
 tinylog-impl = { module = "org.tinylog:tinylog-impl", version.ref = "tinylog" }
 tinylog-slf4j = { module = "org.tinylog:slf4j-tinylog", version.ref = "tinylog" }
 json-schema = { module = "com.github.Ricky12Awesome:json-schema-serialization", version.ref = "json-schema" }
+oshi-core = { module = "com.github.oshi:oshi-core", version.ref = "oshi" }
+imageio-core = { module = "com.twelvemonkeys.imageio:imageio-core", version.ref = "twelvemonkeys-imageio" }
+imageio-icns = { module = "com.twelvemonkeys.imageio:imageio-icns", version.ref = "twelvemonkeys-imageio" }
+plist = { module = "com.googlecode.plist:dd-plist", version.ref = "plist" }
 
 [plugins]
 jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose-plugin" }

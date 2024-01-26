@@ -6,7 +6,7 @@ import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-class WindowsPortTest : PortSupport(){
+class WindowsPortTest : PortSupport() {
 
   @Test
   fun portListTest() {

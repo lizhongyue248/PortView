@@ -34,6 +34,7 @@ import androidx.compose.ui.window.TrayState
 import androidx.compose.ui.window.rememberTrayState
 import androidx.compose.ui.window.setContent
 import component.MyIconButton
+import core.Platform
 import core.TestTag
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -50,7 +51,7 @@ internal fun TopBar(store: AppStore) {
   val closeInteraction = remember { MutableInteractionSource() }
   val borderColor = if (closeInteraction.collectIsFocusedAsState().value) {
     MaterialTheme.colors.onSecondary
-  } else{
+  } else {
     Color.Transparent
   }
   Column {
@@ -117,20 +118,21 @@ fun TraySetting(
 
   // 获取屏幕大小
   val screenSize: Dimension = Toolkit.getDefaultToolkit().screenSize
-  val screenWidth = screenSize.width.dp
-  val screenHeight = screenSize.height.dp
   val windowInfo = LocalWindowInfo.current
+  val screenBounds: Rectangle = GraphicsEnvironment.getLocalGraphicsEnvironment().maximumWindowBounds
+  val screenHeight = screenSize.height.dp
 
   val tray = remember {
     TrayIcon(image).apply {
       isImageAutoSize = true
       addMouseListener(object : MouseAdapter() {
         override fun mousePressed(e: MouseEvent) {
-          if (e.button == MouseEvent.BUTTON1) {
+          println(e.button)
+          if ((Platform.isMac && e.button == MouseEvent.BUTTON3)
+            || (!Platform.isMac && e.button == MouseEvent.BUTTON1)
+          ) {
             val x = e.x.dp
             val y = e.y.dp
-            val screenBounds: Rectangle = GraphicsEnvironment.getLocalGraphicsEnvironment().maximumWindowBounds
-            val screenVisibleWidth = screenBounds.width.dp
             val screenVisibleHeight = screenBounds.height.dp
             val trayHeight = screenHeight.minus(screenVisibleHeight)
             if (y > screenHeight.div(2)) {
@@ -138,6 +140,10 @@ fun TraySetting(
               val positionX = x.minus(windowInfo.containerSize.width.dp.div(2)).plus(20.dp)
               val positionY = screenHeight.minus(trayHeight).minus(windowInfo.containerSize.height.dp).plus(10.dp)
               onAction(positionX, positionY)
+            } else {
+              // 任务栏在上方
+              val positionX = x.minus(windowInfo.containerSize.width.dp.div(4)).plus(20.dp)
+              onAction(positionX, y.minus(10.dp))
             }
           }
         }

@@ -37,14 +37,16 @@ kotlin {
       implementation(libs.app.dirs)
       implementation(libs.serialization.json.jvm)
 
-      // Logging
       implementation(libs.slf4j)
       implementation(libs.tinylog)
       implementation(libs.tinylog.impl)
       implementation(libs.tinylog.slf4j)
-//      implementation(libs.log4j)
-//      implementation(libs.log4j.slf4j)
-//      implementation(libs.kotlin.logging)
+
+      implementation(libs.imageio.core)
+      implementation(libs.imageio.icns)
+      implementation(libs.plist)
+
+      implementation(libs.oshi.core)
     }
   }
 }
@@ -69,6 +71,14 @@ compose.desktop {
       }
       macOS {
         iconFile.set(project.file("icon/mac.icns"))
+        infoPlist {
+          extraKeysRawXml = """
+                        <key>LSUIElement</key>
+                        <string>true</string>
+                        <key>LSBackgroundOnly</key>
+                        <string>true</string>
+                    """.trimIndent()
+        }
       }
       println(project.layout.projectDirectory.dir("resources"))
       appResourcesRootDir.set(project.layout.projectDirectory.dir("resources"))

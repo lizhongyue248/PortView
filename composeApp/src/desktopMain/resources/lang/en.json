@@ -10,7 +10,8 @@
     "openPath": "Open folder",
     "errorNoExecute": "Can not find execute file.",
     "errorNoElevate": "Elevate file not exist.",
-    "errorNoRun": "Start timeout..."
+    "errorNoRun": "Start timeout...",
+    "copy": "Copy command"
   },
   "ui": {
     "homeNav": "Home",
@@ -28,7 +29,9 @@
       "dark": "Dark",
       "light": "Light",
       "system": "System"
-    }
+    },
+    "trayExit": "退出",
+    "trayShow": "显示"
   },
   "links": {
     "sourceCode": "Source Code"

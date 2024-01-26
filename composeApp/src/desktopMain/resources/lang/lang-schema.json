@@ -14,11 +14,11 @@
         },
         "tip": {
           "additionalProperties": false,
-          "$ref": "#/definitions/xk0br3e0ffda7"
+          "$ref": "#/definitions/xerov8ys3bb3z"
         },
         "ui": {
           "additionalProperties": false,
-          "$ref": "#/definitions/xlh7gbm06pfcv"
+          "$ref": "#/definitions/1eh6dcxixosn5"
         },
         "links": {
           "additionalProperties": false,
@@ -35,7 +35,7 @@
     "xq0zwcprkn9j3": {
       "type": "string"
     },
-    "xk0br3e0ffda7": {
+    "xerov8ys3bb3z": {
       "additionalProperties": false,
       "type": "object",
       "properties": {
@@ -67,6 +67,10 @@
           "additionalProperties": false,
           "$ref": "#/definitions/xq0zwcprkn9j3"
         },
+        "copy": {
+          "additionalProperties": false,
+          "$ref": "#/definitions/xq0zwcprkn9j3"
+        },
         "errorNoExecute": {
           "additionalProperties": false,
           "$ref": "#/definitions/xq0zwcprkn9j3"
@@ -88,12 +92,13 @@
         "kill",
         "killError",
         "openPath",
+        "copy",
         "errorNoExecute",
         "errorNoElevate",
         "errorNoRun"
       ]
     },
-    "xlh7gbm06pfcv": {
+    "1eh6dcxixosn5": {
       "additionalProperties": false,
       "type": "object",
       "properties": {
@@ -144,6 +149,14 @@
         "themeOption": {
           "additionalProperties": false,
           "$ref": "#/definitions/px5mae9ial8h"
+        },
+        "trayExit": {
+          "additionalProperties": false,
+          "$ref": "#/definitions/xq0zwcprkn9j3"
+        },
+        "trayShow": {
+          "additionalProperties": false,
+          "$ref": "#/definitions/xq0zwcprkn9j3"
         }
       },
       "required": [
@@ -158,7 +171,9 @@
         "confirm",
         "cancel",
         "elevate",
-        "themeOption"
+        "themeOption",
+        "trayExit",
+        "trayShow"
       ]
     },
     "x1qcfw8fkcxam7": {

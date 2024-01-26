@@ -33,7 +33,8 @@ import core.TestTag
 import model.AppStore
 import model.UNKNOWN
 import org.apache.commons.lang3.StringUtils
-import java.io.File
+import java.awt.Toolkit
+import java.awt.datatransfer.StringSelection
 
 @Composable
 fun Content(store: AppStore) {
@@ -54,11 +55,15 @@ fun Content(store: AppStore) {
             items = {
               listOf(
                 ContextMenuItem(i18n.tip.openPath) {
-                  val file = File(item.command)
-                  if (StringUtils.equalsIgnoreCase(item.name, UNKNOWN) || !file.exists()) {
+                  if (StringUtils.equalsIgnoreCase(item.name, UNKNOWN)) {
                     return@ContextMenuItem
                   }
-                  Platform.actionStrategy.open(file)
+                  Platform.actionStrategy.open(item.command)
+                },
+                ContextMenuItem(i18n.tip.copy) {
+                  val clipboard = Toolkit.getDefaultToolkit().systemClipboard
+                  val selection = StringSelection(i18n.tip.copy)
+                  clipboard.setContents(selection, null)
                 },
                 ContextMenuItem("${item.address}:${item.port}") {},
                 ContextMenuItem("PID - ${item.pid}") {},
@@ -133,7 +138,7 @@ private fun PortItem(item: PortInfo, confirmDialog: MutableState<Boolean>, curre
     }
     Text(
       modifier = Modifier
-        .width(70.dp).padding(start = 10.dp),
+        .width(90.dp).padding(start = 10.dp),
       text = ":${item.port}",
       fontSize = 18.sp,
       fontWeight = SemiBold,

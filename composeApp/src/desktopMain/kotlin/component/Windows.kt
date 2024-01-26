@@ -24,6 +24,7 @@ internal val LocalWindow = compositionLocalOf<Window?> { null }
 @Composable
 fun MyDialogWindow(
   onCloseRequest: () -> Unit,
+  onWindowDeactivated: () -> Unit,
   state: DialogState = rememberDialogState(),
   visible: Boolean = true,
   title: String = "Untitled",
@@ -92,6 +93,23 @@ fun MyDialogWindow(
           object : WindowAdapter() {
             override fun windowClosing(e: WindowEvent?) {
               currentOnCloseRequest()
+            }
+
+            override fun windowDeactivated(e: WindowEvent?) {
+              onWindowDeactivated()
+              println("windowDeactivated")
+            }
+
+            override fun windowActivated(e: WindowEvent?) {
+              println("windowActivated")
+            }
+
+            override fun windowLostFocus(e: WindowEvent?) {
+              println("windowLostFocus")
+            }
+
+            override fun windowGainedFocus(e: WindowEvent?) {
+              println("windowGainedFocus")
             }
           }
         )

@@ -1,5 +1,6 @@
 package core
 
+import core.mac.MacAction
 import core.mac.MacPort
 import core.win.WindowsAction
 import core.win.WindowsPort
@@ -26,6 +27,9 @@ object Platform {
     }
   val actionStrategy: ActionStrategy
     get() {
-      return WindowsAction
+      if (isWindows) {
+        return WindowsAction
+      }
+      return MacAction
     }
 }
