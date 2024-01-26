@@ -63,10 +63,13 @@ compose.desktop {
       packageVersion = "1.0.0"
       windows {
         shortcut = true
+        menu = true
+        menuGroup = "Port View"
         iconFile.set(project.file("icon/win.ico"))
       }
       linux {
         shortcut = true
+        menuGroup = "Port View"
         iconFile.set(project.file("icon/linux.png"))
       }
       macOS {

@@ -18,7 +18,7 @@
         },
         "ui": {
           "additionalProperties": false,
-          "$ref": "#/definitions/1eh6dcxixosn5"
+          "$ref": "#/definitions/uarpucjmhwch"
         },
         "links": {
           "additionalProperties": false,
@@ -98,7 +98,7 @@
         "errorNoRun"
       ]
     },
-    "1eh6dcxixosn5": {
+    "uarpucjmhwch": {
       "additionalProperties": false,
       "type": "object",
       "properties": {
@@ -157,6 +157,10 @@
         "trayShow": {
           "additionalProperties": false,
           "$ref": "#/definitions/xq0zwcprkn9j3"
+        },
+        "trayHide": {
+          "additionalProperties": false,
+          "$ref": "#/definitions/xq0zwcprkn9j3"
         }
       },
       "required": [
@@ -173,7 +177,8 @@
         "elevate",
         "themeOption",
         "trayExit",
-        "trayShow"
+        "trayShow",
+        "trayHide"
       ]
     },
     "x1qcfw8fkcxam7": {

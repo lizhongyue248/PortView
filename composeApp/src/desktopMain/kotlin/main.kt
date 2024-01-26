@@ -61,9 +61,7 @@ fun main() {
         resizable = false,
         icon = painterResource("icon.png"),
         state = dialogState,
-        onWindowDeactivated = {
-           store.hidden()
-        },
+        onWindowDeactivated = store::hidden,
         onKeyEvent = {
           when {
             it.key == Key.Escape && it.type == KeyEventType.KeyUp -> {
@@ -105,7 +103,7 @@ fun main() {
           }
         }
 
-        TraySetting(state = store.state.trayState, exit = { exitApplication() }, onAction = { x, y ->
+        TraySetting(store, exit = { exitApplication() }, onAction = { x, y ->
           dialogState.position = WindowPosition(x, y)
           store.visibleToggle()
         })

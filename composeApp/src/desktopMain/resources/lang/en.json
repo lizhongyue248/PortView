@@ -30,8 +30,9 @@
       "light": "Light",
       "system": "System"
     },
-    "trayExit": "退出",
-    "trayShow": "显示"
+    "trayExit": "Exist",
+    "trayShow": "Show",
+    "trayHide": "Hide"
   },
   "links": {
     "sourceCode": "Source Code"

@@ -30,8 +30,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.*
 import androidx.compose.ui.window.Notification
-import androidx.compose.ui.window.TrayState
-import androidx.compose.ui.window.rememberTrayState
 import androidx.compose.ui.window.setContent
 import component.MyIconButton
 import core.Platform
@@ -106,7 +104,7 @@ internal fun BottomNav(store: AppStore) {
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalResourceApi::class)
 @Composable
 fun TraySetting(
-  state: TrayState = rememberTrayState(),
+  store: AppStore,
   exit: () -> Unit,
   onAction: (x: Dp, y: Dp) -> Unit
 ) {
@@ -154,11 +152,15 @@ fun TraySetting(
   DisposableEffect(Unit) {
     tray.popupMenu = popupMenu
     val menuComposition = popupMenu.setContent(composition) {
-      Item("Exit", onClick = exit)
+      Item(
+        if (store.state.isVisible) LocalLanguage.current.ui.trayHide else LocalLanguage.current.ui.trayShow,
+        onClick = store::visibleToggle
+      )
+      Item(LocalLanguage.current.ui.trayExit, onClick = exit)
     }
     SystemTray.getSystemTray().add(tray)
 
-    state.notificationFlow
+    store.state.trayState.notificationFlow
       .onEach(tray::displayMessage)
       .launchIn(coroutineScope)
     Logger.info("Success launch tray.")

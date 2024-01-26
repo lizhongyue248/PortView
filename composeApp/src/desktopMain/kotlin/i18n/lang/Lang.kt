@@ -32,7 +32,8 @@ data class Ui(
   val elevate: String,
   val themeOption: Map<String, String>,
   val trayExit: String,
-  val trayShow: String
+  val trayShow: String,
+  val trayHide: String,
 )
 
 @Serializable

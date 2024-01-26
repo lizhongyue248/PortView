@@ -31,7 +31,8 @@
     },
     "elevate": "提升到管理员权限",
     "trayExit": "退出",
-    "trayShow": "显示"
+    "trayShow": "显示",
+    "trayHide": "隐藏"
   },
   "links": {
     "sourceCode": "PortView 源代码"
