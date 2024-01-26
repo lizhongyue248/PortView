@@ -113,23 +113,19 @@ fun TraySetting(
     layoutDirection = LayoutDirection.Ltr
   )
   val popupMenu = remember { PopupMenu() }
-
   // 获取屏幕大小
   val screenSize: Dimension = Toolkit.getDefaultToolkit().screenSize
   val windowInfo = LocalWindowInfo.current
   val screenBounds: Rectangle = GraphicsEnvironment.getLocalGraphicsEnvironment().maximumWindowBounds
   val screenHeight = screenSize.height.dp
-
   val tray = remember {
     TrayIcon(image).apply {
       isImageAutoSize = true
       addMouseListener(object : MouseAdapter() {
         override fun mousePressed(e: MouseEvent) {
-          Logger.debug(e.button)
           if ((Platform.isMac && e.button == MouseEvent.BUTTON3)
             || (!Platform.isMac && e.button == MouseEvent.BUTTON1)
           ) {
-            Logger.debug("e.button ${e.button}")
             val x = e.x.dp
             val y = e.y.dp
             val screenVisibleHeight = screenBounds.height.dp
@@ -231,7 +227,9 @@ internal fun SearchField(store: AppStore) {
         ),
         trailingIcon = {
           MyIconButton(
-            onClick = store::updateItems,
+            onClick = {
+              store.updateItems()
+            },
             enabled = !store.state.loading
           ) {
             if (store.state.loading) {

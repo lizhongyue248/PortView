@@ -12,6 +12,9 @@ import com.jthemedetecor.OsThemeDetector
 import core.Platform
 import core.PortInfo
 import i18n.lang.LangEnum
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
@@ -87,13 +90,9 @@ class AppStore {
 
   fun visibleToggle() {
     setState {
-      if (!isVisible) {
-        val items = Platform.portStrategy.portList(state.items)
-        copy(isVisible = true, items = items)
-      } else {
-        copy(isVisible = false)
-      }
+      copy(isVisible = !isVisible)
     }
+    this.updateItems()
   }
 
   fun hidden() {
@@ -112,9 +111,11 @@ class AppStore {
     setState {
       copy(loading = true)
     }
-    val items = Platform.portStrategy.portList(state.items)
-    setState {
-      copy(items = items, loading = false)
+    CoroutineScope(Dispatchers.Default).launch {
+      val items = Platform.portStrategy.portList(state.items)
+      setState {
+        copy(items = items, loading = false)
+      }
     }
   }
 

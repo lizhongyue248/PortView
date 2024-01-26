@@ -28,6 +28,7 @@ import com.tulskiy.keymaster.common.Provider
 import component.MyDialogWindow
 import component.rightBottom
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import model.AppStore
 import model.ThemeOption
 import org.jetbrains.compose.resources.ExperimentalResourceApi
@@ -36,6 +37,7 @@ import org.tinylog.kotlin.Logger
 import ui.*
 import java.awt.GraphicsEnvironment
 import javax.swing.KeyStroke
+import kotlin.time.Duration.Companion.seconds
 
 
 @OptIn(ExperimentalResourceApi::class)
@@ -129,10 +131,10 @@ fun main() {
 private fun refreshEffect(store: AppStore) {
   LaunchedEffect(store.config.refreshTime) {
     Logger.info("Refresh time update to ${store.config.refreshTime}s.")
-//    while (isActive) {
-//      delay(store.config.refreshTime.seconds)
+    while (isActive) {
+      delay(store.config.refreshTime.seconds)
       store.updateItems()
-//    }
+    }
   }
 }
 
