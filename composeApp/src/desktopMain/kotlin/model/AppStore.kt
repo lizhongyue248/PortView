@@ -81,7 +81,8 @@ class AppStore {
         theme = ThemeOption.SYSTEM,
         keyboard = "ctrl shift P",
         refreshTime = 5,
-        showUnknown = true
+        showUnknown = true,
+        showNotification = false
       )
     }
     Logger.info("Get config $fileConfig")
@@ -112,7 +113,16 @@ class AppStore {
       copy(loading = true)
     }
     CoroutineScope(Dispatchers.Default).launch {
-      val items = Platform.portStrategy.portList(state.items)
+      val items = Platform.portStrategy.portList(state.items) { newPorts ->
+        if (state.items.isNotEmpty() && newPorts.isNotEmpty() && config.showNotification) {
+          val tip = if (config.language == LangEnum.ZH) {
+            "新的端口占用: "
+          } else {
+            "New ports: "
+          } + newPorts.joinToString(",")
+          sendNotification(tip, Notification.Type.Info)
+        }
+      }
       setState {
         copy(items = items, loading = false)
       }
@@ -185,6 +195,12 @@ class AppStore {
     }
   }
 
+  fun configShowNotice(showNotice: Boolean) {
+    setConfig {
+      copy(showNotification = showNotice)
+    }
+  }
+
   private inline fun setConfig(update: ConfigState.() -> ConfigState) {
     config = config.update()
     config.save()
@@ -245,7 +261,8 @@ class AppStore {
     val theme: ThemeOption,
     val keyboard: String,
     val refreshTime: Int,
-    val showUnknown: Boolean
+    val showUnknown: Boolean,
+    val showNotification: Boolean
   ) {
     fun save() {
       val json = Json { prettyPrint = true }

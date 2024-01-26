@@ -21,6 +21,7 @@
     "theme": "主题",
     "keyboard": "打开 PortView 的全局快捷键",
     "refreshTime": "进程列表刷新间隔时间 (s)",
+    "showNotice": "有新端口占用时显示通知",
     "unknown": "是否显示 Unknown 进程",
     "confirm": "确认",
     "cancel": "取消",

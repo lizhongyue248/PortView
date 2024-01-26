@@ -18,7 +18,7 @@
         },
         "ui": {
           "additionalProperties": false,
-          "$ref": "#/definitions/uarpucjmhwch"
+          "$ref": "#/definitions/129tjr8561341"
         },
         "links": {
           "additionalProperties": false,
@@ -98,7 +98,7 @@
         "errorNoRun"
       ]
     },
-    "uarpucjmhwch": {
+    "129tjr8561341": {
       "additionalProperties": false,
       "type": "object",
       "properties": {
@@ -131,6 +131,10 @@
           "$ref": "#/definitions/xq0zwcprkn9j3"
         },
         "unknown": {
+          "additionalProperties": false,
+          "$ref": "#/definitions/xq0zwcprkn9j3"
+        },
+        "showNotice": {
           "additionalProperties": false,
           "$ref": "#/definitions/xq0zwcprkn9j3"
         },
@@ -172,6 +176,7 @@
         "keyboard",
         "refreshTime",
         "unknown",
+        "showNotice",
         "confirm",
         "cancel",
         "elevate",

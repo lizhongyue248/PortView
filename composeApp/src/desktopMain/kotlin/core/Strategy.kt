@@ -1,5 +1,6 @@
 package core
 
+import org.apache.commons.lang3.StringUtils
 import org.tinylog.kotlin.Logger
 import oshi.SystemInfo
 import oshi.software.os.InternetProtocolStats
@@ -14,16 +15,22 @@ abstract class PortStrategy {
 
   protected abstract fun getIcon(command: String): BufferedImage?
 
-  fun portList(lastList: List<PortInfo>): List<PortInfo> {
+  fun portList(
+    lastList: List<PortInfo>,
+    newPortHook: (newPorts: Set<String>) -> Unit = {}
+  ): List<PortInfo> {
     val processMap = systemInfo.processes.associateBy { it.processID }
     val macInternet = getInternetProtocolStats()
-    val existList = mutableListOf<PortInfo>()
     val lastListMap = lastList.associateBy { it.pid }
-    return macInternet.connections
+    val newPortList = mutableSetOf<String>()
+    val portInfoList = macInternet.connections
       .asSequence()
       .map { connection ->
         val pid = connection.getowningProcessId()
         val osProcess = processMap[pid] ?: return@map null
+        if (lastListMap[pid] == null && StringUtils.isNotEmpty(osProcess.commandLine)) {
+          newPortList.add("${osProcess.name}($pid)")
+        }
         PortInfo(
           name = osProcess.name,
           command = osProcess.commandLine,
@@ -36,21 +43,11 @@ abstract class PortStrategy {
         )
       }
       .filterNotNull()
-      .filter {
-        val value = lastListMap[it.pid]
-        if (value != null) {
-          existList.add(value)
-          return@filter false
-        }
-        if (it.port != null && it.port!! <= 0) {
-          return@filter false
-        }
-        return@filter true
-      }
-      .plus(existList)
       .distinctBy { "${it.port}-${it.name}" }
       .sortedBy { it.port }
       .toList()
+    newPortHook(newPortList)
+    return portInfoList
   }
 
   private fun formatIPAddress(ipAddressBytes: ByteArray): String {

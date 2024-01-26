@@ -83,7 +83,6 @@ compose.desktop {
                     """.trimIndent()
         }
       }
-      println(project.layout.projectDirectory.dir("resources"))
       appResourcesRootDir.set(project.layout.projectDirectory.dir("resources"))
     }
     buildTypes.release.proguard {

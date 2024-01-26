@@ -27,6 +27,7 @@ data class Ui(
   val keyboard: String,
   val refreshTime: String,
   val unknown: String,
+  val showNotice: String,
   val confirm: String,
   val cancel: String,
   val elevate: String,

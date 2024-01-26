@@ -4,6 +4,7 @@ import PortSupport
 import core.win.WindowsPort
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
+import org.apache.commons.lang3.StringUtils
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -39,13 +40,14 @@ class WindowsPortTest : PortSupport() {
     connections.forEach { connection ->
       val pid = connection.getowningProcessId()
       val osProcess = processMap[pid] ?: return@forEach
-      println("${osProcess.processID} ${osProcess.name} ${osProcess.path}")
-
-      println(
-        "${convertByteArrayToIpAddress(connection.localAddress)}:${connection.localPort} --- ${
-          convertByteArrayToIpAddress(connection.foreignAddress)
-        }:${connection.foreignPort}"
-      )
+      println("${connection.localPort} - ${StringUtils.isEmpty(osProcess.path)} - ${StringUtils.isEmpty(osProcess.commandLine)}")
+//      println("${osProcess.processID} ${osProcess.name} ${osProcess.path}")
+//
+//      println(
+//        "${convertByteArrayToIpAddress(connection.localAddress)}:${connection.localPort} --- ${
+//          convertByteArrayToIpAddress(connection.foreignAddress)
+//        }:${connection.foreignPort}"
+//      )
     }
   }
 

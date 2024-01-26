@@ -62,6 +62,8 @@ fun Setting(store: AppStore) {
     Spacer(Modifier.height(6.dp))
     RefreshField(store)
     Spacer(Modifier.height(12.dp))
+    ShowNotice(store)
+    Spacer(Modifier.height(12.dp))
     Unknown(store)
     Spacer(Modifier.height(12.dp))
     External(store, desktop)
@@ -281,6 +283,23 @@ private fun RefreshField(store: AppStore) {
 }
 
 @Composable
+@OptIn(ExperimentalMaterialApi::class)
+private fun ShowNotice(store: AppStore) {
+  Row(verticalAlignment = Alignment.CenterVertically) {
+    CompositionLocalProvider(LocalMinimumInteractiveComponentEnforcement provides false) {
+      Switch(
+        checked = store.config.showNotification,
+        onCheckedChange = { store.configShowNotice(it) },
+        colors = SwitchDefaults.colors(checkedThumbColor = MaterialTheme.colors.primary),
+        modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
+      )
+    }
+    Spacer(Modifier.width(8.dp))
+    Text(LocalLanguage.current.ui.showNotice, fontSize = 14.sp, color = MaterialTheme.colors.onPrimary)
+  }
+}
+
+@Composable
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 private fun Unknown(store: AppStore) {
   Row(
@@ -290,9 +309,7 @@ private fun Unknown(store: AppStore) {
       Switch(
         checked = store.config.showUnknown,
         onCheckedChange = { store.configShowUnknown(it) },
-        colors = SwitchDefaults.colors(
-          checkedThumbColor = MaterialTheme.colors.primary
-        ),
+        colors = SwitchDefaults.colors(checkedThumbColor = MaterialTheme.colors.primary),
         modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
       )
     }
@@ -360,18 +377,20 @@ private fun External(store: AppStore, desktop: Desktop) {
     ),
   )
   if (!Platform.isDebug && Platform.isWindows) {
-    externalInfoList.add(ExternalInfo(
-      currentLanguage.ui.elevate,
-      onClick = { elevateApplication(store, currentLanguage) },
-      prefixIcon = {
-        Icon(
-          imageVector = rememberSensorOccupied(),
-          tint = Color(68, 122, 227),
-          contentDescription = "to admin",
-          modifier = Modifier.size(16.dp)
-        )
-      },
-    ))
+    externalInfoList.add(
+      ExternalInfo(
+        currentLanguage.ui.elevate,
+        onClick = { elevateApplication(store, currentLanguage) },
+        prefixIcon = {
+          Icon(
+            imageVector = rememberSensorOccupied(),
+            tint = Color(68, 122, 227),
+            contentDescription = "to admin",
+            modifier = Modifier.size(16.dp)
+          )
+        },
+      )
+    )
   }
   externalInfoList
     .forEach {

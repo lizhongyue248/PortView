@@ -49,7 +49,7 @@ fun Content(store: AppStore) {
   }
   Box(modifier = Modifier.padding(bottom = 64.dp)) {
     LazyColumn(Modifier.testTag(TestTag.PORT_LIST).fillMaxSize(), state = lazyListState) {
-      items(store.state.list, key = { "${it.port}-${it.name}"}) { item ->
+      items(store.state.list, key = { "${it.port}-${it.name}" }) { item ->
         CompositionLocalProvider(LocalContextMenuRepresentation provides contextMenuRepresentation) {
           ContextMenuArea(
             items = {
@@ -151,15 +151,9 @@ private fun PortItem(item: PortInfo, confirmDialog: MutableState<Boolean>, curre
 @Composable
 private fun Alert(confirmDialog: MutableState<Boolean>, currentProcess: MutableState<PortInfo?>, store: AppStore) {
   AlertDialog(
-    onDismissRequest = {
-      confirmDialog.value = false
-    },
-    title = {
-      Text(text = LocalLanguage.current.tip.killTitle)
-    },
-    text = {
-      Text(LocalLanguage.current.tip.kill.format(currentProcess.value?.name, currentProcess.value?.port))
-    },
+    onDismissRequest = { confirmDialog.value = false },
+    title = { Text(text = LocalLanguage.current.tip.killTitle) },
+    text = { Text(LocalLanguage.current.tip.kill.format(currentProcess.value?.name, currentProcess.value?.port)) },
     confirmButton = {
       val errorTip = rememberNotification(LocalLanguage.current.tip.killError, "", Notification.Type.Error)
       Button(

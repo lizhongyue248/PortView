@@ -21,6 +21,7 @@
     "theme": "Theme",
     "keyboard": "Open the global shortcut key for PortView",
     "refreshTime": "Process list refresh interval time(s)",
+    "showNotice": "Display notification when a new port is occupied",
     "unknown": "Display unknown processes",
     "confirm": "Yes",
     "cancel": "No",
