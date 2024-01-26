@@ -60,13 +60,14 @@ class MacPort {
     }
   }
 
-  private fun convertByteArrayToIpAddress(ipAddressBytes: ByteArray): String {
-    try {
-      val inetAddress = InetAddress.getByAddress(ipAddressBytes)
-      return inetAddress.hostAddress // This gives the IP address as a String
-    } catch (e: UnknownHostException) {
-      e.printStackTrace()
-      return "Unknown"
-    }
+}
+
+
+internal fun convertByteArrayToIpAddress(ipAddressBytes: ByteArray): String {
+  try {
+    val inetAddress = InetAddress.getByAddress(ipAddressBytes)
+    return inetAddress.hostAddress // This gives the IP address as a String
+  } catch (e: UnknownHostException) {
+    return "Unknown"
   }
 }

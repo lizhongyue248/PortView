@@ -221,6 +221,7 @@ class AppStore {
             true
           } else {
             !StringUtils.equalsIgnoreCase(it.name, UNKNOWN)
+              && StringUtils.isNotEmpty(it.command)
           }
         }
       }

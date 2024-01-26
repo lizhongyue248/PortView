@@ -49,7 +49,7 @@ fun Content(store: AppStore) {
   }
   Box(modifier = Modifier.padding(bottom = 64.dp)) {
     LazyColumn(Modifier.testTag(TestTag.PORT_LIST).fillMaxSize(), state = lazyListState) {
-      items(store.state.list) { item ->
+      items(store.state.list, key = { "${it.port}-${it.name}"}) { item ->
         CompositionLocalProvider(LocalContextMenuRepresentation provides contextMenuRepresentation) {
           ContextMenuArea(
             items = {

@@ -125,9 +125,11 @@ fun TraySetting(
       isImageAutoSize = true
       addMouseListener(object : MouseAdapter() {
         override fun mousePressed(e: MouseEvent) {
+          Logger.debug(e.button)
           if ((Platform.isMac && e.button == MouseEvent.BUTTON3)
             || (!Platform.isMac && e.button == MouseEvent.BUTTON1)
           ) {
+            Logger.debug("e.button ${e.button}")
             val x = e.x.dp
             val y = e.y.dp
             val screenVisibleHeight = screenBounds.height.dp
