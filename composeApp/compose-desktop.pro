@@ -7,6 +7,7 @@
 -keep class oshi.** { *; }
 -keep class org.tinylog.** { *; }
 -keep class com.googlecode.plist.** { *; }
+-keep class com.twelvemonkeys.** { *; }
 
 -dontwarn org.slf4j.**
 -dontwarn net.harawata.**
@@ -14,3 +15,4 @@
 -dontwarn io.github.g00fy2.**
 -dontwarn org.tinylog.**
 -dontwarn com.googlecode.plist.**
+-dontwarn com.twelvemonkeys.**
