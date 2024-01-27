@@ -61,7 +61,7 @@ compose.desktop {
     mainClass = "MainKt"
 
     nativeDistributions {
-      targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.AppImage)
+      targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb, TargetFormat.Rpm, TargetFormat.AppImage)
       modules("java.instrument", "java.management", "java.naming", "java.sql", "jdk.unsupported")
       packageName = "PortView"
       packageVersion = "1.0.0"
