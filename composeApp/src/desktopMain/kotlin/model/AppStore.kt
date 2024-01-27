@@ -31,7 +31,7 @@ import java.nio.file.Path
 import java.nio.file.StandardOpenOption
 
 
-val USER_CONFIG_DIR: String = AppDirsFactory.getInstance().getUserConfigDir("PortView", null, null)
+val USER_CONFIG_DIR: String = AppDirsFactory.getInstance().getUserConfigDir("PortView", null, "zyue")
 val CONFIG_PATH: String = USER_CONFIG_DIR + File.separatorChar + "config.json"
 val LOGGER_PATH: String = USER_CONFIG_DIR + File.separatorChar + "port-view.log"
 val ELEVATE_PATH: String = USER_CONFIG_DIR + File.separatorChar + "Elevate.exe"
@@ -81,7 +81,7 @@ class AppStore {
         language = LangEnum.ZH,
         theme = ThemeOption.SYSTEM,
         keyboard = "ctrl shift P",
-        refreshTime = 5,
+        refreshTime = 60,
         showUnknown = false,
         showNotification = false
       )

@@ -1,5 +1,6 @@
 import org.jetbrains.compose.ExperimentalComposeLibrary
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.kotlin.ir.backend.js.scriptRemoveReceiverLowering
 
 plugins {
   alias(libs.plugins.kotlinMultiplatform)
@@ -53,6 +54,9 @@ kotlin {
 
 
 compose.desktop {
+  nativeApplication {
+    scriptRemoveReceiverLowering
+  }
   application {
     mainClass = "MainKt"
 
@@ -64,6 +68,7 @@ compose.desktop {
       vendor = "zyue.wiki"
       copyright = "Copyright © 2024 $vendor All Rights Reserved."
       licenseFile.set(rootProject.file("LICENSE.txt"))
+      outputBaseDir.set(project.layout.buildDirectory.dir("packages"))
       windows {
         shortcut = true
         menu = true

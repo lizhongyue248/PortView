@@ -91,7 +91,7 @@ private fun TitleInfo(store: AppStore, desktop: Desktop) {
       verticalArrangement = Arrangement.SpaceBetween
     ) {
       Text(Information.app.name, fontSize = 18.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colors.onPrimary)
-      Text(Information.app.updateDate, fontSize = MaterialTheme.typography.caption.fontSize, color = MaterialTheme.colors.onSecondary)
+      Text(Information.app.version, fontSize = MaterialTheme.typography.caption.fontSize, color = MaterialTheme.colors.onSecondary)
     }
     OutlinedButton(
       onClick = {
