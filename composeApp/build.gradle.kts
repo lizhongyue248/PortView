@@ -61,6 +61,8 @@ compose.desktop {
       modules("java.instrument", "java.management", "java.naming", "java.sql", "jdk.unsupported")
       packageName = "PortView"
       packageVersion = "1.0.0"
+      vendor = "zyue.wiki"
+      copyright = "Copyright © 2024 $vendor All Rights Reserved."
       licenseFile.set(rootProject.file("LICENSE.txt"))
       windows {
         shortcut = true

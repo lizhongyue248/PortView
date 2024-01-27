@@ -152,7 +152,7 @@ fun TraySetting(
     tray.popupMenu = popupMenu
     val menuComposition = popupMenu.setContent(composition) {
       Item(
-        if (store.state.isVisible) LocalLanguage.current.ui.trayHide else LocalLanguage.current.ui.trayShow,
+        if (store.state.isVisible) LocalLanguage.current.ui.trayShow else LocalLanguage.current.ui.trayHide,
         onClick = store::visibleToggle
       )
       Item(LocalLanguage.current.ui.trayExit, onClick = exit)

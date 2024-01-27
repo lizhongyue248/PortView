@@ -58,11 +58,11 @@ fun Content(store: AppStore) {
                   if (StringUtils.equalsIgnoreCase(item.name, UNKNOWN)) {
                     return@ContextMenuItem
                   }
-                  Platform.actionStrategy.open(item.command)
+                  Platform.actionStrategy.open(item.path)
                 },
                 ContextMenuItem(i18n.tip.copy) {
                   val clipboard = Toolkit.getDefaultToolkit().systemClipboard
-                  val selection = StringSelection(i18n.tip.copy)
+                  val selection = StringSelection(item.command)
                   clipboard.setContents(selection, null)
                 },
                 ContextMenuItem("${item.address}:${item.port}") {},
@@ -128,7 +128,7 @@ private fun PortItem(item: PortInfo, confirmDialog: MutableState<Boolean>, curre
         )
       }
       Text(
-        text = item.command,
+        text = item.path,
         modifier = Modifier.fillMaxWidth(),
         overflow = TextOverflow.Ellipsis,
         fontSize = MaterialTheme.typography.caption.fontSize,

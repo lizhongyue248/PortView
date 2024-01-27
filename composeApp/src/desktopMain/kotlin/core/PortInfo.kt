@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage
 data class PortInfo(
   val name: String,
   val command: String,
+  val path: String,
   val pid: Int?,
   val address: String?,
   var port: Int?,

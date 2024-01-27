@@ -31,6 +31,7 @@ abstract class PortStrategy {
         PortInfo(
           name = osProcess.name,
           command = osProcess.commandLine,
+          path = osProcess.path,
           pid = osProcess.processID,
           address = formatIPAddress(connection.localAddress),
           port = connection.localPort,

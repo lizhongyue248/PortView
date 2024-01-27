@@ -31,9 +31,10 @@ import java.nio.file.Path
 import java.nio.file.StandardOpenOption
 
 
-val CONFIG_PATH: String = AppDirsFactory.getInstance().getUserConfigDir("PortView", null, "zyue") + File.separatorChar + "config.json"
-val LOGGER_PATH: String = AppDirsFactory.getInstance().getUserConfigDir("PortView", null, "zyue") + File.separatorChar + "port-view.log"
-val ELEVATE_PATH: String = AppDirsFactory.getInstance().getUserConfigDir("PortView", null, "zyue") + File.separatorChar + "Elevate.exe"
+val USER_CONFIG_DIR: String = AppDirsFactory.getInstance().getUserConfigDir("PortView", null, null)
+val CONFIG_PATH: String = USER_CONFIG_DIR + File.separatorChar + "config.json"
+val LOGGER_PATH: String = USER_CONFIG_DIR + File.separatorChar + "port-view.log"
+val ELEVATE_PATH: String = USER_CONFIG_DIR + File.separatorChar + "Elevate.exe"
 
 class AppStore {
   var config: ConfigState by mutableStateOf(initialConfig())
@@ -81,7 +82,7 @@ class AppStore {
         theme = ThemeOption.SYSTEM,
         keyboard = "ctrl shift P",
         refreshTime = 5,
-        showUnknown = true,
+        showUnknown = false,
         showNotification = false
       )
     }
@@ -236,7 +237,7 @@ class AppStore {
         val conditionInt = searchText.toIntOrNull()
         return items.filter {
           it.name.trim().contains(searchText.trim(), ignoreCase = true)
-            || (conditionInt != null && it.port == conditionInt)
+            || (conditionInt != null && "${it.port}".contains("$conditionInt"))
         }.filter {
           if (showUnknown) {
             true
