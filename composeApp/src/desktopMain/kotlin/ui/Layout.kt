@@ -1,5 +1,6 @@
 package ui
 
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
@@ -20,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.toAwtImage
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
@@ -31,7 +33,6 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.*
 import androidx.compose.ui.window.Notification
 import androidx.compose.ui.window.setContent
-import component.MyIconButton
 import core.Platform
 import core.TestTag
 import kotlinx.coroutines.flow.launchIn
@@ -66,7 +67,7 @@ internal fun TopBar(store: AppStore) {
         fontSize = MaterialTheme.typography.h5.fontSize,
         lineHeight = 36.sp
       )
-      MyIconButton(onClick = store::hidden, modifier = Modifier.border(1.dp, borderColor)) {
+      IconButton(onClick = store::hidden, modifier = Modifier.border(1.dp, borderColor).pointerHoverIcon(PointerIcon.Hand)) {
         Icon(
           tint = MaterialTheme.colors.onSecondary,
           contentDescription = "Close Window",
@@ -158,9 +159,7 @@ fun TraySetting(
     }
     SystemTray.getSystemTray().add(tray)
 
-    store.state.trayState.notificationFlow
-      .onEach(tray::displayMessage)
-      .launchIn(coroutineScope)
+    store.state.trayState.notificationFlow.onEach(tray::displayMessage).launchIn(coroutineScope)
     Logger.info("Success launch tray.")
     onDispose {
       menuComposition.dispose()
@@ -183,6 +182,13 @@ private fun TrayIcon.displayMessage(notification: Notification) {
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 internal fun SearchField(store: AppStore) {
+  val rotate by rememberInfiniteTransition().animateFloat(
+    initialValue = 0F,
+    targetValue = 360F,
+    animationSpec = infiniteRepeatable(
+      animation = tween(2000, easing = LinearEasing)
+    )
+  )
   Row {
     BasicTextField(
       value = store.state.searchText,
@@ -226,14 +232,17 @@ internal fun SearchField(store: AppStore) {
           bottom = 0.dp
         ),
         trailingIcon = {
-          MyIconButton(
+          IconButton(
             onClick = {
               store.updateItems()
             },
-            enabled = !store.state.loading
+            enabled = !store.state.loading,
+            modifier = Modifier
+              .pointerHoverIcon(if (store.state.loading) PointerIcon.Default else PointerIcon.Hand)
           ) {
             if (store.state.loading) {
-              Icon(Icons.Filled.Refresh, "Search")
+              Icon(Icons.Filled.Refresh, "Refresh", modifier = Modifier
+                .graphicsLayer { rotationZ = rotate })
             } else {
               Icon(Icons.Filled.Search, "Search")
             }

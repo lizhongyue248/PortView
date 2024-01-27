@@ -27,8 +27,8 @@ import component.MyTextField
 import core.Platform
 import i18n.lang.Lang
 import i18n.lang.LangEnum
-import icons.GithubMark
 import icons.rememberArrowOutward
+import icons.rememberGithub
 import icons.rememberHelp
 import icons.rememberSensorOccupied
 import model.*
@@ -357,7 +357,7 @@ private fun External(store: AppStore, desktop: Desktop) {
       currentLanguage.links.sourceCode,
       prefixIcon = {
         Icon(
-          imageVector = GithubMark,
+          imageVector = rememberGithub(),
           tint = Color(68, 122, 227),
           contentDescription = "to link github",
           modifier = Modifier.size(16.dp)

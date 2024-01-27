@@ -1,18 +1,23 @@
-
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.window.WindowDraggableArea
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
@@ -52,6 +57,12 @@ fun main() {
     )
 
     val darkTheme = remember { mutableStateOf(store.isDarkTheme()) }
+
+    val rotate by rememberInfiniteTransition().animateFloat(
+      initialValue = 0F, targetValue = 360F,
+      animationSpec = infiniteRepeatable(animation = tween(2000, easing = LinearEasing))
+    )
+
     PortViewTheme(darkTheme = darkTheme.value, lang = store.config.language) {
       MyDialogWindow(
         onCloseRequest = store::hidden,
@@ -94,9 +105,25 @@ fun main() {
             bottomBar = { BottomNav(store) }
           ) {
             if (store.state.currentTab == 0) {
-              Column {
+              Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+              ) {
                 SearchField(store)
-                Content(store)
+                if (store.state.loading && store.isEmpty()) {
+                  Image(
+                    painter = painterResource("loading.png"),
+                    contentDescription = "loading",
+                    modifier = Modifier
+                      .size(180.dp)
+                      .padding(top = 40.dp, bottom = 20.dp)
+                      .graphicsLayer {
+                        rotationZ = rotate
+                      }
+                  )
+                  Text(text = "Loading...", color = MaterialTheme.colors.onPrimary, fontSize = MaterialTheme.typography.h5.fontSize)
+                } else {
+                  Content(store)
+                }
               }
             } else {
               Setting(store)

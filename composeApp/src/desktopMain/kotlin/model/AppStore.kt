@@ -108,6 +108,8 @@ class AppStore {
     }
   }
 
+  fun isEmpty() = state.list.isEmpty()
+
   fun updateItems() {
     setState {
       copy(loading = true)
@@ -119,7 +121,9 @@ class AppStore {
             "新的端口占用: "
           } else {
             "New ports: "
-          } + newPorts.joinToString(",")
+          } + newPorts.filter {
+            config.showUnknown || StringUtils.isNotEmpty(it.command)
+          }.joinToString(",") { "${it.name}(${it.port})" }
           sendNotification(tip, Notification.Type.Info)
         }
       }
@@ -207,7 +211,7 @@ class AppStore {
   }
 
   fun searchFocus() {
-    if (state.currentTab == 0) {
+    if (state.currentTab == 0 && state.list.isNotEmpty()) {
       state.searchFocusRequester.requestFocus()
     }
   }

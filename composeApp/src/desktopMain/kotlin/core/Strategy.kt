@@ -1,6 +1,6 @@
 package core
 
-import org.apache.commons.lang3.StringUtils
+import model.UNKNOWN
 import org.tinylog.kotlin.Logger
 import oshi.SystemInfo
 import oshi.software.os.InternetProtocolStats
@@ -17,20 +17,17 @@ abstract class PortStrategy {
 
   fun portList(
     lastList: List<PortInfo>,
-    newPortHook: (newPorts: Set<String>) -> Unit = {}
+    newPortHook: (newPorts: Set<PortInfo>) -> Unit = {}
   ): List<PortInfo> {
     val processMap = systemInfo.processes.associateBy { it.processID }
     val macInternet = getInternetProtocolStats()
     val lastListMap = lastList.associateBy { it.pid }
-    val newPortList = mutableSetOf<String>()
+    val newPortList = mutableSetOf<PortInfo>()
     val portInfoList = macInternet.connections
       .asSequence()
       .map { connection ->
         val pid = connection.getowningProcessId()
         val osProcess = processMap[pid] ?: return@map null
-        if (lastListMap[pid] == null && StringUtils.isNotEmpty(osProcess.commandLine)) {
-          newPortList.add("${osProcess.name}($pid)")
-        }
         PortInfo(
           name = osProcess.name,
           command = osProcess.commandLine,
@@ -40,7 +37,12 @@ abstract class PortStrategy {
           remoteAddress = formatIPAddress(connection.foreignAddress),
           remotePort = connection.foreignPort,
           image = getIcon(osProcess.path)
-        )
+        ).let {
+          if (lastListMap[pid] == null) {
+            newPortList.add(it)
+          }
+          it
+        }
       }
       .filterNotNull()
       .distinctBy { "${it.port}-${it.name}" }
@@ -54,7 +56,7 @@ abstract class PortStrategy {
     return try {
       InetAddress.getByAddress(ipAddressBytes).hostAddress
     } catch (e: UnknownHostException) {
-      "Unknown"
+      UNKNOWN
     }
   }
 }
