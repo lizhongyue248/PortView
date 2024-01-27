@@ -57,33 +57,36 @@ compose.desktop {
     mainClass = "MainKt"
 
     nativeDistributions {
-      targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+      targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.AppImage)
       modules("java.instrument", "java.management", "java.naming", "java.sql", "jdk.unsupported")
       packageName = "PortView"
       packageVersion = "1.0.0"
+      licenseFile.set(rootProject.file("LICENSE.txt"))
       windows {
         shortcut = true
         menu = true
-        menuGroup = "Port View"
+        menuGroup = packageName
+        perUserInstall = true
+        dirChooser = true
         iconFile.set(project.file("icon/win.ico"))
       }
       linux {
         shortcut = true
-        menuGroup = "Port View"
+        menuGroup = packageName
+        appCategory = "Monitor"
         iconFile.set(project.file("icon/linux.png"))
       }
       macOS {
         iconFile.set(project.file("icon/mac.icns"))
         infoPlist {
           extraKeysRawXml = """
-                        <key>LSUIElement</key>
-                        <string>true</string>
-                        <key>LSBackgroundOnly</key>
-                        <string>true</string>
-                    """.trimIndent()
+              <key>LSUIElement</key>
+              <string>true</string>
+              <key>LSBackgroundOnly</key>
+              <string>true</string>
+          """.trimIndent()
         }
       }
-      appResourcesRootDir.set(project.layout.projectDirectory.dir("resources"))
     }
     buildTypes.release.proguard {
       configurationFiles.from(project.file("compose-desktop.pro"))
