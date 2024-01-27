@@ -117,15 +117,19 @@ class AppStore {
     }
     CoroutineScope(Dispatchers.Default).launch {
       val items = Platform.portStrategy.portList(state.items) { newPorts ->
-        if (state.items.isNotEmpty() && newPorts.isNotEmpty() && config.showNotification) {
+        val distinct = newPorts
+          .distinctBy { it.port }
+          .filter { config.showUnknown || StringUtils.isNotEmpty(it.command) }
+        if (state.items.isNotEmpty() && newPorts.isNotEmpty()
+          && config.showNotification && distinct.isNotEmpty()
+        ) {
           val tip = if (config.language == LangEnum.ZH) {
-            "新的端口占用: "
+            "新的端口占用"
           } else {
-            "New ports: "
-          } + newPorts.filter {
-            config.showUnknown || StringUtils.isNotEmpty(it.command)
-          }.joinToString(",") { "${it.name}(${it.port})" }
-          sendNotification(tip, Notification.Type.Info)
+            "New ports"
+          } + " -- ${distinct.size}"
+          val message = distinct.joinToString(",") { "${it.name}(${it.port})" }
+          sendNotification(tip, message, Notification.Type.Info)
         }
       }
       setState {
@@ -153,12 +157,12 @@ class AppStore {
   }
 
   fun sendWarn(title: String) {
-    sendNotification(title, Notification.Type.Warning)
+    sendNotification(title, type = Notification.Type.Warning)
   }
 
-  fun sendNotification(title: String, type: Notification.Type) {
+  fun sendNotification(title: String, message: String = "", type: Notification.Type = Notification.Type.Info) {
     val notification = Notification(
-      title, "", type
+      title, message, type
     )
     state.trayState.sendNotification(notification)
   }

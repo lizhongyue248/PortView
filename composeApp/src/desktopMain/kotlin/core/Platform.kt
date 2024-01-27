@@ -1,5 +1,7 @@
 package core
 
+import core.linux.LinuxAction
+import core.linux.LinuxPort
 import core.mac.MacAction
 import core.mac.MacPort
 import core.win.WindowsAction
@@ -23,13 +25,19 @@ object Platform {
       if (isWindows) {
         return WindowsPort
       }
-      return MacPort
+      if (isMac) {
+        return MacPort
+      }
+      return LinuxPort
     }
   val actionStrategy: ActionStrategy
     get() {
       if (isWindows) {
         return WindowsAction
       }
-      return MacAction
+      if (isMac) {
+        return MacAction
+      }
+      return LinuxAction
     }
 }

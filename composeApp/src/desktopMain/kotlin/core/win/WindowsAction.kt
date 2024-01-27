@@ -6,11 +6,11 @@ import org.tinylog.kotlin.Logger
 import java.io.File
 
 object WindowsAction : ActionStrategy() {
-  override fun open(command: String): Boolean {
-    val file = File(command)
-    if (!file.exists()) {
-      return false
-    }
+   override fun open(path: String): Boolean {
+     val file = File(path)
+     if (!file.exists()) {
+       return false
+     }
     try {
       Shell32.INSTANCE.ShellExecute(
         null,

@@ -9,8 +9,8 @@ import java.util.concurrent.TimeUnit
  * @author yue
  */
 object MacAction : ActionStrategy() {
-  override fun open(command: String): Boolean {
-    val filePath = getFilePath(command)
+  override fun open(path: String): Boolean {
+    val filePath = getFilePath(path)
     val file = File(filePath)
     if (!file.exists()) {
       return false
