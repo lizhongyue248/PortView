@@ -1,0 +1,40 @@
+= Port View
+:idprefix:
+:idseparator: -
+:source-language: kotlin
+:!showtitle:
+:lang: en
+
+image::logo.png[256,256,Logo,align="center"]
+[.text-center.lead]
+PortView +
+image:https://github.com/lizhongyue248/PortView/actions/workflows/package.yml/badge.svg[Package release, link="https://github.com/lizhongyue248/PortView/actions/workflows/package.yml",align="center"] image:https://img.shields.io/github/v/release/lizhongyue248/PortView?sort=semver&display_name=release[GitHub Release, link="https://github.com/lizhongyue248/PortView/releases", align="center"] +
+link:README.adoc[简体中文] | link:README_EN.adoc[English]
+
+== 💡 Introduction
+
+The main function of this project is to provide a graphical interface to view the current system port occupancy. It currently supports Windows, Macos, Debian Linux Desktop, and Centos Linux Desktop platforms. You can get the latest version through link:https://github.com/lizhongyue248/PortView/releases[Github Release] to experience it. It is mainly developed for the purpose of learning links:https://www.jetbrains.com/lp/compose-multiplatform/[compose-multiplatform], but we also strive to do it well.
+
+image::docs/view.png[Demo]
+
+== ✨ Features
+
+- [x] View and search for programs currently occupying ports
+- [x] Close specified program
+- [x] View the monitored IP address and PID
+- [x] Open the directory where the program is located
+- [x] Copy program run command
+- [x] Night mode support, Chinese and English support
+- [x] Profile support
+- [x] Run log
+- [ ] Automatically update apps
+- [ ] Example of starting a test
+
+== ✅ Test
+Currently, it has passed functional testing on the following platforms
+
+- Windows 11 23H2 (22631)
+- Macos Sonoma 14.2.1
+- Ubuntu 22.04.3 Gnome Desktop
+
+

@@ -1,1 +1,39 @@
- = Port View
+= Port View
+:idprefix:
+:idseparator: -
+:source-language: kotlin
+:!showtitle:
+:lang: zh_CN
+
+image::logo.png[256,256,Logo,align="center"]
+[.text-center.lead]
+PortView +
+image:https://github.com/lizhongyue248/PortView/actions/workflows/package.yml/badge.svg[Package release, link="https://github.com/lizhongyue248/PortView/actions/workflows/package.yml",align="center"] image:https://img.shields.io/github/v/release/lizhongyue248/PortView?sort=semver&display_name=release[GitHub Release, link="https://github.com/lizhongyue248/PortView/releases", align="center"] +
+link:README.adoc[简体中文] | link:README_EN.adoc[English]
+
+== 💡简介
+
+这个项目主要功能提供图形化的界面来查看当前系统端口占用情况，目前支持 Windows、Macos、Debian Linux Desktop、Centos Linux Desktop 平台。你可以通过 link:https://github.com/lizhongyue248/PortView/releases[Github Release] 获取最新版本进行体验，主要是以学习 link:https://www.jetbrains.com/lp/compose-multiplatform/[compose-multiplatform] 为目的进行开发的，但是也努力把它给做好。
+
+image::docs/view.png[Demo]
+
+== ✨ 特性
+
+- [x] 查看与搜索当前占用端口的程序
+- [x] 关闭指定程序
+- [x] 查看监听的 IP 地址和 PID
+- [x] 打开程序所在目录
+- [x] 复制程序运行命令
+- [x] 夜间模式支持、中英文支持
+- [x] 配置文件支持
+- [x] 运行日志
+- [ ] 自动更新应用
+- [ ] 完备的测试用例
+
+== ✅ 测试
+目前在以下平台功能测试通过
+
+- Windows 11 23H2 (22631)
+- Macos Sonoma 14.2.1
+- Ubuntu 22.04.3 Gnome Desktop
+
