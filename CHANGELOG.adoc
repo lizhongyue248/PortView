@@ -1,0 +1,19 @@
+= Changelog
+
+This project is developed based on link:https://github.com/JetBrains/compose-multiplatform[compose-multiplatform], with the main feature of displaying the current system's port occupancy status.
+All notable changes to this project will be documented in this file.
+
+The format is based on link:https://keepachangelog.com/[Keep a Changelog]
+and this project adheres to link:https://semver.org/[Semantic Versioning].
+
+== link:../../v1.0.0[v1.0.0]
+
+== ✨Features
+- View and search for programs currently occupying ports
+- Close specified program
+- View the monitored IP address and PID
+- Open the directory where the program is located
+- Copy program run command
+- Night mode support, Chinese and English support
+- Profile support
+- Run log

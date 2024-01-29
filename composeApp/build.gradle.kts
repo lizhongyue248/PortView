@@ -1,17 +1,13 @@
 
-import org.jetbrains.changelog.ChangelogSectionUrlBuilder
-import org.jetbrains.changelog.date
 import org.jetbrains.compose.ExperimentalComposeLibrary
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.com.google.gson.Gson
 import org.jetbrains.kotlin.ir.backend.js.scriptRemoveReceiverLowering
-import org.jetbrains.kotlin.utils.addToStdlib.UnsafeCastFunction
 
 plugins {
   alias(libs.plugins.kotlinMultiplatform)
   alias(libs.plugins.kotlinSerialization)
   alias(libs.plugins.jetbrainsCompose)
-  alias(libs.plugins.jetbrainsChangelog)
 }
 
 kotlin {
@@ -57,9 +53,7 @@ kotlin {
     }
   }
 }
-@OptIn(UnsafeCastFunction::class)
 val appJson = File(projectDir.absolutePath + "/src/desktopMain/resources/app.json").readText()
-
 
 data class AppInfo(
   val name: String,
@@ -67,7 +61,7 @@ data class AppInfo(
   val version: String
 )
 
-val app = Gson().fromJson(appJson, AppInfo::class.java)
+val app: AppInfo = Gson().fromJson(appJson, AppInfo::class.java)
 
 compose.desktop {
   nativeApplication {
@@ -118,29 +112,6 @@ compose.desktop {
 
 }
 
-changelog {
-  version.set(app.version)
-  path.set(rootProject.file("CHANGELOG.md").canonicalPath)
-  repositoryUrl.set("https://github.com/JetBrains/gradle-changelog-plugin")
-  header.set(provider { "[${version.get()}] - ${date()}" })
-  headerParserRegex.set("""(\d+\.\d+)""".toRegex())
-  introduction.set(
-    """
-      This project is developed based on [compose-multiplatform](https://github.com/JetBrains/compose-multiplatform), with the main feature of displaying the current system's port occupancy status.
-      All notable changes to this project will be documented in this file.
-
-      The format is based on [Keep a Changelog](https://keepachangelog.com/)
-      and this project adheres to [Semantic Versioning](https://semver.org/).
-    """.trimIndent()
-  )
-  itemPrefix.set("-")
-  keepUnreleasedSection.set(true)
-  unreleasedTerm.set("[Unreleased]")
-  groups.set(listOf("Added", "Changed", "Deprecated", "Removed", "Fixed", "Security"))
-  lineSeparator.set("\n")
-  combinePreReleases.set(true)
-  sectionUrlBuilder.set(ChangelogSectionUrlBuilder { repositoryUrl, currentVersion, previousVersion, isUnreleased -> "foo" })
-}
 
 
 
