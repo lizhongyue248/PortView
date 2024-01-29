@@ -5,15 +5,36 @@
 :!showtitle:
 :lang: en
 
+ifdef::env-github[]
+++++
+<p align="center">
+  <img width="256" height="256" src="logo.png" alt="logo">
+  <h3 align="center">PortView</h3>
+  <p align="center">
+    <a title="Package release" href="https://github.com/lizhongyue248/PortView/actions/workflows/package.yml"><img src="https://github.com/lizhongyue248/PortView/actions/workflows/package.yml/badge.svg" alt="Package release svg" /></a>
+    <a title="Release" href="https://github.com/lizhongyue248/PortView/releases"><img src="https://img.shields.io/github/v/release/lizhongyue248/PortView?sort=semver&display_name=release" alt="Package release svg" /></a>
+    <br>
+    <a href="README.adoc">中文</a> | <a href="README_EN.adoc">English</a>
+  </p>
+</p>
+++++
+endif::[]
+
+ifndef::env-github[]
 image::logo.png[256,256,Logo,align="center"]
+
 [.text-center.lead]
 PortView +
-image:https://github.com/lizhongyue248/PortView/actions/workflows/package.yml/badge.svg[Package release, link="https://github.com/lizhongyue248/PortView/actions/workflows/package.yml",align="center"] image:https://img.shields.io/github/v/release/lizhongyue248/PortView?sort=semver&display_name=release[GitHub Release, link="https://github.com/lizhongyue248/PortView/releases", align="center"] +
+image:https://github.com/lizhongyue248/PortView/actions/workflows/package.yml/badge.svg[Package release,link="https://github.com/lizhongyue248/PortView/actions/workflows/package.yml",align="center"] image:https://img.shields.io/github/v/release/lizhongyue248/PortView?sort=semver&display_name=release[GitHub Release,link="https://github.com/lizhongyue248/PortView/releases", align="center"] +
 link:README.adoc[简体中文] | link:README_EN.adoc[English]
+endif::[]
 
 == 💡 Introduction
 
-The main function of this project is to provide a graphical interface to view the current system port occupancy. It currently supports Windows, Macos, Debian Linux Desktop, and Centos Linux Desktop platforms. You can get the latest version through link:https://github.com/lizhongyue248/PortView/releases[Github Release] to experience it. It is mainly developed for the purpose of learning links:https://www.jetbrains.com/lp/compose-multiplatform/[compose-multiplatform], but we also strive to do it well.
+The main function of this project is to provide a graphical interface to view the current system port occupancy.
+It currently supports Windows, Macos, Debian Linux Desktop, and Centos Linux Desktop platforms.
+You can get the latest version through link:https://github.com/lizhongyue248/PortView/releases[Github Release] to experience it.
+It is mainly developed for the purpose of learning links:https://www.jetbrains.com/lp/compose-multiplatform/[compose-multiplatform], but we also strive to do it well.
 
 image::docs/view.png[Demo]
 
@@ -31,6 +52,7 @@ image::docs/view.png[Demo]
 - [ ] Example of starting a test
 
 == ✅ Test
+
 Currently, it has passed functional testing on the following platforms
 
 - Windows 11 23H2 (22631)
