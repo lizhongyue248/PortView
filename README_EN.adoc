@@ -8,14 +8,14 @@
 ifdef::env-github[]
 ++++
 <p align="center">
-  <img width="256" height="256" src="logo.png" alt="logo">
-  <h3 align="center">PortView</h3>
-  <p align="center">
-    <a title="Package release" href="https://github.com/lizhongyue248/PortView/actions/workflows/package.yml"><img src="https://github.com/lizhongyue248/PortView/actions/workflows/package.yml/badge.svg" alt="Package release svg" /></a>
-    <a title="Release" href="https://github.com/lizhongyue248/PortView/releases"><img src="https://img.shields.io/github/v/release/lizhongyue248/PortView?sort=semver&display_name=release" alt="Package release svg" /></a>
-    <br>
-    <a href="README.adoc">中文</a> | <a href="README_EN.adoc">English</a>
-  </p>
+   `<img width="256" height="256" src="logo.png" alt="logo">`
+   <h3 align="center">PortView</h3>
+   <p align="center">
+     <a title="Package release" href="https://github.com/lizhongyue248/PortView/actions/workflows/package.yml"><img src="https://github.com/lizhongyue248/PortView/actions /workflows/package.yml/badge.svg" alt="Package release svg" /></a>
+     <a title="Release" href="https://github.com/lizhongyue248/PortView/releases"><img src="https://img.shields.io/github/v/release/lizhongyue248/PortView? sort=semver&display_name=release" alt="Package release svg" /></a>
+     <br>
+     <a href="README.adoc">中文</a> | <a href="README_EN.adoc">English</a>
+   </p>
 </p>
 ++++
 endif::[]
@@ -24,17 +24,14 @@ ifndef::env-github[]
 image::logo.png[256,256,Logo,align="center"]
 
 [.text-center.lead]
-PortView +
-image:https://github.com/lizhongyue248/PortView/actions/workflows/package.yml/badge.svg[Package release,link="https://github.com/lizhongyue248/PortView/actions/workflows/package.yml",align="center"] image:https://img.shields.io/github/v/release/lizhongyue248/PortView?sort=semver&display_name=release[GitHub Release,link="https://github.com/lizhongyue248/PortView/releases", align="center"] +
-link:README.adoc[简体中文] | link:README_EN.adoc[English]
+PortView+
+image:https://github.com/lizhongyue248/PortView/actions/workflows/package.yml/badge.svg[Package release,link="https://github.com/lizhongyue248/PortView/actions/workflows/package. yml",align="center"] image:https://img.shields.io/github/v/release/lizhongyue248/PortView?sort=semver&display_name=release[GitHub Release,link="https://github.com /lizhongyue248/PortView/releases", align="center"] +
+link:README.adoc[中文] | link:README_EN.adoc[English]
 endif::[]
 
-== 💡 Introduction
+== 💡Introduction
 
-The main function of this project is to provide a graphical interface to view the current system port occupancy.
-It currently supports Windows, Macos, Debian Linux Desktop, and Centos Linux Desktop platforms.
-You can get the latest version through link:https://github.com/lizhongyue248/PortView/releases[Github Release] to experience it.
-It is mainly developed for the purpose of learning links:https://www.jetbrains.com/lp/compose-multiplatform/[compose-multiplatform], but we also strive to do it well.
+The main function of this project is to provide a graphical interface to view the current system port occupancy. It currently supports Windows, Macos, Debian Linux Desktop, and Centos Linux Desktop platforms. You can get the latest version for experience through link:https://github.com/lizhongyue248/PortView/releases[Github Release], mainly for learning link:https://www.jetbrains.com/lp/compose-multiplatform[compose-multiplatform] was developed for the purpose, but we also strive to do it well.
 
 image::docs/view.png[Demo]
 
@@ -42,21 +39,97 @@ image::docs/view.png[Demo]
 
 - [x] View and search for programs currently occupying ports
 - [x] Close specified program
-- [x] View the monitored IP address and PID
+- [x] View listening IP address and PID
 - [x] Open the directory where the program is located
 - [x] Copy program run command
 - [x] Night mode support, Chinese and English support
 - [x] Profile support
 - [x] Run log
+- [x] Windows privilege escalation operations
+- [ ] Add digital signature to installation file
+- [ ] Complete unit test cases
 - [ ] Automatically update apps
-- [ ] Example of starting a test
+
+== 🧑‍💻 Development
+
+The tool mainly uses the technology stack link:https://www.jetbrains.com/lp/compose-multiplatform/[compose-multiplatform], based on which the distribution of multiple desktops is completed. Therefore, the writing method is slightly different from link:https://developer.android.com/jetpack/compose[Jetpack compose], and some unique components that belong to Desktop (Desktop, Tray, Scrollbar, Notification, etc.) are added. It contains some customized components, such as a window that can hide the title and persist on the top.
+
+=== Core code
+
+Obtaining the core code of the process is initially completed by calling the system api through JNA. However, because different platforms mainly call the underlying api, I found this to be difficult when debugging on mac, but I don’t want to obtain it through command parsing. data. Finally, I chose to use link:https://github.com/oshi/oshi[oshi] to obtain system process and network information. The problem is that the acquisition speed is much slower than the underlying API, but the data integrity and cross-platform Sex is indeed the best support. Native Windows api gets process information at link:https://github.com/lizhongyue248/PortView/commit/cd3c7f7784b41ff54c225b35b127f4d0aff9eaed#diff-5df30cfe24e76c37155179df0d1aacf59d7851c9c16a4dbc1774dd172f97f968L23[commit cd3c7f77] for refactoring.
+
+=== Configuration information
+
+.Configuration file storage path
+[%autowidth]
+|===
+|System |Configuration file path
+|Macos
+|/Users/\{username}/Library/Preferences/PortView/zyue
+
+|Windows
+|C:\Users\\{username}\AppData\Local\zyue\PortView
+
+|Linux
+|/home/\{username}/.config/PortView
+|===
+
+It is worth noting that currently `compose-multiplatform` is copied to the `app/resources` directory of the corresponding platform through the configuration of `gradle`, refer to link:https://github.com/JetBrains/compose-multiplatform/tree/master/tutorials/Native_distributions_and_local_execution#adding-files-to-packaged-application[Official Document] The configuration is as follows
+
+[source,kotlin]
+----
+appResourcesRootDir.set(project.layout.projectDirectory.dir("resources"))
+----
+
+Currently, only privilege escalation files valid for `windows` are stored.
+
+=== Third-party libraries
+
+`compose-multiplatform` uses link:https://www.guardsquare.com/manual/home[ProGuard] to reduce and obfuscate the code. The obfuscation is currently turned off, but the use of some third-party libraries will cause similar problems such as being unable to be found. Class exceptions, so you need to define some packages or classes that will not be processed in the `compose-desktop.pro` file.
+
+
+=== Run
+
+Use `Gradle` for construction, `Graalvm-ce-17 JDK` and `Kotlin` for development, mainly providing the following commands to run and package
+
+.Commands and uses
+[%autowidth]
+|===
+|Command |Use | Others
+|`./gradlew run`
+|Run the program
+| -
+
+|`./gradlew runRelease`
+|Run the post-release program
+|No rebuild will occur
+
+|`./gradlew runReleaseDistributable`
+|Run the post-release program
+|Needs to be rebuilt
+
+|`./gradlew packageReleaseDistributionForCurrentOS`
+|Packaging according to the current operating system
+|Supports `msi`, `dmg`, `deb`, `rpm`
+|===
+
+The built files are stored in the `composeApp/build` directory, and the packaged files are stored in the `composeApp/build/packages` directory.
+
+=== Publish
+
+Use link:https://github.com/lizhongyue248/PortView/actions[Github Action] for packaging and distribution. When a tag starting with the letter `v` is detected, it will be automatically published to link:https://github.com/lizhongyue248/PortView/releases[Github Release]. It is worth noting that the `CHANGELOG.adoc` file requires manual maintenance, so every time a function is added or repaired, the documentation needs to be supplemented, which is also a recommended practice.
+
+=== Signature issue
+
+There are signature issues on both `Mac` and `Windows`. When the software is installed, it will prompt that it is from an untrusted developer. Refer to link:https://support.apple.com/zh-cn/guide/mac-help/mh40616/mac[Open Mac App from Unidentified Developer] with link:https://support.microsoft.com/zh-cn/windows/%E5%B0%86%E6%8E%92%E9%99%A4%E9%A1%B9%E6%B7%BB%E5%8A%A0%E5%88%B0-windows-%E5%AE%89%E5%85%A8%E4%B8%AD%E5%BF%83-811816c0-4dfd-af4a-47e4-c301afe13b26[Add exclusion to Windows Security Center]. You can rest assured that the application will not make any network requests or maliciously modify system files. If you mind, you can also download the source code to compile and run.
+
 
 == ✅ Test
 
-Currently, it has passed functional testing on the following platforms
+Currently, functional tests have been passed on the following platforms
 
 - Windows 11 23H2 (22631)
 - Macos Sonoma 14.2.1
 - Ubuntu 22.04.3 Gnome Desktop
 
-
+On the one hand, the unit test is not fully supported by `compose-multiplatform`, and on the other hand, the requirements have not been fully determined due to changes, so it has not been written yet. To be improved...

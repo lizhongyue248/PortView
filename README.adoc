@@ -45,14 +45,91 @@ image::docs/view.png[Demo]
 - [x] 夜间模式支持、中英文支持
 - [x] 配置文件支持
 - [x] 运行日志
+- [x] Windows 提权操作
+- [ ] 安装文件增加数字签名
+- [ ] 完备的单元测试用例
 - [ ] 自动更新应用
-- [ ] 完备的测试用例
+
+== 🧑‍💻 开发
+
+工具主要使用技术栈为 link:https://www.jetbrains.com/lp/compose-multiplatform/[compose-multiplatform]，基于此完成多桌面端的分发。因此写法与 link:https://developer.android.com/jetpack/compose[Jetpack compose] 具有一点差异，同时增加了部分独属于 Desktop 的特有组件（Desktop、Tray、Scrollbar、Notification 等）。其中包含了自定义的部分组件，例如可隐藏标题持久在最上层的窗口等。
+
+=== 核心代码
+
+获取进程的核心代码一开始是通过 JNA 调用系统 api 完成，但是，但是由于对于不同平台主要通过调用底层 api，在 mac 上调试的时候发现这点比较难，但是不太想通过命令解析的方式获取数据。最后选择使用 link:https://github.com/oshi/oshi[oshi] 来获取系统进程和网络信息，存在的问题就是获取的速度相比于底层 api 慢了很多，但是数据完整性和跨平台性确是支持最好的。原生 Windows api 获取进程信息在 link:https://github.com/lizhongyue248/PortView/commit/cd3c7f7784b41ff54c225b35b127f4d0aff9eaed#diff-5df30cfe24e76c37155179df0d1aacf59d7851c9c16a4dbc1774dd172f97f968L23[commit cd3c7f77] 进行重构。
+
+=== 配置信息
+
+.配置文件存储路径
+[%autowidth]
+|===
+|系统 |配置文件路径
+|Macos
+|/Users/\{username}/Library/Preferences/PortView/zyue
+
+|Windows
+|C:\Users\\{username}\AppData\Local\zyue\PortView
+
+|Linux
+|/home/\{username}/.config/PortView
+|===
+
+值得注意的是，目前 `compose-multiplatform` 通过 `gradle` 的配置将其复制到对应平台的 `app/resources` 目录下，参考 link:https://github.com/JetBrains/compose-multiplatform/tree/master/tutorials/Native_distributions_and_local_execution#adding-files-to-packaged-application[官方文档] 配置如下
+
+[source,kotlin]
+----
+appResourcesRootDir.set(project.layout.projectDirectory.dir("resources"))
+----
+
+目前存放的只是对 `windows` 有效的提权文件。
+
+=== 第三方库
+
+`compose-multiplatform` 使用了 link:https://www.guardsquare.com/manual/home[ProGuard] 进行代码缩小和混淆，混淆目前是关闭的，但是对于某些第三方库使用会造成类似无法找到类的异常情况，因此需要在 `compose-desktop.pro` 文件中定义某些不进行处理的包或者类，
+
+
+=== 运行
+
+使用 `Gradle` 进行构建，`Graalvm-ce-17 JDK` 与 `Kotlin` 进行开发，主要提供如下命令运行与打包
+
+.命令与用途
+[%autowidth]
+|===
+|命令 |用途 | 其他
+|`./gradlew run`
+|运行程序
+| -
+
+|`./gradlew runRelease`
+|运行发版后的程序
+|不会进行重新构建
+
+|`./gradlew runReleaseDistributable`
+|运行发版后的程序
+|需要重新构建
+
+|`./gradlew packageReleaseDistributionForCurrentOS`
+|根据当前操作系统打包
+|支持 `msi`, `dmg`, `deb`, `rpm`
+|===
+
+构建后的文件存放在 `composeApp/build` 目录，打包后的文件村存放在 `composeApp/build/packages` 目录
+
+=== 发布
+
+使用 link:https://github.com/lizhongyue248/PortView/actions[Github Action] 进行打包和分发，检测到有 `v` 字母开头的标签时，自动进行发布到 link:https://github.com/lizhongyue248/PortView/releases[Github Release]。值得注意的是，`CHANGELOG.adoc` 文件是需要人工去维护的，因此每次增加功能或者修复，需要补充文档，这也是较为推荐的一种实践。
+
+=== 签名问题
+
+在 `Mac` 和 `Windows` 上都存在签名问题，软件安装时会提示来自不受信任的开发者，参考 link:https://support.apple.com/zh-cn/guide/mac-help/mh40616/mac[打开来自身份不明开发者的 Mac App] 与 link:https://support.microsoft.com/zh-cn/windows/%E5%B0%86%E6%8E%92%E9%99%A4%E9%A1%B9%E6%B7%BB%E5%8A%A0%E5%88%B0-windows-%E5%AE%89%E5%85%A8%E4%B8%AD%E5%BF%83-811816c0-4dfd-af4a-47e4-c301afe13b26[将排除项添加到 Windows 安全中心]。你可以完全放心，应用不进行任何网络请求与恶意修改系统文件，如果你介意，还可以下载源码进行编译运行。
+
 
 == ✅ 测试
 
-目前在以下平台功能测试通过
+目前在以下平台功能性测试通过
 
 - Windows 11 23H2 (22631)
 - Macos Sonoma 14.2.1
 - Ubuntu 22.04.3 Gnome Desktop
 
+单元测试一方面是 `compose-multiplatform` 支持还不特别完善，另一方面是需求在变动没有完全确定下来，所以一直没有写。待完善...

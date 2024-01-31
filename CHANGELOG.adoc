@@ -6,7 +6,14 @@ All notable changes to this project will be documented in this file.
 The format is based on link:https://keepachangelog.com/[Keep a Changelog]
 and this project adheres to link:https://semver.org/[Semantic Versioning].
 
-== link:../../v1.0.0[v1.0.0]
+== link:../../compare/v1.0.0%E2%80%A6master[Unreleased]
+
+== ⚡️Improve performance
+- Remove elevate files other than Windows (link:../../commit/ffccf27aa621f2b02d8ba6d9bf2feed2d61f9b50[ffccf27a])
+
+== link:../../releases/tag/v1.0.0[v1.0.0]
+
+2024-1-29
 
 == ✨Features
 - View and search for programs currently occupying ports
