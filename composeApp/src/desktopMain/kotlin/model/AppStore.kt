@@ -15,26 +15,22 @@ import i18n.lang.LangEnum
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import net.harawata.appdirs.AppDirsFactory
 import org.apache.commons.lang3.StringUtils
-import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.jetbrains.compose.resources.resource
 import org.tinylog.configuration.Configuration
 import org.tinylog.kotlin.Logger
 import java.io.File
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.StandardOpenOption
+import com.sun.jna.Platform as JNAPlatform
 
 
 val USER_CONFIG_DIR: String = AppDirsFactory.getInstance().getUserConfigDir("PortView", null, "zyue")
 val CONFIG_PATH: String = USER_CONFIG_DIR + File.separatorChar + "config.json"
 val LOGGER_PATH: String = USER_CONFIG_DIR + File.separatorChar + "port-view.log"
-val ELEVATE_PATH: String = USER_CONFIG_DIR + File.separatorChar + "Elevate.exe"
+val ELEVATE_PATH: String = System.getProperty("compose.application.resources.dir") +
+  File.separatorChar + "Elevate_${if (JNAPlatform.is64Bit()) "x64" else "x86"}.exe"
 
 class AppStore {
   var config: ConfigState by mutableStateOf(initialConfig())
@@ -42,25 +38,8 @@ class AppStore {
   var state: AppState by mutableStateOf(initialState())
     private set
 
-  @OptIn(ExperimentalResourceApi::class)
   private fun initialState(): AppState {
-    if (Platform.isWindows) {
-      val elevatePath = File(ELEVATE_PATH)
-      if (!elevatePath.exists()) {
-        val name = "helper/Elevate_${
-          if (Platform.x64) "x64"
-          else "x86"
-        }.exe"
-        val bytes = runBlocking {
-          resource(name).readBytes()
-        }
-        try {
-          Files.write(Path.of(ELEVATE_PATH), bytes, StandardOpenOption.CREATE, StandardOpenOption.WRITE)
-        } catch (e: Exception) {
-          Logger.warn("Write Elevate file error.", e)
-        }
-      }
-    }
+    Logger.info("compose.application.resources.dir $ELEVATE_PATH")
     return AppState(
       keyboard = config.getKeyStrokeString(),
       showUnknown = config.showUnknown

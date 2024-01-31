@@ -79,6 +79,8 @@ compose.desktop {
       copyright = "Copyright © 2024 $vendor All Rights Reserved."
       licenseFile.set(rootProject.file("LICENSE.txt"))
       outputBaseDir.set(project.layout.buildDirectory.dir("packages"))
+      appResourcesRootDir.set(project.layout.projectDirectory.dir("resources"))
+      println(project.layout.projectDirectory.dir("resources"))
       windows {
         shortcut = true
         menu = true

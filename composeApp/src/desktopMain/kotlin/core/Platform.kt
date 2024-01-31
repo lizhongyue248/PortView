@@ -6,18 +6,15 @@ import core.mac.MacAction
 import core.mac.MacPort
 import core.win.WindowsAction
 import core.win.WindowsPort
+import com.sun.jna.Platform as JNAPlatform
 
 object Platform {
   val name: String = "Java ${System.getProperty("java.version")}"
   val osName: String = System.getProperty("os.name")
   val isWindows: Boolean
-    get() = osName.lowercase().contains("windows")
+    get() = JNAPlatform.isWindows()
   val isMac: Boolean
-    get() = osName.lowercase().contains("mac")
-  val x64: Boolean
-    get() = System.getProperty("os.arch").contains("64")
-  val x86: Boolean
-    get() = !x64
+    get() = JNAPlatform.isMac()
 
   var isDebug: Boolean = false
   val portStrategy: PortStrategy
