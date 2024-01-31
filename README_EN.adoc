@@ -56,7 +56,7 @@ The tool mainly uses the technology stack link:https://www.jetbrains.com/lp/comp
 
 === Core code
 
-Obtaining the core code of the process is initially completed by calling the system api through JNA. However, because different platforms mainly call the underlying api, I found this to be difficult when debugging on mac, but I don’t want to obtain it through command parsing. data. Finally, I chose to use link:https://github.com/oshi/oshi[oshi] to obtain system process and network information. The problem is that the acquisition speed is much slower than the underlying API, but the data integrity and cross-platform Sex is indeed the best support. Native Windows api gets process information at link:https://github.com/lizhongyue248/PortView/commit/cd3c7f7784b41ff54c225b35b127f4d0aff9eaed#diff-5df30cfe24e76c37155179df0d1aacf59d7851c9c16a4dbc1774dd172f97f968L23[commit cd3c7f77] for refactoring.
+Obtaining the core code of the process is initially completed by calling the system api through JNA. However, because different platforms mainly call the underlying api, I found this to be difficult when debugging on mac, and I don’t want to obtain it through command parsing. data. Finally, I chose to use link:https://github.com/oshi/oshi[oshi] to obtain system process and network information. The problem is that the acquisition speed is much slower than the underlying API, but the data integrity and cross-platform Sex is indeed the best support. Native Windows api gets process information at link:https://github.com/lizhongyue248/PortView/commit/cd3c7f7784b41ff54c225b35b127f4d0aff9eaed#diff-5df30cfe24e76c37155179df0d1aacf59d7851c9c16a4dbc1774dd172f97f968L23[commit cd3c7f77] for refactoring.
 
 === Configuration information
 

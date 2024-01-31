@@ -56,7 +56,7 @@ image::docs/view.png[Demo]
 
 === 核心代码
 
-获取进程的核心代码一开始是通过 JNA 调用系统 api 完成，但是，但是由于对于不同平台主要通过调用底层 api，在 mac 上调试的时候发现这点比较难，但是不太想通过命令解析的方式获取数据。最后选择使用 link:https://github.com/oshi/oshi[oshi] 来获取系统进程和网络信息，存在的问题就是获取的速度相比于底层 api 慢了很多，但是数据完整性和跨平台性确是支持最好的。原生 Windows api 获取进程信息在 link:https://github.com/lizhongyue248/PortView/commit/cd3c7f7784b41ff54c225b35b127f4d0aff9eaed#diff-5df30cfe24e76c37155179df0d1aacf59d7851c9c16a4dbc1774dd172f97f968L23[commit cd3c7f77] 进行重构。
+获取进程的核心代码一开始是通过 JNA 调用系统 api 完成，但是由于对于不同平台主要通过调用底层 api，在 mac 上调试的时候发现这点比较难，又不太想通过命令解析的方式获取数据。最后选择使用 link:https://github.com/oshi/oshi[oshi] 来获取系统进程和网络信息，存在的问题就是获取的速度相比于底层 api 慢了很多，但是数据完整性和跨平台性确是支持最好的。原生 Windows api 获取进程信息在 link:https://github.com/lizhongyue248/PortView/commit/cd3c7f7784b41ff54c225b35b127f4d0aff9eaed#diff-5df30cfe24e76c37155179df0d1aacf59d7851c9c16a4dbc1774dd172f97f968L23[commit cd3c7f77] 进行重构。
 
 === 配置信息
 
