@@ -113,7 +113,7 @@ appResourcesRootDir.set(project.layout.projectDirectory.dir("resources"))
 |支持 `msi`, `dmg`, `deb`, `rpm`
 |===
 
-构建后的文件存放在 `composeApp/build` 目录，打包后的文件村存放在 `composeApp/build/packages` 目录
+构建后的文件存放在 `composeApp/build` 目录，打包后的文件存放在 `composeApp/build/packages` 目录
 
 === 发布
 
