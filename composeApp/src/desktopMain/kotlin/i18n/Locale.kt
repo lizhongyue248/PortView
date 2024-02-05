@@ -9,6 +9,7 @@ import org.jetbrains.compose.resources.resource
 import org.tinylog.kotlin.Logger
 import java.util.Locale
 import java.util.Locale.CHINESE
+import java.util.Locale.ENGLISH
 
 object Locale {
 
@@ -35,11 +36,14 @@ object Locale {
 
   fun getDefaultLang(): Lang {
     if (langMap.isEmpty()) {
-      throw Exception("Not found any lang resource when get default lang.")
+      throw RuntimeException("Not found any lang resource when get default lang.")
     }
     val systemDefault = Locale.getDefault()
     if (systemDefault == CHINESE && langMap.containsKey(LangEnum.ZH)) {
       return langMap[LangEnum.ZH]!!
+    }
+    if (systemDefault == ENGLISH && langMap.containsKey(LangEnum.EN)) {
+      return langMap[LangEnum.EN]!!
     }
     return langMap[langMap.keys.first()]!!
   }

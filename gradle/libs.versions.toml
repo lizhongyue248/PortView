@@ -19,6 +19,8 @@ json-schema = "0.9.9"
 oshi = "6.4.11"
 twelvemonkeys-imageio = "3.10.1"
 plist = "1.27"
+kotlinx-coroutines-test = "1.7.3"
+mockk = "1.13.9"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -49,6 +51,8 @@ oshi-core = { module = "com.github.oshi:oshi-core", version.ref = "oshi" }
 imageio-core = { module = "com.twelvemonkeys.imageio:imageio-core", version.ref = "twelvemonkeys-imageio" }
 imageio-icns = { module = "com.twelvemonkeys.imageio:imageio-icns", version.ref = "twelvemonkeys-imageio" }
 plist = { module = "com.googlecode.plist:dd-plist", version.ref = "plist" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines-test" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 
 [plugins]
 jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose-plugin" }

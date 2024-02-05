@@ -35,9 +35,11 @@ import component.rightBottom
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import model.AppStore
+import model.LOGGER_PATH
 import model.ThemeOption
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
+import org.tinylog.configuration.Configuration
 import org.tinylog.kotlin.Logger
 import ui.*
 import java.awt.GraphicsEnvironment
@@ -46,110 +48,113 @@ import kotlin.time.Duration.Companion.seconds
 
 
 @OptIn(ExperimentalResourceApi::class)
-fun main() = application {
-  val store = remember { AppStore() }
-  val rightBottom = GraphicsEnvironment.getLocalGraphicsEnvironment().maximumWindowBounds.rightBottom
-  val dialogState = rememberDialogState(
-    width = 420.dp,
-    height = 700.dp,
-    position = WindowPosition((rightBottom.x - 400).dp, (rightBottom.y - 690).dp)
-  )
+fun main() {
+  Configuration.set("writer2.file", LOGGER_PATH)
+  application {
+    val store = remember { AppStore() }
+    val rightBottom = GraphicsEnvironment.getLocalGraphicsEnvironment().maximumWindowBounds.rightBottom
+    val dialogState = rememberDialogState(
+      width = 420.dp,
+      height = 700.dp,
+      position = WindowPosition((rightBottom.x - 400).dp, (rightBottom.y - 690).dp)
+    )
 
-  val darkTheme = remember { mutableStateOf(store.isDarkTheme()) }
+    val darkTheme = remember { mutableStateOf(store.isDarkTheme()) }
 
-  val rotate by rememberInfiniteTransition().animateFloat(
-    initialValue = 0F, targetValue = 360F,
-    animationSpec = infiniteRepeatable(animation = tween(2000, easing = LinearEasing))
-  )
+    val rotate by rememberInfiniteTransition().animateFloat(
+      initialValue = 0F, targetValue = 360F,
+      animationSpec = infiniteRepeatable(animation = tween(2000, easing = LinearEasing))
+    )
 
-  PortViewTheme(darkTheme = darkTheme.value, lang = store.config.language) {
-    MyDialogWindow(
-      onCloseRequest = store::hidden,
-      visible = store.state.isVisible,
-      alwaysOnTop = true,
-      undecorated = true,
-      transparent = true,
-      resizable = false,
-      icon = painterResource("icon.png"),
-      state = dialogState,
-      onWindowDeactivated = store::hidden,
-      onKeyEvent = {
-        when {
-          it.key == Key.Escape && it.type == KeyEventType.KeyUp -> {
-            store.visibleToggle()
-            true
-          }
-
-          else -> false
-        }
-      },
-    ) {
-      MaterialTheme {
-        Scaffold(
-          modifier = Modifier.background(Color.Transparent).fillMaxSize()
-            .padding(top = 10.dp, start = 20.dp, end = 20.dp, bottom = 10.dp)
-            .shadow(20.dp, RoundedCornerShape(5.dp))
-            .focusRequester(store.state.focusRequester),
-          topBar = {
-            WindowDraggableArea(modifier = Modifier
-              .pointerInput(Unit) {
-                detectTransformGestures { _, panGesture, _, _ ->
-                  dialogState.position = WindowPosition(
-                    (dialogState.position.x.value + panGesture.x).dp,
-                    (dialogState.position.y.value + panGesture.y).dp
-                  )
-                }
-              }) { TopBar(store) }
-          },
-          bottomBar = { BottomNav(store) }
-        ) {
-          if (store.state.currentTab == 0) {
-            Column(
-              horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-              SearchField(store)
-              if (store.state.loading && store.isEmpty()) {
-                Image(
-                  painter = painterResource("loading.png"),
-                  contentDescription = "loading",
-                  modifier = Modifier
-                    .size(180.dp)
-                    .padding(top = 40.dp, bottom = 20.dp)
-                    .graphicsLayer {
-                      rotationZ = rotate
-                    }
-                )
-                Text(text = "Loading...", color = MaterialTheme.colors.onPrimary, fontSize = MaterialTheme.typography.h5.fontSize)
-              } else {
-                Content(store)
-              }
+    PortViewTheme(darkTheme = darkTheme.value, lang = store.config.language) {
+      MyDialogWindow(
+        onCloseRequest = store::hidden,
+        visible = store.state.isVisible,
+        alwaysOnTop = true,
+        undecorated = true,
+        transparent = true,
+        resizable = false,
+        icon = painterResource("icon.png"),
+        state = dialogState,
+        onWindowDeactivated = store::hidden,
+        onKeyEvent = {
+          when {
+            it.key == Key.Escape && it.type == KeyEventType.KeyUp -> {
+              store.visibleToggle()
+              true
             }
-          } else {
-            Setting(store)
+
+            else -> false
+          }
+        },
+      ) {
+        MaterialTheme {
+          Scaffold(
+            modifier = Modifier.background(Color.Transparent).fillMaxSize()
+              .padding(top = 10.dp, start = 20.dp, end = 20.dp, bottom = 10.dp)
+              .shadow(20.dp, RoundedCornerShape(5.dp))
+              .focusRequester(store.state.focusRequester),
+            topBar = {
+              WindowDraggableArea(modifier = Modifier
+                .pointerInput(Unit) {
+                  detectTransformGestures { _, panGesture, _, _ ->
+                    dialogState.position = WindowPosition(
+                      (dialogState.position.x.value + panGesture.x).dp,
+                      (dialogState.position.y.value + panGesture.y).dp
+                    )
+                  }
+                }) { TopBar(store) }
+            },
+            bottomBar = { BottomNav(store) }
+          ) {
+            if (store.state.currentTab == 0) {
+              Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+              ) {
+                SearchField(store)
+                if (store.state.loading && store.isEmpty()) {
+                  Image(
+                    painter = painterResource("loading.png"),
+                    contentDescription = "loading",
+                    modifier = Modifier
+                      .size(180.dp)
+                      .padding(top = 40.dp, bottom = 20.dp)
+                      .graphicsLayer {
+                        rotationZ = rotate
+                      }
+                  )
+                  Text(text = "Loading...", color = MaterialTheme.colors.onPrimary, fontSize = MaterialTheme.typography.h5.fontSize)
+                } else {
+                  Content(store)
+                }
+              }
+            } else {
+              Setting(store)
+            }
           }
         }
+
+        TraySetting(store, exit = { exitApplication() }, onAction = { x, y ->
+          dialogState.position = WindowPosition(x, y)
+          store.visibleToggle()
+        })
       }
-
-      TraySetting(store, exit = { exitApplication() }, onAction = { x, y ->
-        dialogState.position = WindowPosition(x, y)
-        store.visibleToggle()
-      })
     }
+
+    val notification = rememberNotification(LocalLanguage.current.tip.welcome, "")
+
+    LaunchedEffect(Unit) {
+      store.sendNotification(notification)
+      Logger.info("Send init notification.")
+      store.searchFocus()
+      store.updateItems()
+    }
+
+    refreshEffect(store)
+    themeEffect(store, darkTheme)
+    keyboardEffect(store)
+    focusEffect(store)
   }
-
-  val notification = rememberNotification(LocalLanguage.current.tip.welcome, "")
-
-  LaunchedEffect(Unit) {
-    store.sendNotification(notification)
-    Logger.info("Send init notification.")
-    store.searchFocus()
-    store.updateItems()
-  }
-
-  refreshEffect(store)
-  themeEffect(store, darkTheme)
-  keyboardEffect(store)
-  focusEffect(store)
 }
 
 @Composable

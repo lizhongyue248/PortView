@@ -24,6 +24,8 @@ kotlin {
         implementation(compose.desktop.uiTestJUnit4)
         implementation(compose.desktop.currentOs)
         implementation(libs.json.schema)
+        implementation(libs.kotlinx.coroutines.test)
+        implementation(libs.mockk)
       }
     }
     commonMain.dependencies {

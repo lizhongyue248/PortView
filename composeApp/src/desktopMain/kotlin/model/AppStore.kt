@@ -20,11 +20,9 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import net.harawata.appdirs.AppDirsFactory
 import org.apache.commons.lang3.StringUtils
-import org.tinylog.configuration.Configuration
 import org.tinylog.kotlin.Logger
 import java.io.File
 import com.sun.jna.Platform as JNAPlatform
-
 
 val USER_CONFIG_DIR: String = AppDirsFactory.getInstance().getUserConfigDir("PortView", null, "zyue")
 val CONFIG_PATH: String = USER_CONFIG_DIR + File.separatorChar + "config.json"
@@ -32,22 +30,15 @@ val LOGGER_PATH: String = USER_CONFIG_DIR + File.separatorChar + "port-view.log"
 val ELEVATE_PATH: String = System.getProperty("compose.application.resources.dir") +
   File.separatorChar + "Elevate_${if (JNAPlatform.is64Bit()) "x64" else "x86"}.exe"
 
-class AppStore {
+class AppStore(
+  private val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.Default)
+) {
   var config: ConfigState by mutableStateOf(initialConfig())
     private set
   var state: AppState by mutableStateOf(initialState())
     private set
 
-  private fun initialState(): AppState {
-    Logger.info("compose.application.resources.dir $ELEVATE_PATH")
-    return AppState(
-      keyboard = config.getKeyStrokeString(),
-      showUnknown = config.showUnknown
-    )
-  }
-
   private fun initialConfig(): ConfigState {
-    Configuration.set("writer2.file", LOGGER_PATH)
     Logger.info("Success set logger writer file. $LOGGER_PATH")
     val json = Json { ignoreUnknownKeys = true }
     var fileConfig = runCatching {
@@ -67,6 +58,14 @@ class AppStore {
     }
     Logger.info("Get config $fileConfig")
     return fileConfig
+  }
+
+  private fun initialState(): AppState {
+    Logger.info("compose.application.resources.dir $ELEVATE_PATH")
+    return AppState(
+      keyboard = config.getKeyStrokeString(),
+      showUnknown = config.showUnknown
+    )
   }
 
   fun visibleToggle() {
@@ -94,7 +93,7 @@ class AppStore {
     setState {
       copy(loading = true)
     }
-    CoroutineScope(Dispatchers.Default).launch {
+    coroutineScope.launch {
       val items = Platform.portStrategy.portList(state.items) { newPorts ->
         val distinct = newPorts
           .distinctBy { it.port }

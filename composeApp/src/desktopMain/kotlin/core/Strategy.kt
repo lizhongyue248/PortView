@@ -33,7 +33,6 @@ abstract class PortStrategy {
     return bufferedImage
   }
 
-
   fun portList(
     lastList: List<PortInfo>,
     newPortHook: (newPorts: Set<PortInfo>) -> Unit = {}

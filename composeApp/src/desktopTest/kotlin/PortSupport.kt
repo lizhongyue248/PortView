@@ -1,5 +1,6 @@
 import org.junit.After
 import org.junit.Before
+import org.tinylog.kotlin.Logger
 import java.net.ServerSocket
 import kotlin.properties.Delegates
 
@@ -11,12 +12,12 @@ open class PortSupport {
   fun before() {
     socket = ServerSocket(0)
     port = socket.localPort
-    println("Start port: $port")
+    Logger.info("Start port: $port")
   }
 
   @After
   fun after() {
     socket.close()
-    println("Close port: $port")
+    Logger.info("Close port: $port")
   }
 }
