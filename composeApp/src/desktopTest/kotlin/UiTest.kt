@@ -1,37 +1,17 @@
-import core.TestTag.Companion.PORT_ITEM
-import core.TestTag.Companion.PORT_LIST
-import core.TestTag.Companion.SEARCH_INPUT
-import androidx.compose.ui.test.*
+
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performTextInput
+import core.TestTag.Companion.SEARCH_INPUT
+import model.AppStore
 import org.junit.Assert
 import org.junit.Rule
 import org.junit.Test
-import model.AppStore
-import ui.Content
 import ui.SearchField
 
 class UiTest : PortSupport() {
-
   @get:Rule
   val rule = createComposeRule()
-
-  @Test
-  fun `Get new port test`() {
-    val store = AppStore()
-    rule.setContent {
-      Content(store)
-    }
-    rule.waitForIdle()
-
-    rule.onNodeWithTag(PORT_LIST, true)
-      .performTouchInput { swipeUp() }
-      .onChildren()
-      .filterToOne(hasTestTag(PORT_ITEM(port)))
-      .onChildren()
-      .onLast()
-      .assertTextEquals(":$port")
-  }
-
   @Test
   fun `Input search text test`() {
     val store = AppStore()

@@ -17,7 +17,9 @@ open class PortSupport {
 
   @After
   fun after() {
-    socket.close()
-    Logger.info("Close port: $port")
+    if (!socket.isClosed) {
+      socket.close()
+      Logger.info("Close port: $port")
+    }
   }
 }

@@ -61,13 +61,18 @@ internal fun TopBar(store: AppStore) {
       verticalAlignment = Alignment.CenterVertically
     ) {
       Text(
+        modifier = Modifier.testTag(TestTag.TITLE),
         text = "Port View",
         style = MaterialTheme.typography.h5,
         fontWeight = FontWeight.Bold,
         fontSize = MaterialTheme.typography.h5.fontSize,
         lineHeight = 36.sp
       )
-      IconButton(onClick = store::hidden, modifier = Modifier.border(1.dp, borderColor).pointerHoverIcon(PointerIcon.Hand)) {
+      IconButton(onClick = store::hidden,
+        modifier = Modifier.border(1.dp, borderColor)
+          .pointerHoverIcon(PointerIcon.Hand)
+          .testTag(TestTag.CLOSE_BUTTON)
+      ) {
         Icon(
           tint = MaterialTheme.colors.onSecondary,
           contentDescription = "Close Window",
@@ -81,6 +86,7 @@ internal fun TopBar(store: AppStore) {
 @Composable
 internal fun BottomNav(store: AppStore) {
   BottomNavigation(
+    modifier = Modifier.testTag(TestTag.BOTTOM_NAV),
     backgroundColor = MaterialTheme.colors.background
   ) {
     listOf(LocalLanguage.current.ui.homeNav, LocalLanguage.current.ui.settingNav).forEachIndexed { index, item ->
@@ -89,8 +95,8 @@ internal fun BottomNav(store: AppStore) {
         unselectedContentColor = MaterialTheme.colors.onPrimary,
         icon = {
           when (index) {
-            0 -> Icon(Icons.Outlined.Home, contentDescription = null)
-            else -> Icon(Icons.Outlined.Settings, contentDescription = null)
+            0 -> Icon(Icons.Outlined.Home, modifier = Modifier.testTag(TestTag.NAV_HOME), contentDescription = "Home")
+            else -> Icon(Icons.Outlined.Settings,modifier = Modifier.testTag(TestTag.NAV_SETTING), contentDescription = "Settings")
           }
         },
         label = { Text(item) },

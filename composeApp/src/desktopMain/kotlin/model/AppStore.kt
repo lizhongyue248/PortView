@@ -1,7 +1,6 @@
 package model
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -205,7 +204,6 @@ class AppStore(
     val searchFocusRequester: FocusRequester = FocusRequester(),
     val searchInteractionSource: MutableInteractionSource = MutableInteractionSource(),
     val focusRequester: FocusRequester = FocusRequester(),
-    val lazyListState: LazyListState = LazyListState(0, 0),
     val currentTab: Int = 0,
     val editingItemId: Long? = null,
     val keyboard: String = "",

@@ -29,6 +29,7 @@ import androidx.compose.ui.window.rememberNotification
 import core.Platform
 import core.PortInfo
 import core.TestTag
+import core.TestTag.Companion.PORT_SCROLLBAR
 import model.AppStore
 import model.UNKNOWN
 import org.apache.commons.lang3.StringUtils
@@ -37,7 +38,7 @@ import java.awt.datatransfer.StringSelection
 
 @Composable
 fun Content(store: AppStore) {
-  val lazyListState = rememberSaveable(saver = LazyListState.Saver) { store.state.lazyListState }
+  val lazyListState = rememberSaveable(saver = LazyListState.Saver) { LazyListState(0, 0) }
   val confirmDialog = remember { mutableStateOf(false) }
   val currentProcess = remember { mutableStateOf<PortInfo?>(null) }
   val i18n = LocalLanguage.current
@@ -74,7 +75,9 @@ fun Content(store: AppStore) {
     }
     VerticalScrollbar(
       rememberScrollbarAdapter(lazyListState),
-      modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight()
+      modifier = Modifier
+        .align(Alignment.CenterEnd).fillMaxHeight()
+        .testTag(PORT_SCROLLBAR)
     )
   }
   if (confirmDialog.value) {
@@ -149,12 +152,14 @@ private fun PortItem(item: PortInfo, confirmDialog: MutableState<Boolean>, curre
 @Composable
 private fun Alert(confirmDialog: MutableState<Boolean>, currentProcess: MutableState<PortInfo?>, store: AppStore) {
   AlertDialog(
+    modifier = Modifier.testTag(TestTag.CLOSE_ALERT),
     onDismissRequest = { confirmDialog.value = false },
     title = { Text(text = LocalLanguage.current.tip.killTitle) },
     text = { Text(LocalLanguage.current.tip.kill.format(currentProcess.value?.name, currentProcess.value?.port)) },
     confirmButton = {
       val errorTip = rememberNotification(LocalLanguage.current.tip.killError, "", Notification.Type.Error)
       Button(
+        modifier = Modifier.testTag(TestTag.CLOSE_ALERT_CONFIRM),
         onClick = {
           val result = Platform.actionStrategy.closeProcess(currentProcess.value?.pid)
           if (result.first) {
@@ -169,6 +174,7 @@ private fun Alert(confirmDialog: MutableState<Boolean>, currentProcess: MutableS
     },
     dismissButton = {
       Button(
+        modifier = Modifier.testTag(TestTag.CLOSE_ALERT_CANCEL),
         colors = ButtonDefaults.buttonColors(
           backgroundColor = MaterialTheme.colors.error
         ),
