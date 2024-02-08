@@ -2,9 +2,7 @@ package ui
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -18,7 +16,6 @@ import androidx.compose.ui.graphics.toPainter
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -33,6 +30,9 @@ import core.TestTag.Companion.PORT_SCROLLBAR
 import model.AppStore
 import model.UNKNOWN
 import org.apache.commons.lang3.StringUtils
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.painterResource
+import portview.composeapp.generated.resources.Res
 import java.awt.Toolkit
 import java.awt.datatransfer.StringSelection
 
@@ -85,6 +85,7 @@ fun Content(store: AppStore) {
   }
 }
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 private fun PortItem(item: PortInfo, confirmDialog: MutableState<Boolean>, currentProcess: MutableState<PortInfo?>) {
   Row(
@@ -107,7 +108,7 @@ private fun PortItem(item: PortInfo, confirmDialog: MutableState<Boolean>, curre
         .shadow(8.dp, CircleShape)
     ) {
       Image(
-        painter = if (item.image === null) painterResource("logo-ghost.png") else item.image.toPainter(),
+        painter = if (item.image === null) painterResource(Res.drawable.logo_ghost) else item.image.toPainter(),
         contentDescription = "logo",
         modifier = Modifier.fillMaxSize()
           .padding(2.dp)

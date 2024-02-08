@@ -41,6 +41,7 @@ import model.AppStore
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.tinylog.kotlin.Logger
+import portview.composeapp.generated.resources.Res
 import java.awt.*
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
@@ -115,7 +116,7 @@ fun TraySetting(
   exit: () -> Unit,
   onAction: (x: Dp, y: Dp) -> Unit
 ) {
-  val image = painterResource("icon.png").toAwtImage(
+  val image = painterResource(Res.drawable.icon).toAwtImage(
     density = Density(1f, 1f),
     layoutDirection = LayoutDirection.Ltr
   )

@@ -14,7 +14,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.*
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpOffset
@@ -32,7 +31,10 @@ import icons.rememberGithub
 import icons.rememberHelp
 import icons.rememberSensorOccupied
 import model.*
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.painterResource
 import org.tinylog.kotlin.Logger
+import portview.composeapp.generated.resources.Res
 import java.awt.Desktop
 import java.awt.event.KeyEvent
 import java.io.File
@@ -71,6 +73,7 @@ fun Setting(store: AppStore) {
 
 }
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 private fun TitleInfo(store: AppStore, desktop: Desktop) {
   val file = File(LOGGER_PATH)
@@ -80,7 +83,7 @@ private fun TitleInfo(store: AppStore, desktop: Desktop) {
     modifier = Modifier.padding(top = 12.dp)
   ) {
     Image(
-      painter = painterResource("icon.png"),
+      painter = painterResource(Res.drawable.icon),
       contentDescription = "icon",
       modifier = Modifier.size(64.dp)
     )

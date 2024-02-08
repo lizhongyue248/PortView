@@ -5,8 +5,8 @@ import i18n.lang.LangEnum
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.jetbrains.compose.resources.resource
 import org.tinylog.kotlin.Logger
+import portview.composeapp.generated.resources.Res
 import java.util.Locale
 import java.util.Locale.CHINESE
 import java.util.Locale.ENGLISH
@@ -28,8 +28,8 @@ object Locale {
   private fun getLangString(): List<String> {
     return runBlocking {
       listOf(
-        resource("lang/zh.json").readBytes().decodeToString(),
-        resource("lang/en.json").readBytes().decodeToString()
+        Res.readBytes("files/lang/zh.json").decodeToString(),
+        Res.readBytes("files/lang/en.json").decodeToString(),
       )
     }
   }

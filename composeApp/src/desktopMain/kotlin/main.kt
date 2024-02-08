@@ -2,6 +2,7 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTransformGestures
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -39,8 +40,10 @@ import model.LOGGER_PATH
 import model.ThemeOption
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.skiko.Library
 import org.tinylog.configuration.Configuration
 import org.tinylog.kotlin.Logger
+import portview.composeapp.generated.resources.Res
 import ui.*
 import java.awt.GraphicsEnvironment
 import javax.swing.KeyStroke
@@ -50,7 +53,9 @@ import kotlin.time.Duration.Companion.seconds
 @OptIn(ExperimentalResourceApi::class)
 fun main() {
   Configuration.set("writer2.file", LOGGER_PATH)
+  Library.load()
   application {
+    println("isSystemInDarkTheme() ${isSystemInDarkTheme()}")
     val store = remember { AppStore() }
     val rightBottom = GraphicsEnvironment.getLocalGraphicsEnvironment().maximumWindowBounds.rightBottom
     val dialogState = rememberDialogState(
@@ -74,7 +79,7 @@ fun main() {
         undecorated = true,
         transparent = true,
         resizable = false,
-        icon = painterResource("icon.png"),
+        icon = painterResource(Res.drawable.icon),
         state = dialogState,
         onWindowDeactivated = store::hidden,
         onKeyEvent = {
@@ -88,49 +93,47 @@ fun main() {
           }
         },
       ) {
-        MaterialTheme {
-          Scaffold(
-            modifier = Modifier.background(Color.Transparent).fillMaxSize()
-              .padding(top = 10.dp, start = 20.dp, end = 20.dp, bottom = 10.dp)
-              .shadow(20.dp, RoundedCornerShape(5.dp))
-              .focusRequester(store.state.focusRequester),
-            topBar = {
-              WindowDraggableArea(modifier = Modifier
-                .pointerInput(Unit) {
-                  detectTransformGestures { _, panGesture, _, _ ->
-                    dialogState.position = WindowPosition(
-                      (dialogState.position.x.value + panGesture.x).dp,
-                      (dialogState.position.y.value + panGesture.y).dp
-                    )
-                  }
-                }) { TopBar(store) }
-            },
-            bottomBar = { BottomNav(store) }
-          ) {
-            if (store.state.currentTab == 0) {
-              Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-              ) {
-                SearchField(store)
-                if (store.state.loading && store.isEmpty()) {
-                  Image(
-                    painter = painterResource("loading.png"),
-                    contentDescription = "loading",
-                    modifier = Modifier
-                      .size(180.dp)
-                      .padding(top = 40.dp, bottom = 20.dp)
-                      .graphicsLayer {
-                        rotationZ = rotate
-                      }
+        Scaffold(
+          modifier = Modifier.background(Color.Transparent).fillMaxSize()
+            .padding(top = 10.dp, start = 20.dp, end = 20.dp, bottom = 10.dp)
+            .shadow(20.dp, RoundedCornerShape(5.dp))
+            .focusRequester(store.state.focusRequester),
+          topBar = {
+            WindowDraggableArea(modifier = Modifier
+              .pointerInput(Unit) {
+                detectTransformGestures { _, panGesture, _, _ ->
+                  dialogState.position = WindowPosition(
+                    (dialogState.position.x.value + panGesture.x).dp,
+                    (dialogState.position.y.value + panGesture.y).dp
                   )
-                  Text(text = "Loading...", color = MaterialTheme.colors.onPrimary, fontSize = MaterialTheme.typography.h5.fontSize)
-                } else {
-                  Content(store)
                 }
+              }) { TopBar(store) }
+          },
+          bottomBar = { BottomNav(store) }
+        ) {
+          if (store.state.currentTab == 0) {
+            Column(
+              horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+              SearchField(store)
+              if (store.state.loading && store.isEmpty()) {
+                Image(
+                  painter = painterResource(Res.drawable.loading),
+                  contentDescription = "loading",
+                  modifier = Modifier
+                    .size(180.dp)
+                    .padding(top = 40.dp, bottom = 20.dp)
+                    .graphicsLayer {
+                      rotationZ = rotate
+                    }
+                )
+                Text(text = "Loading...", color = MaterialTheme.colors.onPrimary, fontSize = MaterialTheme.typography.h5.fontSize)
+              } else {
+                Content(store)
               }
-            } else {
-              Setting(store)
             }
+          } else {
+            Setting(store)
           }
         }
 

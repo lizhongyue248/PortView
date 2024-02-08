@@ -1,5 +1,4 @@
 
-import org.jetbrains.compose.ExperimentalComposeLibrary
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.com.google.gson.Gson
 import org.jetbrains.kotlin.ir.backend.js.scriptRemoveReceiverLowering
@@ -33,7 +32,6 @@ kotlin {
       implementation(compose.foundation)
       implementation(compose.material3)
       implementation(libs.jSystemThemeDetector)
-      @OptIn(ExperimentalComposeLibrary::class)
       implementation(compose.components.resources)
       implementation(libs.jna.platform)
       implementation(libs.jna)
@@ -55,7 +53,7 @@ kotlin {
     }
   }
 }
-val appJson = File(projectDir.absolutePath + "/src/desktopMain/resources/app.json").readText()
+val appJson = File(projectDir.absolutePath + "/src/commonMain/composeResources/files/app.json").readText()
 
 data class AppInfo(
   val name: String,

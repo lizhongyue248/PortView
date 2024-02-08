@@ -30,13 +30,15 @@ class OtherTest {
     Logger.info("OsThemeDetector.getDetector().isDark ${OsThemeDetector.getDetector().isDark}")
   }
 
-  @OptIn(ExperimentalComposeUiApi::class)
+  @OptIn(ExperimentalComposeUiApi::class, ExperimentalResourceApi::class)
   @Test
   fun i18nTest() {
     val json = Json { ignoreUnknownKeys = true }
-    val resource = this.javaClass.classLoader.getResource("lang")?.toURI() ?: throw Exception("Not found lang resource.")
-    val langDir = File(resource)
-    val langList = mutableListOf<Lang>()
+    val resource = FileResourceLoader(File("src/commonMain/composeResources/files/lang"))
+    println(resource.root.absolutePath)
+    println(resource.root.isDirectory)
+    val langDir = File(resource.root.absolutePath)
+    val langMap = mutableMapOf<String, Lang>()
     langDir.listFiles()?.forEach { langFile ->
       if (!langFile.isFile || langFile.extension != "json") {
         Logger.info("${langFile.name} is not json file, skip.")
@@ -44,20 +46,16 @@ class OtherTest {
       }
       val jsonString = langFile.readText()
       val lang = json.decodeFromString<Lang>(jsonString)
-      langList.add(lang)
+      langMap[langFile.nameWithoutExtension] = lang
       Logger.info("Load lang [${lang.name}] file ${langFile.name} success.")
     }
-    val fileResourceLoader = FileResourceLoader(File("lang"))
-    println(fileResourceLoader.root.absolutePath)
-    println(fileResourceLoader.root.isDirectory)
+    assert(langMap.size == 2)
+    assert(langMap.containsKey("zh"))
+    assert(langMap.containsKey("en"))
   }
 
-  @OptIn(ExperimentalResourceApi::class)
   @Test
   fun getLocale() {
-//    val currentLocale: Locale = Locale.getDefault()
-//    println(currentLocale.language)
-//    println(ThemeOption.SYSTEM.name.lowercase())
     val appDirs = AppDirsFactory.getInstance()
     println("User data dir: " + appDirs.getUserDataDir("PortView", null, null))
     println(

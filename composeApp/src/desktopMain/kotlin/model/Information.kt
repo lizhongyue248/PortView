@@ -5,7 +5,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.jetbrains.compose.resources.resource
+import portview.composeapp.generated.resources.Res
 
 data class ExternalInfo(
   val title: String,
@@ -36,7 +36,7 @@ object Information {
   private fun fromFile(): AppInformation {
     val json = Json { ignoreUnknownKeys = true }
     return json.decodeFromString(runBlocking {
-      resource("app.json").readBytes().decodeToString()
+      Res.readBytes("files/app.json").decodeToString()
     })
   }
 }
