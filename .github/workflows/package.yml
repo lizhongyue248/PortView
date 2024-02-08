@@ -1,14 +1,11 @@
-name: Package release
+name: Package
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - 'gradle/**'
-      - 'gradle.properties'
-      - 'settings.gradle.kts'
-      - 'build.gradle.kts'
-      - 'composeApp/**'
-      - '.github/workflows/**'
+  workflow_run:
+    workflows: ["Test"]
+    types:
+      - completed
+
 jobs:
   package-release:
     strategy:
@@ -23,7 +20,7 @@ jobs:
           distribution: 'corretto'
           java-version: '17'
           cache: gradle
-      - name: Test Package Release
+      - name: Package for current os
         shell: bash
         run: |
           ./gradlew packageReleaseDistributionForCurrentOS
