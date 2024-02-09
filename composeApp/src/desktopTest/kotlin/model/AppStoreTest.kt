@@ -2,7 +2,7 @@ package model
 
 import core.Platform
 import core.PortInfo
-import core.win.WindowsPort
+import core.PortStrategy
 import i18n.lang.LangEnum
 import io.mockk.every
 import io.mockk.mockkObject
@@ -14,8 +14,16 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
 import org.junit.Before
 import org.junit.Test
+import oshi.software.os.InternetProtocolStats
 import java.io.File
 import kotlin.time.Duration.Companion.seconds
+object TestPort:  PortStrategy() {
+
+  override fun getInternetProtocolStats(): InternetProtocolStats {
+    TODO("Not yet implemented")
+  }
+
+}
 
 class AppStoreTest {
 
@@ -120,10 +128,10 @@ class AppStoreTest {
       )
 
       mockkObject(Platform)
-      every { Platform.portStrategy } returns WindowsPort
-      mockkObject(WindowsPort)
-      every { WindowsPort.portList(emptyList(), any()) } returns firstList
-      every { WindowsPort.portList(firstList, any()) } answers {
+      every { Platform.portStrategy } returns TestPort
+      mockkObject(TestPort)
+      every { TestPort.portList(emptyList(), any()) } returns firstList
+      every { TestPort.portList(firstList, any()) } answers {
         val newPortHook = secondArg<(newPorts: Set<PortInfo>) -> Unit>()
         newPortHook(secondList.toSet())
         secondList
@@ -145,8 +153,8 @@ class AppStoreTest {
 
       // verify call times
       verify(atLeast = 1) { Platform.portStrategy }
-      verify(exactly = 1) { WindowsPort.portList(emptyList(), any()) }
-      verify(exactly = 1) { WindowsPort.portList(firstList, any()) }
+      verify(exactly = 1) { TestPort.portList(emptyList(), any()) }
+      verify(exactly = 1) { TestPort.portList(firstList, any()) }
       verify(exactly = 1) { appStore.sendNotification(any(), any(), any()) }
     }
 
